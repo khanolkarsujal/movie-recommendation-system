@@ -25,8 +25,16 @@ function Home() {
         <SeasonTabBar seasons={seasons} activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
 
-      <div className="relative z-20 space-y-8 pt-0 mt-8">
-        {/* ── Featured Picks Banner ── */}
+      <div className="relative z-20 space-y-12 pt-10 mt-12">
+        {/* ── Continue Watching (RESUME) ── */}
+        <EpisodeRow 
+          title="Continue Watching" 
+          label="RESUME" 
+          episodes={continueWatching} 
+          isContinueWatching={true}
+        />
+
+        {/* ── Featured Picks Banner (HANDPICKED FOR YOU) ── */}
         <FeaturedBanner />
 
         {/* ── Season Episodes ── */}
@@ -34,14 +42,6 @@ function Home() {
           title={`${seasons[activeTab]} Episodes`} 
           label="CURRENT SEASON"
           episodes={generateEpisodes(activeTab + 1)} 
-        />
-
-        {/* ── Continue Watching ── */}
-        <EpisodeRow 
-          title="Continue Watching" 
-          label="RESUME" 
-          episodes={continueWatching} 
-          isContinueWatching={true}
         />
 
         {/* ── Trending Now (Top 10) ── */}

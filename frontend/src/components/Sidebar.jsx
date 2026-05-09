@@ -125,8 +125,10 @@ const Sidebar = () => {
     <aside className="fixed left-0 top-0 h-screen w-[64px] bg-[#111111] flex flex-col items-center z-[100]">
       {/* Unified Header Zone */}
       <div className="h-[64px] flex items-center justify-center w-full">
-        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-          <span className="text-[#111] font-bold text-xl select-none">S</span>
+        <div className="flex items-center gap-1 cursor-pointer group" onClick={() => navigate('/')}>
+          <div className="w-8 h-8 bg-gradient-to-br from-[#8b5cf6] to-[#6d28d9] rounded-lg flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <Film size={18} color="white" />
+          </div>
         </div>
       </div>
 
@@ -167,7 +169,7 @@ const Sidebar = () => {
 
               {/* Notification Badge */}
               {item.badge > 0 && (
-                <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#ef4444] rounded-full border-2 border-[#111111] flex items-center justify-center z-20 animate-badgePulse">
+                <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#8b5cf6] rounded-full border-2 border-[#111111] flex items-center justify-center z-20 animate-badgePulse">
                   <span className="text-[9px] text-white font-bold">{item.badge}</span>
                 </div>
               )}

@@ -139,7 +139,7 @@ function EpisodeCard({ episode, index, isContinueWatching = false }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-5 flex flex-col gap-3 bg-[#181818]"
+              className="p-5 space-y-4 bg-[#181818] border-t border-white/5"
             >
               <h3 className="text-[18px] font-bold text-white leading-tight">
                 {episode.title}

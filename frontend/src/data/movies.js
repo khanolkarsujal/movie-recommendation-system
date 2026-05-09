@@ -191,3 +191,26 @@ export const newReleases = [
     thumbnail: 'https://images.unsplash.com/photo-1515888012938-a6d7e06c0fc0?w=500&q=75',
   },
 ];
+
+export const continueWatching = [
+  {
+    id: 'cw1', title: 'Blood Covenant', duration: 'S2:E4', progress: 65, rating: 8.7, year: 2027,
+    genres: ['Action', 'Horror'], description: 'The templar knight faces his ultimate test against the vampire queen.',
+    thumbnail: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&q=75',
+  },
+  {
+    id: 'cw2', title: 'The Last Rune', duration: '2h 01m', progress: 15, rating: 9.0, year: 2027,
+    genres: ['Fantasy', 'Adventure'], description: 'The final rune holds the power to unmake all of reality.',
+    thumbnail: 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?w=500&q=75',
+  },
+  {
+    id: 'cw3', title: 'Cyber Drift', duration: 'S1:E8', progress: 85, rating: 8.2, year: 2024,
+    genres: ['Cyberpunk', 'Action'], description: 'Racing through the neon underground, the final drift decides everything.',
+    thumbnail: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=500&q=75',
+  },
+  {
+    id: 'cw4', title: 'Abyssal Deep', duration: '1h 45m', progress: 40, rating: 7.8, year: 2025,
+    genres: ['Sci-Fi', 'Horror'], description: 'Deep sea explorers find something that has been waiting for millions of years.',
+    thumbnail: 'https://images.unsplash.com/photo-1682687982501-1e58f8147c08?w=500&q=75',
+  }
+];

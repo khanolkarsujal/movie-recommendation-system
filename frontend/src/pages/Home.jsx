@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import TabBar from '../components/TabBar';
 import EpisodeRow from '../components/EpisodeRow';
@@ -17,10 +18,16 @@ import { seasons, generateEpisodes, trendingNow, newReleases } from '../data/mov
 function Home() {
   const [activeTab, setActiveTab] = useState(0);
 
+  const prevTabRef = useRef(activeTab);
+  const direction = activeTab > prevTabRef.current ? 1 : -1;
+
   // Re-generate episodes whenever the active season changes.
-  // The `key` prop on EpisodeRow re-mounts the component so
-  // Framer Motion plays the staggered entrance animation on every tab switch.
   const currentEpisodes = generateEpisodes(activeTab + 1);
+
+  // Update prev tab after render
+  useEffect(() => {
+    prevTabRef.current = activeTab;
+  }, [activeTab]);
 
   return (
     <>
@@ -35,11 +42,23 @@ function Home() {
       />
 
       {/* ── Season Episode Row ──────────────────────────────── */}
-      <EpisodeRow
-        key={`season-${activeTab}`}
-        title={`${seasons[activeTab]} Episodes`}
-        episodes={currentEpisodes}
-      />
+      <div className="relative overflow-hidden w-full">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={activeTab}
+            custom={direction}
+            initial={{ opacity: 0, x: direction * 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction * -40 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            <EpisodeRow
+              title={`${seasons[activeTab]} Episodes`}
+              episodes={currentEpisodes}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       {/* ── Trending Now ────────────────────────────────────── */}
       <EpisodeRow title="Trending Now" episodes={trendingNow} />

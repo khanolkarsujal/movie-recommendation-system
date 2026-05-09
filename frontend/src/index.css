@@ -37,12 +37,21 @@ body {
   }
 }
 
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0 }
+  to   { transform: translateY(0);     opacity: 1 }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.6s ease-out forwards;
 }
 
 .animate-slideUp {
   animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out forwards;
 }
 
 @keyframes bellRing {
@@ -81,6 +90,39 @@ body {
 /* Hide scrollbar for season tab strip */
 .tab-strip::-webkit-scrollbar {
   display: none;
+}
+
+/* Premium Nav Links */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 1.5px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #8b5cf6;
+  border-radius: 50%;
 }
 .tab-strip {
   scrollbar-width: none;

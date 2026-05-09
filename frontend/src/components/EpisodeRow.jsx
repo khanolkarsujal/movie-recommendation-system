@@ -18,7 +18,7 @@ function EpisodeRow({ title, episodes, label }) {
   const scroll = useCallback((dir) => {
     const el = scrollRef.current;
     if (!el) return;
-    const amount = dir === 'right' ? el.clientWidth - 80 : -(el.clientWidth - 80);
+    const amount = dir === 'right' ? 800 : -800;
     el.scrollBy({ left: amount, behavior: 'smooth' });
   }, []);
 
@@ -30,13 +30,13 @@ function EpisodeRow({ title, episodes, label }) {
 
   return (
     <section
-      className="relative mb-10"
+      className="relative mb-4"
       aria-label={title}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Row Header */}
-      <div className="flex items-center justify-between px-5 md:px-[var(--row-padding)] mb-4">
+      <div className="flex items-center justify-between px-5 md:px-[var(--row-padding)] mb-3">
         <div>
           {label && (
             <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-[var(--accent)] block mb-1">
@@ -54,62 +54,48 @@ function EpisodeRow({ title, episodes, label }) {
 
       {/* Scroll Container */}
       <div className="relative">
-        {/* Fade Edges */}
-        <div
-          className="absolute left-0 top-0 bottom-6 w-20 z-20 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to right, var(--bg-base), transparent)',
-            opacity: canLeft ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-          }}
-        />
-        <div
-          className="absolute right-0 top-0 bottom-6 w-20 z-20 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to left, var(--bg-base), transparent)',
-            opacity: canRight ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-          }}
-        />
-
-        {/* Scroll Buttons */}
-        <button
-          onClick={() => scroll('left')}
-          aria-label="Scroll left"
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-[calc(var(--card-h)-8px)] rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center transition-all duration-300 hover:bg-black/80 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-          style={{
-            opacity: canLeft && hovered ? 1 : 0,
-            transform: `translateY(-50%) translateX(${canLeft && hovered ? '0px' : '-8px'})`,
-            pointerEvents: canLeft && hovered ? 'auto' : 'none',
-          }}
-        >
-          <ChevronLeft size={22} />
-        </button>
-
-        <button
-          onClick={() => scroll('right')}
-          aria-label="Scroll right"
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-[calc(var(--card-h)-8px)] rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center transition-all duration-300 hover:bg-black/80 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-          style={{
-            opacity: canRight && hovered ? 1 : 0,
-            transform: `translateY(-50%) translateX(${canRight && hovered ? '0px' : '8px'})`,
-            pointerEvents: canRight && hovered ? 'auto' : 'none',
-          }}
-        >
-          <ChevronRight size={22} />
-        </button>
-
-        {/* Scrollable Strip */}
+        {/* Scrollable Strip - overflow visible to allow cards to expand upward/downward, padding-bottom 200px for expanded space */}
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="row-scroll flex flex-row gap-3 overflow-x-auto overflow-y-visible pb-6 pt-2 px-5 md:px-[var(--row-padding)]"
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          className="row-scroll flex flex-row gap-3 pt-2 px-5 md:px-[var(--row-padding)]"
+          style={{ 
+            overflow: 'visible',
+            paddingBottom: '160px', /* space for hover popup to expand upward/downward */
+            scrollBehavior: 'smooth'
+          }}
         >
           {episodes.map((ep, i) => (
             <EpisodeCard key={ep.id} episode={ep} index={i} />
           ))}
         </div>
+
+        {/* Floating Scroll Buttons */}
+        <button
+          onClick={() => scroll('left')}
+          aria-label="Scroll left"
+          className="absolute left-[var(--sidebar-width)] top-[65px] -translate-y-1/2 z-[150] w-10 h-[80px] text-white flex items-center justify-center transition-all duration-300 outline-none"
+          style={{
+            background: 'linear-gradient(to left, transparent, rgba(0,0,0,0.8))',
+            opacity: canLeft && hovered ? 1 : 0,
+            pointerEvents: canLeft && hovered ? 'auto' : 'none',
+          }}
+        >
+          <ChevronLeft size={28} />
+        </button>
+
+        <button
+          onClick={() => scroll('right')}
+          aria-label="Scroll right"
+          className="absolute right-0 top-[65px] -translate-y-1/2 z-[150] w-10 h-[80px] text-white flex items-center justify-center transition-all duration-300 outline-none"
+          style={{
+            background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.8))',
+            opacity: canRight && hovered ? 1 : 0,
+            pointerEvents: canRight && hovered ? 'auto' : 'none',
+          }}
+        >
+          <ChevronRight size={28} />
+        </button>
       </div>
     </section>
   );

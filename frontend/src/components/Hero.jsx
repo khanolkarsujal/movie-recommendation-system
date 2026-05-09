@@ -1,7 +1,10 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Play, Plus, Info, Volume2, VolumeX } from 'lucide-react';
+import { Play, Plus, Heart, Info, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import heroBg from '../assets/hero_bg.png';
+import useStore from '../store/useStore';
 
 const MoltenGlassHero = lazy(() => import('./ui/MoltenGlassHero'));
 
@@ -116,6 +119,8 @@ const Hero = () => {
   const [showVideo, setShowVideo] = useState(false);
   const [muted, setMuted] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(new Set());
+  const navigate = useNavigate();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useStore();
   
   // Parallax & Mouse Pan
   const [scrollY, setScrollY] = useState(0);
@@ -125,8 +130,8 @@ const Hero = () => {
     ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
     : false;
 
-  const movie = FEATURED_MOVIES[current];
-  const isLoaded = imagesLoaded.has(movie.id);
+  const movie = heroMovie || FEATURED_MOVIES[current];
+  const isLoaded = imagesLoaded.has(movie.id) || movie.isCustom;
 
   // ─── Scroll & Mouse Listeners ──────────────────────────────────────────
   useEffect(() => {
@@ -155,13 +160,13 @@ const Hero = () => {
 
   useEffect(() => {
     let hoverTimer;
-    if (paused && !prefersReducedMotion) {
+    if (paused && !prefersReducedMotion && !heroMovie) {
       hoverTimer = setTimeout(() => setShowVideo(true), 2000);
     } else {
       setShowVideo(false);
     }
     return () => clearTimeout(hoverTimer);
-  }, [paused, current, prefersReducedMotion]);
+  }, [paused, current, prefersReducedMotion, heroMovie]);
 
   // ─── Preload Next Image ────────────────────────────────────────────────
   useEffect(() => {
@@ -354,15 +359,32 @@ const Hero = () => {
             <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 mt-2">
               <button 
                 aria-label={`Play ${movie.title}`}
+                onClick={() => navigate(`/watch?title=${encodeURIComponent(movie.title)}`)}
                 className="flex items-center justify-center gap-2.5 bg-white text-black px-7 py-3 md:py-3.5 rounded-md font-bold text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white/90 hover:scale-[1.04] hover:-translate-y-[2px] active:scale-[0.97] shadow-[0_8px_24px_rgba(255,255,255,0.15)] outline-none focus-visible:ring-4 focus-visible:ring-white/50"
               >
                 <Play size={18} fill="black" />
                 Play
               </button>
               
-              <button className="flex items-center justify-center gap-2 bg-white/10 border border-white/20 text-white px-5 py-3 md:py-3.5 rounded-md font-semibold text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white/20 hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md">
-                <Plus size={18} />
-                Watchlist
+              <button
+                aria-label={isInWatchlist(movie.id) ? `Remove ${movie.title} from Watchlist` : `Add ${movie.title} to Watchlist`}
+                onClick={() => {
+                  if (isInWatchlist(movie.id)) {
+                    removeFromWatchlist(movie.id);
+                    toast('Removed from Watchlist', { icon: '🗑️', style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } });
+                  } else {
+                    addToWatchlist({ id: movie.id, title: movie.title, year: movie.year, thumbnail: movie.image, duration: movie.duration, genres: [movie.genre] });
+                    toast.success('Added to Watchlist ✓', { style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(139,92,246,0.4)' } });
+                  }
+                }}
+                className={`flex items-center justify-center gap-2 border text-white px-5 py-3 md:py-3.5 rounded-md font-semibold text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md ${
+                  isInWatchlist(movie.id)
+                    ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-[var(--accent)]'
+                    : 'bg-white/10 border-white/20 hover:bg-white/20'
+                }`}
+              >
+                <Heart size={18} fill={isInWatchlist(movie.id) ? 'currentColor' : 'none'} />
+                {isInWatchlist(movie.id) ? 'Saved' : 'Watchlist'}
               </button>
 
               <button className="hidden md:flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-5 py-3.5 rounded-md font-medium text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white/15 hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md">

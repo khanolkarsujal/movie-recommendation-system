@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Play, Plus, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Plus, Star, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import useStore from '../store/useStore';
 import MovieModal from './MovieModal';
 import { GENRE_COLORS } from '../data/movies';
 
@@ -121,6 +124,10 @@ const CarouselCard = memo(({ item, position, onClick }) => {
   const isRight  = position === 1;
   const isHidden = Math.abs(position) > 1;
 
+  const navigate = useNavigate();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useStore();
+  const inWatchlist = isInWatchlist(item.id);
+
   if (isHidden) return null;
 
   const scale   = isCenter ? 1 : 0.82;
@@ -222,19 +229,32 @@ const CarouselCard = memo(({ item, position, onClick }) => {
           <div className="flex items-center gap-3">
             <button
               className="flex items-center gap-2.5 bg-white text-black px-6 py-3 rounded-lg font-bold text-[15px] transition-all hover:bg-white/90 hover:scale-[1.03] active:scale-[0.97] shadow-[0_8px_24px_rgba(255,255,255,0.15)] outline-none focus-visible:ring-2 focus-visible:ring-white"
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => { e.stopPropagation(); navigate(`/watch?title=${encodeURIComponent(item.title)}`) }}
               aria-label={`Play ${item.title}`}
             >
               <Play size={16} fill="black" />
               {item.progress > 0 ? 'Continue' : 'Play Now'}
             </button>
             <button
-              className="flex items-center gap-2 bg-white/10 border border-white/20 text-white px-5 py-3 rounded-lg font-semibold text-[14px] transition-all hover:bg-white/20 active:scale-[0.97] outline-none focus-visible:ring-2 focus-visible:ring-white backdrop-blur-sm"
-              onClick={(e) => { e.stopPropagation(); }}
+              className={`flex items-center justify-center gap-2 border text-white px-5 py-3 rounded-lg font-semibold text-[14px] transition-all hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md ${
+                inWatchlist
+                  ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-[var(--accent)]'
+                  : 'bg-white/10 border-white/20 hover:bg-white/20'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (inWatchlist) {
+                  removeFromWatchlist(item.id);
+                  toast('Removed from Watchlist', { icon: '🗑️', style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontSize: '14px', borderRadius: '10px' } });
+                } else {
+                  addToWatchlist({ id: item.id, title: item.title, year: item.year, thumbnail: item.thumbnail, duration: item.duration, genres: item.genres });
+                  toast.success('Added to Watchlist ✓', { style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(139,92,246,0.4)', fontSize: '14px', borderRadius: '10px' }, iconTheme: { primary: '#8b5cf6', secondary: '#fff' } });
+                }
+              }}
               aria-label="Add to watchlist"
             >
-              <Plus size={16} />
-              Watchlist
+              <Heart size={16} fill={inWatchlist ? 'currentColor' : 'none'} />
+              {inWatchlist ? 'Saved' : 'Watchlist'}
             </button>
           </div>
         </div>

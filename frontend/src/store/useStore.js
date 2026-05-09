@@ -14,9 +14,11 @@ const useStore = create(
         set((state) => ({ watchlist: state.watchlist.filter((m) => m.id !== id) })),
       isInWatchlist: (id) => get().watchlist.some((m) => m.id === id),
 
-      // ─── Currently Playing ──────────────────────────────────────────────────
+      // ─── Currently Playing & Hero ───────────────────────────────────────────
       playingMovie: null,
       setPlayingMovie: (movie) => set({ playingMovie: movie }),
+      heroMovie: null,
+      setHeroMovie: (movie) => set({ heroMovie: movie }),
 
       // ─── Search ─────────────────────────────────────────────────────────────
       searchQuery: '',

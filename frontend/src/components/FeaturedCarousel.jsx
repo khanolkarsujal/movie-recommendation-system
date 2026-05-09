@@ -180,7 +180,7 @@ const CarouselCard = memo(({ item, position, onClick }) => {
         <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
           {/* Badge */}
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: item.accent }}>S</div>
+
             <span className="text-[12px] font-bold text-white/80 tracking-[1.5px] uppercase">{item.badge}</span>
           </div>
 

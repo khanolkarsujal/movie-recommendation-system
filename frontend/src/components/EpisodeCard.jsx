@@ -102,12 +102,7 @@ function EpisodeCard({ episode, index }) {
             className="w-full h-full object-cover"
           />
           
-          {/* Top Badges */}
-          <div className="absolute top-2 left-2 z-20">
-            <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[var(--accent)] shadow-[0_0_8px_var(--accent-glow)]">
-              <span className="text-[10px] font-bold text-white">S</span>
-            </div>
-          </div>
+
 
           {!hovered && (
             <div className="absolute bottom-2 right-2 z-20 bg-black/60 backdrop-blur-sm rounded-[4px] px-1.5 py-0.5">

@@ -5,6 +5,7 @@ import EpisodeRow from '../components/EpisodeRow';
 import GenreFilterBar from '../components/GenreFilterBar';
 import Top10Row from '../components/Top10Row';
 import SeasonTabBar from '../components/SeasonTabBar';
+import FeaturedBanner from '../components/FeaturedBanner';
 import { seasons, generateEpisodes, trendingNow, newReleases, continueWatching } from '../data/movies';
 
 function Home() {
@@ -24,7 +25,10 @@ function Home() {
         <SeasonTabBar seasons={seasons} activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
 
-      <div className="relative z-20 space-y-8 pt-0 -mt-[20px]">
+      <div className="relative z-20 space-y-8 pt-0 mt-8">
+        {/* ── Featured Picks Banner ── */}
+        <FeaturedBanner />
+
         {/* ── Season Episodes ── */}
         <EpisodeRow 
           title={`${seasons[activeTab]} Episodes`} 

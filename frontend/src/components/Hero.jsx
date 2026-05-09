@@ -371,7 +371,7 @@ const Hero = () => {
       </AnimatePresence>
 
       {/* ── LAYER 5: Progress Indicators ── */}
-      <div className="absolute bottom-6 md:bottom-8 left-[24px] md:left-[80px] z-30 flex items-center gap-2">
+      <div className="absolute bottom-[270px] md:bottom-[290px] left-[24px] md:left-[80px] z-30 flex items-center gap-2">
         {FEATURED_MOVIES.map((_, idx) => {
           const isActive = idx === current;
           return (

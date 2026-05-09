@@ -44,3 +44,17 @@ body {
 .animate-slideUp {
   animation: slideUp 0.6s ease-out forwards;
 }
+
+/* Hide scrollbar for season tab strip */
+.tab-strip::-webkit-scrollbar {
+  display: none;
+}
+.tab-strip {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Tab hover — show underline span on parent hover */
+.tab-btn:hover .tab-hover-line {
+  opacity: 1 !important;
+}

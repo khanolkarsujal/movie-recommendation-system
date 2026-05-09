@@ -25,8 +25,8 @@ const Sidebar = () => {
   return (
 
     <aside className="fixed left-0 top-0 h-screen w-16 bg-[#111111] flex flex-col items-center z-[100]">
-      {/* Unified Header Zone - Exactly 60px height */}
-      <div className="h-[60px] flex items-center justify-center w-full">
+      {/* Unified Header Zone - Exactly 64px height to match Navbar */}
+      <div className="h-[64px] flex items-center justify-center w-full">
         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.2)]">
           <span className="text-[#111] font-bold text-xl select-none">S</span>
         </div>

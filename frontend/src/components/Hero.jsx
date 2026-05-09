@@ -1,35 +1,56 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Play, Plus, Info } from 'lucide-react';
 import heroBg from '../assets/hero_bg.png';
 
+const MoltenGlassHero = lazy(() => import('./ui/MoltenGlassHero'));
+
 const Hero = () => {
   return (
-    <section className="relative w-full h-screen overflow-hidden bg-[#0d0d0d]">
-      {/* Background Image */}
-      <img 
-        src={heroBg} 
-        alt="Demonic Slash Background" 
-        className="absolute top-0 right-0 w-full h-full object-cover object-[right_center]"
-      />
+    <section 
+      className="relative w-full h-screen overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, #0d0520, #0a0a1a, #1a0a2e)' // Fallback gradient
+      }}
+    >
+      {/* Layer 0: Molten Glass animated background */}
+      <Suspense fallback={null}>
+        <div className="absolute inset-0 z-0">
+          <MoltenGlassHero />
+        </div>
+      </Suspense>
 
-      {/* Left Side Gradient Overlay */}
+      {/* Layer 1: Dark tinted overlay for readability */}
       <div 
-        className="absolute inset-0 z-1"
+        className="absolute inset-0 z-10"
         style={{
-          background: 'linear-gradient(to right, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.75) 35%, rgba(0, 0, 0, 0.2) 60%, transparent 100%)'
+          background: "linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.80) 35%, rgba(0,0,0,0.30) 65%, transparent 100%)"
         }}
       />
 
+      {/* Layer 2: Movie poster image on right */}
+      <img 
+        src={heroBg} 
+        alt="Demonic Slash Background" 
+        className="absolute right-0 top-0 h-full w-[70%] lg:w-[60%] z-10 object-cover object-[right_center]"
+        style={{ 
+          opacity: 0.90, 
+          filter: "contrast(1.1) saturate(1.2) brightness(0.9)",
+          maskImage: "linear-gradient(to left, black 40%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to left, black 40%, transparent 100%)"
+        }}
+      />
+
+
       {/* Bottom Gradient Fade */}
       <div 
-        className="absolute bottom-0 left-0 w-full h-[120px] z-2"
+        className="absolute bottom-0 left-0 w-full h-[120px] z-10"
         style={{
           background: 'linear-gradient(to bottom, transparent, #0d0d0d)'
         }}
       />
 
-      {/* Content Block */}
-      <div className="absolute left-20 bottom-[180px] z-10 max-w-[520px] flex flex-col gap-3 ml-4">
+      {/* Layer 3: Content Block */}
+      <div className="absolute left-[80px] bottom-[160px] z-20 max-w-[520px] flex flex-col gap-3">
         {/* Platform Badge */}
         <div className="flex items-center gap-1.5 animate-fadeIn opacity-0 [animation-delay:0.2s] [animation-fill-mode:forwards]">
           <div className="w-4.5 h-4.5 bg-purple-600 rounded-full flex items-center justify-center shrink-0">
@@ -89,3 +110,4 @@ const Hero = () => {
 };
 
 export default Hero;
+

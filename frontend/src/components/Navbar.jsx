@@ -8,7 +8,7 @@ const Navbar = () => {
   const navLinks = ['Home', 'Browse', 'Kids', 'Support', 'FAQ'];
 
   return (
-    <nav className="fixed top-0 left-16 right-0 h-[60px] flex items-center justify-between px-6 z-[99] backdrop-blur-[6px] bg-[#111111]/40">
+    <nav className="fixed top-0 left-16 right-0 h-[64px] flex items-center justify-between px-6 z-[99] bg-transparent">
       {/* Left Section */}
       <div className="flex items-center">
         {/* Nav Links */}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import SeasonTabs from './components/SeasonTabs';
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
@@ -20,35 +21,11 @@ function App() {
       <main className="flex-grow pl-[64px]">
         <Hero />
 
-        {/* Tab Bar Container */}
-        <div className="relative w-full px-[80px] mt-6 mb-5 flex flex-row items-center gap-8 h-12 overflow-x-auto scrollbar-hide">
-          {/* Sliding Indicator (Alternative implementation for smooth sliding) */}
-          <div 
-            className="absolute bottom-0 h-[2px] bg-white rounded-full transition-all duration-250 ease-in-out"
-            style={{ 
-              width: '65px', // Approximate width of "Season X" text
-              left: `calc(80px + ${activeTab * (65 + 32)}px)` // padding-left + index * (width + gap)
-            }}
-          />
-
-          {seasons.map((season, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              className={`relative py-2 text-[15px] whitespace-nowrap transition-colors duration-200 group ${
-                activeTab === index 
-                  ? 'text-white font-semibold' 
-                  : 'text-white/50 font-medium hover:text-white/85'
-              }`}
-            >
-              {season}
-              {/* Hover underline for inactive tabs */}
-              {activeTab !== index && (
-                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-white/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-              )}
-            </button>
-          ))}
-        </div>
+        <SeasonTabs
+          seasons={seasons}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
 
         {/* Episode Cards Grid */}
         <div className="px-[80px] pb-20 mt-4">

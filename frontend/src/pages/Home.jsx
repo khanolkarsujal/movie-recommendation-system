@@ -1,47 +1,37 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import TabBar from '../components/TabBar';
 import EpisodeRow from '../components/EpisodeRow';
 import { seasons, generateEpisodes, trendingNow, newReleases } from '../data/movies';
 
-/**
- * Home page — the main landing view of the streaming platform.
- *
- * Layout (top → bottom):
- *   1. HeroSection   — full-screen cinematic hero with Molten Glass background
- *   2. TabBar        — horizontal season selector with sliding underline indicator
- *   3. Episode Row   — horizontally scrollable cards for selected season
- *   4. Trending Now  — second card row
- *   5. New Releases  — third card row
- */
 function Home() {
   const [activeTab, setActiveTab] = useState(0);
-
   const prevTabRef = useRef(activeTab);
-  const direction = activeTab > prevTabRef.current ? 1 : -1;
+  const direction  = activeTab > prevTabRef.current ? 1 : -1;
 
-  // Re-generate episodes whenever the active season changes.
-  const currentEpisodes = generateEpisodes(activeTab + 1);
-
-  // Update prev tab after render
   useEffect(() => {
     prevTabRef.current = activeTab;
   }, [activeTab]);
 
+  // Memoize expensive episode generation — only regenerates when season changes
+  const currentEpisodes = useMemo(() => generateEpisodes(activeTab + 1), [activeTab]);
+
+  const handleTabChange = useCallback((idx) => setActiveTab(idx), []);
+
   return (
     <>
-      {/* ── Hero ────────────────────────────────────────────── */}
+      {/* ── Hero ── */}
       <HeroSection />
 
-      {/* ── Season Tab Bar ──────────────────────────────────── */}
+      {/* ── Season Tab Bar ── */}
       <TabBar
         seasons={seasons}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
       />
 
-      {/* ── Season Episode Row ──────────────────────────────── */}
+      {/* ── Season Episodes — direction-aware transition ── */}
       <div className="relative overflow-hidden w-full">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -50,7 +40,7 @@ function Home() {
             initial={{ opacity: 0, x: direction * 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: direction * -40 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
             <EpisodeRow
               title={`${seasons[activeTab]} Episodes`}
@@ -60,14 +50,29 @@ function Home() {
         </AnimatePresence>
       </div>
 
-      {/* ── Trending Now ────────────────────────────────────── */}
-      <EpisodeRow title="Trending Now" episodes={trendingNow} />
+      {/* ── Trending Now ── */}
+      <EpisodeRow
+        title="Trending Now"
+        label="Top 10 in Your Country"
+        episodes={trendingNow}
+      />
 
-      {/* ── New Releases ────────────────────────────────────── */}
-      <EpisodeRow title="New Releases" episodes={newReleases} />
+      {/* ── New Releases ── */}
+      <EpisodeRow
+        title="New This Week"
+        label="Just Added"
+        episodes={newReleases}
+      />
 
-      {/* bottom breathing room */}
-      <div className="h-16" />
+      {/* ── Because you watched… (reuse season 2 episodes as placeholder) ── */}
+      <EpisodeRow
+        title="Because You Watched Demonic Slash"
+        label="Recommended For You"
+        episodes={useMemo(() => generateEpisodes(2), [])}
+      />
+
+      {/* Bottom spacing */}
+      <div className="h-20" />
     </>
   );
 }

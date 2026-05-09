@@ -1,164 +1,257 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { GENRE_COLORS } from '../data/movies';
 
-// Premium gradients for placeholder thumbnails
+// ─── Constants ────────────────────────────────────────────────────────────────
 const CARD_GRADIENTS = [
   'linear-gradient(135deg, #0f0c29, #302b63, #24243e)',
   'linear-gradient(135deg, #1a0a2e, #2d1b69, #0d0d0d)',
   'linear-gradient(135deg, #16213e, #0f3460, #533483)',
-  'linear-gradient(135deg, #0d0d0d, #1a0a2e, #6d1b7b)',
   'linear-gradient(135deg, #200122, #6f0000, #200122)',
+  'linear-gradient(135deg, #141e30, #243b55, #1a0a2e)',
 ];
 
+function ratingColor(r) {
+  if (r >= 8.0) return '#22c55e';
+  if (r >= 6.5) return '#eab308';
+  return '#ef4444';
+}
+
+// ─── Genre Dot Badge ─────────────────────────────────────────────────────────
+const GenreBadge = memo(({ genre }) => (
+  <span className="genre-badge" style={{ borderColor: `${GENRE_COLORS[genre] || '#fff'}30` }}>
+    <span
+      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+      style={{ backgroundColor: GENRE_COLORS[genre] || '#fff' }}
+    />
+    {genre}
+  </span>
+));
+
+// ─── Star Rating (half-star precision) ───────────────────────────────────────
+const StarRating = memo(({ rating }) => {
+  const MAX = 5;
+  const normalized = (rating / 10) * MAX;
+  return (
+    <div className="flex items-center gap-0.5" aria-label={`Rating ${rating} out of 10`}>
+      {Array.from({ length: MAX }, (_, i) => {
+        const fill = Math.max(0, Math.min(1, normalized - i));
+        return (
+          <div key={i} className="relative w-3 h-3">
+            <span className="absolute inset-0 text-white/20 text-[12px] leading-none">★</span>
+            <span
+              className="absolute inset-0 text-[12px] leading-none overflow-hidden"
+              style={{ width: `${fill * 100}%`, color: ratingColor(rating) }}
+            >★</span>
+          </div>
+        );
+      })}
+      <span className="text-[11px] text-white/60 ml-1 font-semibold">{rating.toFixed(1)}</span>
+    </div>
+  );
+});
+
+// ─── Image with lazy load + fallback ─────────────────────────────────────────
+const CardImage = memo(({ src, alt, gradient, hovered }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [errored, setErrored] = useState(false);
+
+  const showGradient = errored || (!src);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {!showGradient && (
+        <>
+          {/* Skeleton while loading */}
+          {!loaded && <div className="skeleton absolute inset-0" style={{ borderRadius: 0 }} />}
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            onLoad={() => setLoaded(true)}
+            onError={() => setErrored(true)}
+            className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{
+              opacity: loaded ? 1 : 0,
+              transform: hovered ? 'scale(1.08)' : 'scale(1.0)',
+              transition: 'opacity 0.3s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1)',
+            }}
+          />
+        </>
+      )}
+      {showGradient && (
+        <div
+          className="w-full h-full"
+          style={{
+            background: gradient,
+            transform: hovered ? 'scale(1.08)' : 'scale(1.0)',
+            transition: 'transform 0.7s cubic-bezier(0.22,1,0.36,1)',
+          }}
+        />
+      )}
+    </div>
+  );
+});
+
+// ─── Main Card ────────────────────────────────────────────────────────────────
 function EpisodeCard({ episode, index }) {
   const [hovered, setHovered] = useState(false);
 
-  const hasThumbnail = !!episode.thumbnail;
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+  const rColor = ratingColor(episode.rating || 7);
+
+  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseLeave = useCallback(() => setHovered(false), []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="relative rounded-xl overflow-hidden cursor-pointer group flex-shrink-0"
-      style={{
-        width: 280,
-        height: 158, // 16:9 aspect ratio
-        boxShadow: hovered
-          ? '0 16px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.15)'
-          : '0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)',
-        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
-        transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-      }}
+      transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="card-root"
+      style={{ height: 'var(--card-h)' }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       tabIndex={0}
-      aria-label={`Play ${episode.title}`}
+      role="article"
+      aria-label={`${episode.title}, ${episode.duration}`}
+      onFocus={handleMouseEnter}
+      onBlur={handleMouseLeave}
     >
-      {/* ── LAYER 0: Thumbnail ── */}
-      <div className="absolute inset-0 z-0">
-        {hasThumbnail ? (
-          <img
-            src={episode.thumbnail}
-            alt={episode.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{ transform: hovered ? 'scale(1.08)' : 'scale(1.0)' }}
-          />
-        ) : (
-          <div
-            className="w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{ background: gradient, transform: hovered ? 'scale(1.08)' : 'scale(1.0)' }}
-          />
-        )}
-      </div>
+      {/* ── BG Image / Gradient ── */}
+      <CardImage
+        src={episode.thumbnail}
+        alt={episode.title}
+        gradient={gradient}
+        hovered={hovered}
+      />
 
-      {/* ── LAYER 1: Default Gradient Overlay ── */}
+      {/* ── Dark Gradient Overlays ── */}
       <div
-        className="absolute inset-0 z-10 transition-opacity duration-500"
+        className="absolute inset-0 z-10 pointer-events-none"
         style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%)',
-          opacity: hovered ? 0 : 1,
+          background: hovered
+            ? 'linear-gradient(to top, rgba(5,5,8,0.98) 0%, rgba(5,5,8,0.80) 50%, rgba(5,5,8,0.2) 100%)'
+            : 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 55%, transparent 100%)',
+          transition: 'background 0.4s ease',
         }}
       />
 
-      {/* ── LAYER 2: Hover Gradient Overlay ── */}
-      <div
-        className="absolute inset-0 z-10 transition-opacity duration-500"
-        style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.2) 100%)',
-          opacity: hovered ? 1 : 0,
-        }}
-      />
-
-      {/* ── LAYER 3: Badges (Top Left/Right) ── */}
-      <div className="absolute top-2.5 left-2.5 z-20 flex gap-1.5 opacity-100 transition-opacity duration-300">
-        <div className="w-5 h-5 rounded-full bg-[#8b5cf6] flex items-center justify-center shadow-md">
+      {/* ── Top Badges ── */}
+      <div className="absolute top-2.5 left-2.5 z-20 flex gap-1.5">
+        <div
+          className="w-5 h-5 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: 'var(--accent)', boxShadow: '0 0 8px var(--accent-glow)' }}
+          aria-hidden="true"
+        >
           <span className="text-[10px] font-bold text-white">S</span>
         </div>
       </div>
-      
+
       {!hovered && (
-        <div className="absolute top-2.5 right-2.5 z-20 bg-black/60 backdrop-blur-md rounded px-1.5 py-0.5 shadow-sm">
+        <div className="absolute top-2.5 right-2.5 z-20 bg-black/60 backdrop-blur-sm rounded-[4px] px-1.5 py-0.5">
           <span className="text-[11px] font-semibold text-white/90">{episode.duration}</span>
         </div>
       )}
 
-      {/* ── LAYER 4: Content Base (Always visible, shifts on hover) ── */}
-      <div
-        className="absolute left-0 w-full px-3 z-30 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col justify-end"
-        style={{
-          bottom: hovered ? 'auto' : '12px',
-          top: hovered ? '12px' : 'auto',
-          height: hovered ? '100%' : 'auto',
-        }}
-      >
-        <h3 
-          className="text-[14px] font-bold text-white leading-tight drop-shadow-md line-clamp-1 transition-all"
-          style={{ transform: hovered ? 'translateY(-2px)' : 'translateY(0)' }}
-        >
+      {/* ── Base Content: Title always visible ── */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 px-3 pb-3">
+        <h3 className="text-[13px] font-bold text-white leading-tight line-clamp-1 drop-shadow-md">
           {episode.title}
         </h3>
 
-        {/* ── LAYER 5: Expanded Hover Content ── */}
+        {/* Hover Expansion */}
         <AnimatePresence>
           {hovered && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 5 }}
-              transition={{ duration: 0.3, delay: 0.05 }}
-              className="flex flex-col gap-2 mt-auto pb-3"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden"
             >
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2 mb-1">
-                <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-white/80 transition-colors shadow-lg hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]">
-                  <Play size={14} fill="black" className="ml-0.5" />
-                </button>
-                <button className="w-8 h-8 rounded-full bg-[#2a2a2a]/80 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-white/40 transition-all hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]">
-                  <Plus size={16} />
-                </button>
-                <button className="w-8 h-8 rounded-full bg-[#2a2a2a]/80 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-white/40 transition-all hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]">
-                  <ThumbsUp size={14} />
-                </button>
-                <button className="w-8 h-8 rounded-full bg-[#2a2a2a]/80 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-white/40 transition-all hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6] ml-auto">
-                  <ChevronDown size={16} />
-                </button>
+              {/* Rating bar + stars */}
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex-1 h-[3px] bg-white/15 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${((episode.rating || 7) / 10) * 100}%`,
+                      backgroundColor: rColor,
+                    }}
+                  />
+                </div>
+                <StarRating rating={episode.rating || 7} />
               </div>
 
-              {/* Metadata */}
-              <div className="flex items-center gap-2 text-[11px] font-semibold">
-                <span className="text-[#22c55e] drop-shadow-sm">98% Match</span>
-                <span className="border border-white/30 px-1 rounded-[3px] text-white/80 leading-tight">TV-MA</span>
-                <span className="text-white/80">{episode.duration}</span>
-                <span className="border border-white/30 px-1 rounded-[3px] text-white/80 leading-tight">HD</span>
+              {/* Metadata row */}
+              <div className="flex items-center gap-2 mt-2 text-[11px] text-white/70 font-medium flex-wrap">
+                <span className="font-bold" style={{ color: 'var(--green-match)' }}>98% Match</span>
+                <span>·</span>
+                <span>{episode.year || 2025}</span>
+                <span>·</span>
+                <span>{episode.duration}</span>
+                <span className="border border-white/30 px-1 rounded-[3px] text-white/80 text-[10px]">HD</span>
               </div>
-              
-              {/* Categories */}
-              <div className="flex items-center gap-1.5 text-[11px] text-white/60 font-medium">
-                <span>Action</span>
-                <span className="w-1 h-1 rounded-full bg-white/30" />
-                <span>Fantasy</span>
-                <span className="w-1 h-1 rounded-full bg-white/30" />
-                <span>Dark</span>
+
+              {/* Genres */}
+              {episode.genres?.length > 0 && (
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                  {episode.genres.slice(0, 2).map(g => <GenreBadge key={g} genre={g} />)}
+                </div>
+              )}
+
+              {/* Description */}
+              {episode.description && (
+                <p className="text-[11px] text-white/55 leading-[1.5] mt-2 line-clamp-2">
+                  {episode.description}
+                </p>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 mt-3">
+                <button
+                  className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 transition-transform hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                  aria-label={`Play ${episode.title}`}
+                >
+                  <Play size={13} fill="black" className="ml-0.5" />
+                </button>
+                <button
+                  className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white flex-shrink-0 transition-all hover:bg-white/20 hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                  aria-label="Add to watchlist"
+                >
+                  <Plus size={14} />
+                </button>
+                <button
+                  className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white flex-shrink-0 transition-all hover:bg-white/20 hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                  aria-label="Like"
+                >
+                  <ThumbsUp size={13} />
+                </button>
+                <button
+                  className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white flex-shrink-0 ml-auto transition-all hover:bg-white/20 hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                  aria-label="More info"
+                >
+                  <ChevronDown size={14} />
+                </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* ── LAYER 6: Progress Bar (Always at bottom edge) ── */}
-      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white/10 z-20">
-        {(episode.progress > 0 || hovered) && (
+      {/* ── Progress Bar (bottom edge) ── */}
+      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white/10 z-30">
+        {episode.progress > 0 && (
           <div
-            className="h-full bg-[#8b5cf6] rounded-r-full transition-all duration-300"
-            style={{ width: hovered ? '100%' : `${episode.progress || 0}%` }}
+            className="h-full rounded-r-full"
+            style={{ width: `${episode.progress}%`, backgroundColor: 'var(--accent)' }}
           />
         )}
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
-export default EpisodeCard;
+export default memo(EpisodeCard);

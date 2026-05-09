@@ -1,103 +1,140 @@
-import React, { useRef, useState, useEffect, useCallback, memo } from 'react';
+import React, { useRef, useState, useEffect, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import EpisodeCard from './EpisodeCard';
 
 function EpisodeRow({ title, episodes, label }) {
-  const scrollRef    = useRef(null);
-  const [hovered,    setHovered]    = useState(false);
-  const [canLeft,    setCanLeft]    = useState(false);
-  const [canRight,   setCanRight]   = useState(true);
+  const rowRef        = useRef(null);
+  const [rowHovered,  setRowHovered]  = useState(false);
+  const [showLeft,    setShowLeft]    = useState(false);
+  const [showRight,   setShowRight]   = useState(true);
 
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 5);
-    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
-  }, []);
+  const scroll = (dir) => {
+    rowRef.current?.scrollBy({
+      left: dir === 'right' ? 700 : -700,
+      behavior: 'smooth'
+    });
+  };
 
-  const scroll = useCallback((dir) => {
-    const el = scrollRef.current;
+  const onScroll = () => {
+    const el = rowRef.current;
     if (!el) return;
-    const amount = dir === 'right' ? 800 : -800;
-    el.scrollBy({ left: amount, behavior: 'smooth' });
-  }, []);
+    setShowLeft(el.scrollLeft > 10);
+    setShowRight(
+      el.scrollLeft < el.scrollWidth - el.clientWidth - 10
+    );
+  };
 
   useEffect(() => {
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
-  }, [episodes, checkScroll]);
+    const el = rowRef.current;
+    el?.addEventListener('scroll', onScroll, { passive: true });
+    return () => el?.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <section
-      className="relative mb-4"
-      aria-label={title}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+    <div
+      className="movie-row"
+      onMouseEnter={() => setRowHovered(true)}
+      onMouseLeave={() => setRowHovered(false)}
+      style={{ position: 'relative', marginBottom: '32px' }}
     >
       {/* Row Header */}
-      <div className="flex items-center justify-between px-5 md:px-[var(--row-padding)] mb-3">
-        <div>
-          {label && (
-            <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-[var(--accent)] block mb-1">
-              {label}
-            </span>
-          )}
-          <h2 className="text-[18px] md:text-[20px] font-bold text-white/90 flex items-center gap-3 group/title cursor-pointer hover:text-white transition-colors">
-            {title}
-            <span className="opacity-0 group-hover/title:opacity-100 -translate-x-3 group-hover/title:translate-x-0 transition-all duration-300 text-[12px] font-bold text-[var(--accent)] flex items-center">
-              Explore All <ChevronRight size={13} className="ml-0.5" />
-            </span>
-          </h2>
-        </div>
+      <div style={{ padding: '0 80px', marginBottom: '12px' }}>
+        {label && (
+          <span className="text-[11px] font-bold uppercase tracking-[1.5px] text-[var(--accent)] block mb-1">
+            {label}
+          </span>
+        )}
+        <h2 style={{
+          fontSize: '18px',
+          fontWeight: '600',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          cursor: 'pointer'
+        }} className="group/title hover:text-white transition-colors">
+          {title}
+          <span className="opacity-0 group-hover/title:opacity-100 -translate-x-3 group-hover/title:translate-x-0 transition-all duration-300 text-[12px] font-bold text-[var(--accent)] flex items-center">
+            Explore All <ChevronRight size={13} className="ml-0.5" />
+          </span>
+        </h2>
       </div>
 
-      {/* Scroll Container */}
-      <div className="relative">
-        {/* Scrollable Strip - overflow visible to allow cards to expand upward/downward, padding-bottom 200px for expanded space */}
-        <div
-          ref={scrollRef}
-          onScroll={checkScroll}
-          className="row-scroll flex flex-row gap-3 pt-2 px-5 md:px-[var(--row-padding)]"
-          style={{ 
-            overflow: 'visible',
-            paddingBottom: '160px', /* space for hover popup to expand upward/downward */
-            scrollBehavior: 'smooth'
-          }}
-        >
-          {episodes.map((ep, i) => (
-            <EpisodeCard key={ep.id} episode={ep} index={i} />
-          ))}
-        </div>
+      {/* Left Arrow */}
+      <button
+        onClick={() => scroll('left')}
+        style={{
+          opacity: showLeft && rowHovered ? 1 : 0,
+          pointerEvents: showLeft && rowHovered ? 'auto' : 'none',
+          transition: 'opacity 0.2s ease',
+          position: 'absolute',
+          left: '64px',
+          top: '50%',
+          transform: 'translateY(-30%)',
+          zIndex: 50,
+          width: '48px',
+          height: '100px',
+          background: 'linear-gradient(to right, rgba(0,0,0,0.9), transparent)',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ChevronLeft size={24} color="white" strokeWidth={2.5} />
+      </button>
 
-        {/* Floating Scroll Buttons */}
-        <button
-          onClick={() => scroll('left')}
-          aria-label="Scroll left"
-          className="absolute left-[var(--sidebar-width)] top-[65px] -translate-y-1/2 z-[150] w-10 h-[80px] text-white flex items-center justify-center transition-all duration-300 outline-none"
-          style={{
-            background: 'linear-gradient(to left, transparent, rgba(0,0,0,0.8))',
-            opacity: canLeft && hovered ? 1 : 0,
-            pointerEvents: canLeft && hovered ? 'auto' : 'none',
-          }}
-        >
-          <ChevronLeft size={28} />
-        </button>
-
-        <button
-          onClick={() => scroll('right')}
-          aria-label="Scroll right"
-          className="absolute right-0 top-[65px] -translate-y-1/2 z-[150] w-10 h-[80px] text-white flex items-center justify-center transition-all duration-300 outline-none"
-          style={{
-            background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.8))',
-            opacity: canRight && hovered ? 1 : 0,
-            pointerEvents: canRight && hovered ? 'auto' : 'none',
-          }}
-        >
-          <ChevronRight size={28} />
-        </button>
+      {/* Cards container */}
+      <div
+        ref={rowRef}
+        onScroll={onScroll}
+        style={{
+          display: 'flex',
+          overflowX: 'auto',
+          overflowY: 'visible',
+          gap: '12px',
+          padding: '8px 80px 200px 80px',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none', /* IE and Edge */
+        }}
+        className="row-scroll"
+      >
+        <style dangerouslySetInnerHTML={{__html: `
+          .row-scroll::-webkit-scrollbar {
+            display: none;
+          }
+        `}} />
+        {episodes.map((ep, i) => (
+          <EpisodeCard key={ep.id} episode={ep} index={i} />
+        ))}
       </div>
-    </section>
+
+      {/* Right Arrow */}
+      <button
+        onClick={() => scroll('right')}
+        style={{
+          opacity: showRight && rowHovered ? 1 : 0,
+          pointerEvents: showRight && rowHovered ? 'auto' : 'none',
+          transition: 'opacity 0.2s ease',
+          position: 'absolute',
+          right: '0px',
+          top: '50%',
+          transform: 'translateY(-30%)',
+          zIndex: 50,
+          width: '48px',
+          height: '100px',
+          background: 'linear-gradient(to left, rgba(0,0,0,0.9), transparent)',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ChevronRight size={24} color="white" strokeWidth={2.5} />
+      </button>
+    </div>
   );
 }
 

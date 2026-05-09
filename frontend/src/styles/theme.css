@@ -1,0 +1,353 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ════════════════════════════════════════
+     OTT PLATFORM DESIGN SYSTEM
+     Professional Netflix-quality tokens
+     ════════════════════════════════════════ */
+
+  /* ── BACKGROUNDS (3-layer depth system) ── */
+  --bg-page: #141414;
+  --bg-card: #181818;
+  --bg-elevated: #232323;
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+  --bg-glass: rgba(20, 20, 20, 0.92);
+
+  /* Legacy aliases for compatibility */
+  --bg-base: #141414;
+  --bg-surface: #181818;
+
+  /* ── BRAND COLORS ── */
+  --brand-purple: #8b5cf6;
+  --brand-purple-dim: rgba(139, 92, 246, 0.2);
+  --brand-purple-glow: rgba(139, 92, 246, 0.4);
+  --accent: #8b5cf6;
+
+  /* ── SEMANTIC COLORS ── */
+  --status-match-green: #46d369;
+  --status-mid-yellow: #f59e0b;
+  --status-low-red: #ef4444;
+  --status-new-blue: #3b82f6;
+
+  /* ── TEXT COLORS ── */
+  --text-primary: #e5e5e5;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-muted: rgba(255, 255, 255, 0.35);
+  --text-disabled: rgba(255, 255, 255, 0.2);
+  --text-inverse: #141414;
+
+  /* ── BORDERS ── */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.25);
+  --border-brand: rgba(139, 92, 246, 0.5);
+
+  /* ── SPACING (4px grid) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ── BORDER RADIUS ── */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 999px;
+  --radius: 4px;
+
+  /* ── SHADOWS & ELEVATION ── */
+  --shadow-card-hover: 0 6px 30px rgba(0, 0, 0, 0.8);
+  --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.9);
+  --shadow-tooltip: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-button: 0 4px 20px rgba(139, 92, 246, 0.3);
+  --shadow-glow-purple: 0 0 24px rgba(139, 92, 246, 0.4);
+
+  /* ── TYPOGRAPHY SCALE ── */
+  /* Display */
+  --text-display-hero: 72px;
+  --text-display-title: 48px;
+
+  /* Headings */
+  --text-heading-xl: 32px;
+  --text-heading-lg: 24px;
+  --text-heading-md: 20px;
+  --text-heading-sm: 16px;
+
+  /* Body */
+  --text-body-lg: 16px;
+  --text-body-md: 14px;
+  --text-body-sm: 13px;
+
+  /* Labels */
+  --text-label-lg: 14px;
+  --text-label-md: 12px;
+  --text-label-sm: 11px;
+  --text-label-xs: 10px;
+
+  /* Legacy support */
+  --text-base: 16px;
+  --text-sm: 14px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+
+  /* ── TYPOGRAPHY WEIGHTS ── */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 800;
+
+  /* ── LEGACY COMPATIBILITY ── */
+  --font-size: 16px;
+  --background: #141414;
+  --foreground: #e5e5e5;
+  --card: #181818;
+  --card-foreground: #e5e5e5;
+  --popover: #232323;
+  --popover-foreground: #e5e5e5;
+  --primary: #e5e5e5;
+  --primary-foreground: #141414;
+  --secondary: rgba(109, 109, 110, 0.7);
+  --secondary-foreground: #e5e5e5;
+  --muted: rgba(255, 255, 255, 0.35);
+  --muted-foreground: rgba(255, 255, 255, 0.65);
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.12);
+  --input-background: rgba(255, 255, 255, 0.05);
+  --ring: rgba(139, 92, 246, 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+
+  /* Scrollbar styling for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-card);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Hide scrollbar for horizontal card rows */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ════════════════════════════════════════
+   ANIMATIONS & KEYFRAMES
+   ════════════════════════════════════════ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Utility classes for skeleton loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 0px,
+    rgba(255, 255, 255, 0.05) 40px,
+    var(--bg-card) 80px
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* AI button pulse ring effect */
+.ai-pulse-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.4) 0%,
+    transparent 70%
+  );
+  animation: pulse-ring 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Glass morphism utility */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Card hover glow effect */
+.card-hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.card-hover-glow:hover {
+  box-shadow: var(--shadow-card-hover);
+}

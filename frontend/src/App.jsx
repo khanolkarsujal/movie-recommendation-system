@@ -1,12 +1,12 @@
 import React, { Component, lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import Navbar  from './components/Navbar';
+import Navbar from './components/Navbar';
 
 // ─── Code-split all pages ─────────────────────────────────────────────────────
-const Home          = lazy(() => import('./pages/Home'));
+const Home = lazy(() => import('./pages/Home'));
 const AnalyticsPage = lazy(() => import('./pages/Analytics'));
-const ProfilePage   = lazy(() => import('./pages/Profile'));
+const ProfilePage = lazy(() => import('./pages/Profile'));
 
 // ─── Stub pages for non-built routes ─────────────────────────────────────────
 function StubPage({ name }) {
@@ -38,9 +38,9 @@ function PageLoader() {
 // ─── Error Boundary ───────────────────────────────────────────────────────────
 class ErrorBoundary extends Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
-  
+
   static getDerivedStateFromError(error) { return { hasError: true, error }; }
-  
+
   componentDidCatch(error, info) { console.error('[ErrorBoundary]', error, info); }
 
   render() {
@@ -76,11 +76,11 @@ function App() {
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/"              element={<Home />} />
-              <Route path="/analytics"     element={<AnalyticsPage />} />
-              <Route path="/profile"       element={<ProfilePage />} />
-              <Route path="/schedule"      element={<StubPage name="Schedule" />} />
-              <Route path="/activity"      element={<StubPage name="Activity" />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/schedule" element={<StubPage name="Schedule" />} />
+              <Route path="/activity" element={<StubPage name="Activity" />} />
               <Route path="/notifications" element={<StubPage name="Notifications" />} />
             </Routes>
           </Suspense>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, X, Menu, Settings, Heart, UserRound, Palette, LogOut } from 'lucide-react';
+import { Search, Bell, X, Menu, Settings, Heart, UserRound, Palette, LogOut, Film } from 'lucide-react';
 import avatarImg from '../assets/avatar.png';
+import { trendingNow, newReleases, generateEpisodes } from '../data/movies';
 
 // ─── Constants & Mock Data ──────────────────────────────────────────────────
 const navLinks = [
@@ -132,6 +133,25 @@ const Navbar = () => {
     browseTimeoutRef.current = setTimeout(() => setBrowseHovered(false), 150);
   };
 
+  // ─── Search Logic ───────────────────────────────────────────────────────────
+  // Build a searchable pool of all available content
+  const searchPool = useMemo(() => {
+    const all = [...trendingNow, ...newReleases, ...generateEpisodes(1), ...generateEpisodes(2)];
+    // Deduplicate by ID
+    return Array.from(new Map(all.map(item => [item.id, item])).values());
+  }, []);
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return searchPool
+      .filter(item => 
+        item.title.toLowerCase().includes(q) || 
+        (item.genres && item.genres.some(g => g.toLowerCase().includes(q)))
+      )
+      .slice(0, 6); // Max 6 results
+  }, [searchQuery, searchPool]);
+
   // ─── Render Components ────────────────────────────────────────────────────
   const unreadCount = mockNotifications.filter(n => n.unread).length;
 
@@ -260,19 +280,55 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-[56px] right-0 w-[320px] bg-[#0f0f0f]/98 border border-white/5 rounded-xl backdrop-blur-[20px] shadow-[0_16px_48px_rgba(0,0,0,0.6)] overflow-hidden max-h-[400px] overflow-y-auto"
+                className="absolute top-[56px] right-0 w-[360px] bg-[#0f0f0f]/98 border border-white/5 rounded-xl backdrop-blur-[20px] shadow-[0_16px_48px_rgba(0,0,0,0.6)] overflow-hidden max-h-[400px] overflow-y-auto"
               >
                 <div className="p-3">
-                  <p className="text-[12px] text-white/50 px-2 pb-2">Top Results</p>
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors">
-                    <div className="w-10 h-14 bg-white/10 rounded overflow-hidden flex-shrink-0">
-                      <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=100&q=80" className="w-full h-full object-cover opacity-80" alt="result" />
+                  <p className="text-[12px] font-bold tracking-wider text-white/40 uppercase px-2 pb-3 pt-1">
+                    {searchResults.length > 0 ? 'Top Results' : 'No Results'}
+                  </p>
+                  
+                  {searchResults.length === 0 ? (
+                    <div className="py-6 flex flex-col items-center justify-center text-center opacity-60">
+                      <Search size={24} className="mb-2 text-white/50" />
+                      <p className="text-[13px] text-white">No matches found for "{searchQuery}"</p>
                     </div>
-                    <div>
-                      <h4 className="text-[14px] text-white font-medium">Demon Arrives</h4>
-                      <p className="text-[12px] text-white/50">2028 • Movie</p>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      {searchResults.map((res) => (
+                        <div
+                          key={res.id}
+                          onClick={() => {
+                            setSearchOpen(false);
+                            navigate(`/watch?title=${encodeURIComponent(res.title)}`);
+                          }}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors group"
+                        >
+                          <div className="w-14 h-[76px] bg-white/10 rounded-md overflow-hidden flex-shrink-0 relative">
+                            {res.thumbnail ? (
+                              <img src={res.thumbnail} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform" alt={res.title} />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center"><Film size={16} className="text-white/30" /></div>
+                            )}
+                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+                          </div>
+                          <div>
+                            <h4 className="text-[14px] text-white font-bold mb-1">{res.title}</h4>
+                            <div className="flex items-center gap-2 text-[11px] text-white/50">
+                              <span className="text-[var(--green-match)] font-semibold">{res.rating ? `${(res.rating * 10).toFixed(0)}% Match` : '98% Match'}</span>
+                              <span>·</span>
+                              <span>{res.year || 2025}</span>
+                              {res.genres && (
+                                <>
+                                  <span>·</span>
+                                  <span>{res.genres[0]}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  )}
                 </div>
               </motion.div>
             )}

@@ -4,7 +4,7 @@ import HeroSection from '../components/HeroSection';
 import TabBar from '../components/TabBar';
 import EpisodeRow from '../components/EpisodeRow';
 import FeaturedCarousel from '../components/FeaturedCarousel';
-import { seasons, generateEpisodes, trendingNow, newReleases } from '../data/movies';
+import { seasons, generateEpisodes, trendingNow, newReleases, continueWatching } from '../data/movies';
 
 function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -26,7 +26,7 @@ function Home() {
       <TabBar seasons={seasons} activeTab={activeTab} setActiveTab={handleTabChange} />
 
       {/* ── Season Episodes ── */}
-      <div className="relative overflow-hidden w-full">
+      <div className="relative overflow-hidden w-full mb-8">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={activeTab}
@@ -40,6 +40,9 @@ function Home() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* ── Continue Watching ── */}
+      <EpisodeRow title="Continue Watching for John" episodes={continueWatching} />
 
       {/* ── Featured Carousel ── */}
       <FeaturedCarousel />

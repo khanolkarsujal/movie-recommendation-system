@@ -60,7 +60,7 @@ class ErrorBoundary extends Component {
 // ─── App Shell ────────────────────────────────────────────────────────────────
 function App() {
   const location = useLocation();
-  const isImmersive = location.pathname === '/' || location.pathname.startsWith('/watch');
+  const isImmersive = location.pathname.startsWith('/watch');
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--bg-base)', color: 'white' }}>

@@ -120,7 +120,7 @@ const Hero = () => {
   const [muted, setMuted] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(new Set());
   const navigate = useNavigate();
-  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useStore();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist, heroMovie } = useStore();
   
   // Parallax & Mouse Pan
   const [scrollY, setScrollY] = useState(0);

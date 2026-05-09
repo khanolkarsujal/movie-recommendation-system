@@ -53,8 +53,8 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
 
   return (
     <motion.div
-      className="relative flex-shrink-0 group cursor-pointer"
-      style={{ width: '220px' }}
+      className="relative flex-shrink-0 group cursor-pointer aspect-video"
+      style={{ width: 'var(--card-width, 240px)' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
@@ -65,10 +65,10 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
       transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Thumbnail Container */}
-      <div className="relative w-full h-[124px] rounded-[4px] overflow-hidden bg-[var(--bg-card)]">
+      <div className="relative w-full h-full rounded-[4px] overflow-hidden bg-[var(--bg-card)]">
         {/* Thumbnail Image */}
         <img
-          src={movie.thumbnail || 'https://via.placeholder.com/220x124/181818/666?text=No+Image'}
+          src={movie.thumbnail || 'https://via.placeholder.com/230x130/181818/666?text=No+Image'}
           alt={movie.title}
           className="w-full h-full object-cover"
           loading="lazy"

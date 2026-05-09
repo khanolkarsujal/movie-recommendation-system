@@ -86,7 +86,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     if (!video) return;
 
     if (showTrailer) {
-      video.play().catch(() => {});
+      video.play().catch(() => { });
     } else {
       video.pause();
       video.currentTime = 0;
@@ -121,8 +121,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   return (
     <motion.div
-      className="relative cursor-pointer group"
-      style={{ width: '220px', height: '124px' }}
+      className="relative cursor-pointer group aspect-video flex-shrink-0"
+      style={{ width: 'var(--card-width, 240px)' }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handlePlayClick}
@@ -260,11 +260,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               <button
                 onClick={handleWatchlistClick}
                 className={`flex-shrink-0 w-7 h-7 rounded-full backdrop-blur-sm border
-                         flex items-center justify-center transition-all active:scale-95 ${
-                  inWatchlist
+                         flex items-center justify-center transition-all active:scale-95 ${inWatchlist
                     ? 'bg-[var(--brand-purple)]/20 border-[var(--brand-purple)] text-[var(--brand-purple)]'
                     : 'bg-black/60 border-white/20 text-white hover:border-white/40'
-                }`}
+                  }`}
                 aria-label={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
               >
                 {inWatchlist ? <Check size={14} /> : <Plus size={14} />}

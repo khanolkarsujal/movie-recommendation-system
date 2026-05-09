@@ -13,7 +13,7 @@ interface SkeletonCardProps {
 }
 
 const variantDimensions = {
-  landscape: 'w-[220px] h-[124px]', // 16:9
+  landscape: 'w-[var(--card-width,240px)] aspect-video', // 16:9
   portrait: 'w-[140px] h-[210px]', // 2:3
   row: 'w-full h-[72px]',
 };

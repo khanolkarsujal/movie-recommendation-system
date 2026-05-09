@@ -264,9 +264,9 @@ export const MovieRow: React.FC<MovieRowProps> = ({
             <HoverCardPopup
               movie={hoveredMovie}
               direction={hoverDirection}
-              onPlay={() => {}}
-              onAdd={() => {}}
-              onInfo={() => {}}
+              onPlay={() => { }}
+              onAdd={() => { }}
+              onInfo={() => { }}
             />
           </div>
         )}

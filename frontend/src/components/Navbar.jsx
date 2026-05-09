@@ -5,9 +5,8 @@ import { Search, Bell, X, Menu, Settings, Heart, UserRound, Palette, LogOut, Fil
 import avatarImg from '../assets/avatar.png';
 import { trendingNow, newReleases, generateEpisodes } from '../data/movies';
 
-// ─── Constants & Mock Data ──────────────────────────────────────────────────
 const navLinks = [
-  { path: '/', label: 'Home' },
+  { path: '/browse', label: 'Home' },
   { path: '#browse', label: 'Browse', hasMegaMenu: true },
   { path: '#kids', label: 'Kids' },
   { path: '#support', label: 'Support' },
@@ -167,7 +166,7 @@ const Navbar = () => {
       <div className="flex items-center">
         <div className="hidden md:flex items-center gap-8 relative">
           {navLinks.map((link) => {
-            const isActive = location.pathname === link.path || (link.path === '/' && location.pathname === '');
+            const isActive = location.pathname === link.path || (link.path === '/browse' && location.pathname === '/browse');
             return (
               <div
                 key={link.label}
@@ -417,22 +416,22 @@ const Navbar = () => {
 
                 {/* Items */}
                 <div className="flex flex-col py-2">
-                  <button className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left">
-                    <UserRound size={16} /> Manage Profiles
+                  <button onClick={() => navigate('/')} className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left outline-none">
+                    <UserRound size={16} /> Switch Profile
                   </button>
-                  <button className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left">
+                  <button onClick={() => navigate('/browse')} className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left outline-none">
                     <Heart size={16} /> My Watchlist
                   </button>
-                  <button className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left">
+                  <button onClick={() => navigate('/profile')} className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left outline-none">
                     <Settings size={16} /> Account Settings
                   </button>
-                  <button className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left">
+                  <button className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-white/5 transition-colors w-full text-left outline-none">
                     <Palette size={16} /> Appearance
                   </button>
                   
                   <div className="h-px bg-white/10 my-1 mx-4" />
                   
-                  <button className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-[#ef4444]/10 hover:text-[#ef4444] transition-colors w-full text-left">
+                  <button onClick={() => navigate('/')} className="flex items-center gap-3 px-4 py-2.5 text-[14px] text-white/80 hover:bg-[#ef4444]/10 hover:text-[#ef4444] transition-colors w-full text-left outline-none">
                     <LogOut size={16} /> Sign Out
                   </button>
                 </div>

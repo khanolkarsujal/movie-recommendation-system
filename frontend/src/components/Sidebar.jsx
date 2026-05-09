@@ -15,7 +15,7 @@ import {
 import avatarImg from '../assets/avatar.png';
 
 const navItems = [
-  { id: 'home', icon: Home, path: '/', label: 'Home' },
+  { id: 'home', icon: Home, path: '/browse', label: 'Home' },
   { id: 'analytics', icon: BarChart2, path: '/analytics', label: 'Analytics' },
   { id: 'profile', icon: UserRound, path: '/profile', label: 'Profile' },
   { id: 'calendar', icon: Calendar, path: '/schedule', label: 'Schedule' },

@@ -1,43 +1,98 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import avatarImg from '../assets/avatar.png';
 
-const PROFILE_STATS = [
-  { label: 'Watchlist',  value: '47' },
-  { label: 'Completed',  value: '23' },
-  { label: 'Reviews',    value: '12' },
+const PROFILES = [
+  { id: 1, name: 'John', color: '#8b5cf6', img: avatarImg },
+  { id: 2, name: 'Sarah', color: '#ef4444', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop' },
+  { id: 3, name: 'Kids', color: '#10b981', img: 'https://images.unsplash.com/photo-1606122017369-d782bbb78592?w=200&h=200&fit=crop' },
 ];
 
-export default function Profile() {
+function Profile() {
+  const navigate = useNavigate();
+  const [managing, setManaging] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(null);
+
+  const handleProfileClick = (profile) => {
+    if (managing) return; // If managing, maybe go to an edit screen instead
+    setLoadingProfile(profile.id);
+    // Simulate loading user data, then navigate
+    setTimeout(() => {
+      navigate('/browse');
+    }, 1200);
+  };
+
   return (
-    <div className="min-h-screen pt-24 px-8 md:px-[80px]">
-      {/* Cover */}
-      <div
-        className="w-full h-40 rounded-2xl mb-0"
-        style={{ background: 'linear-gradient(135deg, #1a0a2e, #6d28d9 50%, #0f3460)' }}
-      />
-      {/* Avatar + Name */}
-      <div className="relative flex items-end gap-6 -mt-12 mb-8 px-4">
-        <img
-          src={avatarImg}
-          alt="Profile avatar"
-          className="w-24 h-24 rounded-full border-4 object-cover"
-          style={{ borderColor: 'var(--bg-base)' }}
-        />
-        <div className="pb-1">
-          <h1 className="text-2xl font-bold text-white">John Doe</h1>
-          <p className="text-white/50 text-sm">john@email.com</p>
-        </div>
-      </div>
-      {/* Stats */}
-      <div className="flex gap-8 mb-10">
-        {PROFILE_STATS.map(({ label, value }) => (
-          <div key={label} className="text-center">
-            <p className="text-2xl font-bold text-white">{value}</p>
-            <p className="text-sm text-white/50">{label}</p>
-          </div>
-        ))}
-      </div>
-      <p className="text-white/30 text-sm">Full profile editor coming soon.</p>
+    <div className="fixed inset-0 z-[200] bg-[#050508] flex flex-col items-center justify-center min-h-screen">
+      <AnimatePresence>
+        {!loadingProfile ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center"
+          >
+            <h1 className="text-white text-4xl md:text-5xl font-medium mb-12 tracking-tight">
+              {managing ? 'Manage Profiles' : "Who's watching?"}
+            </h1>
+
+            <div className="flex flex-wrap justify-center gap-6 md:gap-10 mb-16">
+              {PROFILES.map((p) => (
+                <div key={p.id} className="group flex flex-col items-center cursor-pointer">
+                  <div
+                    onClick={() => handleProfileClick(p)}
+                    className="w-28 h-28 md:w-36 md:h-36 rounded-xl overflow-hidden border-[3px] border-transparent group-hover:border-white transition-all duration-300 relative group-hover:scale-105"
+                  >
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors z-10" />
+                    <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
+                    {managing && (
+                      <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                        <div className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center">
+                          <span className="text-white text-xl material-icons">edit</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <span className="mt-4 text-white/60 text-[15px] font-medium group-hover:text-white transition-colors">
+                    {p.name}
+                  </span>
+                </div>
+              ))}
+
+              <div className="group flex flex-col items-center cursor-pointer">
+                <div className="w-28 h-28 md:w-36 md:h-36 rounded-xl border-[3px] border-white/20 group-hover:border-white group-hover:bg-white/10 transition-all duration-300 flex items-center justify-center">
+                  <Plus size={48} className="text-white/50 group-hover:text-white" />
+                </div>
+                <span className="mt-4 text-white/60 text-[15px] font-medium group-hover:text-white transition-colors">
+                  Add Profile
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setManaging(!managing)}
+              className="px-6 py-2 border border-white/40 text-white/60 hover:border-white hover:text-white transition-colors text-[14px] tracking-[2px] uppercase font-bold"
+            >
+              {managing ? 'Done' : 'Manage Profiles'}
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center"
+          >
+            {/* Spinning Loader Ring */}
+            <div className="w-16 h-16 border-4 border-white/10 border-t-[var(--accent)] rounded-full animate-spin mb-6" />
+            <h2 className="text-white/80 text-xl font-medium animate-pulse">Loading Profile...</h2>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+
+export default Profile;

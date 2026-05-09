@@ -1,5 +1,5 @@
 import React, { Component, lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 
@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 const Home = lazy(() => import('./pages/Home'));
 const AnalyticsPage = lazy(() => import('./pages/Analytics'));
 const ProfilePage = lazy(() => import('./pages/Profile'));
+const Watch = lazy(() => import('./pages/Watch'));
 
 // ─── Stub pages for non-built routes ─────────────────────────────────────────
 function StubPage({ name }) {
@@ -67,16 +68,21 @@ class ErrorBoundary extends Component {
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
 function App() {
+  const location = useLocation();
+  const hideNavigation = location.pathname === '/' || location.pathname.startsWith('/watch');
+
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--bg-base)', color: 'white' }}>
-      <Sidebar />
-      <Navbar />
+      {!hideNavigation && <Sidebar />}
+      {!hideNavigation && <Navbar />}
 
-      <main className="flex-grow pl-[var(--sidebar-width)]">
+      <main className={`flex-grow ${!hideNavigation ? 'pl-[var(--sidebar-width)]' : ''}`}>
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<ProfilePage />} />
+              <Route path="/browse" element={<Home />} />
+              <Route path="/watch" element={<Watch />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/schedule" element={<StubPage name="Schedule" />} />

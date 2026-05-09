@@ -49,6 +49,11 @@ body {
   font-family: var(--font-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -204,6 +209,8 @@ body {
   border-radius: var(--card-radius);
   overflow: hidden;
   cursor: pointer;
+  scroll-snap-align: start;
+  scroll-margin-left: var(--row-padding);
   transition:
     transform 0.4s var(--ease-premium),
     box-shadow 0.4s var(--ease-premium);
@@ -240,18 +247,16 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   CUSTOM SCROLLBAR — Card Rows (thin branded)
+   CUSTOM SCROLLBAR — Card Rows (thin branded) & Scroll Snap
    ═══════════════════════════════════════════════════════════════════════════ */
+.row-scroll {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scroll-padding-left: var(--row-padding);
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .row-scroll::-webkit-scrollbar {
-  height: 3px;
-}
-.row-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.row-scroll::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
-  border-radius: 999px;
-}
-.row-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.6);
+  display: none; /* Chrome, Safari and Opera */
 }

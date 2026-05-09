@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, useRef, memo } from 'react';
 import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GENRE_COLORS } from '../data/movies';
@@ -52,15 +52,16 @@ const StarRating = memo(({ rating }) => {
   );
 });
 
-// ─── Image with lazy load + fallback ─────────────────────────────────────────
-const CardImage = memo(({ src, alt, gradient, hovered }) => {
+// ─── Image & Video with lazy load + fallback ────────────────────────────────
+const CardImage = memo(({ src, alt, gradient, hovered, showVideo }) => {
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
 
   const showGradient = errored || (!src);
+  const MOCK_VIDEO = "https://www.w3schools.com/html/mov_bbb.mp4";
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden bg-black">
       {!showGradient && (
         <>
           {/* Skeleton while loading */}
@@ -80,29 +81,50 @@ const CardImage = memo(({ src, alt, gradient, hovered }) => {
           />
         </>
       )}
-      {showGradient && (
-        <div
-          className="w-full h-full"
-          style={{
-            background: gradient,
-            transform: hovered ? 'scale(1.08)' : 'scale(1.0)',
-            transition: 'transform 0.7s cubic-bezier(0.22,1,0.36,1)',
-          }}
-        />
-      )}
+      {/* Auto-playing Hover Video */}
+      <AnimatePresence>
+        {showVideo && (
+          <motion.video
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            src={MOCK_VIDEO}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            style={{ filter: 'brightness(0.85) saturate(1.1)' }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 });
 
 // ─── Main Card ────────────────────────────────────────────────────────────────
 function EpisodeCard({ episode, index }) {
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered]     = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const hoverTimerRef = useRef(null);
 
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
   const rColor = ratingColor(episode.rating || 7);
 
-  const handleMouseEnter = useCallback(() => setHovered(true), []);
-  const handleMouseLeave = useCallback(() => setHovered(false), []);
+  const handleMouseEnter = useCallback(() => {
+    setHovered(true);
+    // Start hover timer for video preview
+    hoverTimerRef.current = setTimeout(() => {
+      setShowVideo(true);
+    }, 700);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setHovered(false);
+    setShowVideo(false);
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+  }, []);
 
   return (
     <motion.article
@@ -119,12 +141,13 @@ function EpisodeCard({ episode, index }) {
       onFocus={handleMouseEnter}
       onBlur={handleMouseLeave}
     >
-      {/* ── BG Image / Gradient ── */}
+      {/* ── BG Image / Video / Gradient ── */}
       <CardImage
         src={episode.thumbnail}
         alt={episode.title}
         gradient={gradient}
         hovered={hovered}
+        showVideo={showVideo}
       />
 
       {/* ── Dark Gradient Overlays ── */}

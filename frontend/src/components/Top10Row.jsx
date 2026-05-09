@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import EpisodeCard from './EpisodeCard';
 
 function Top10Row({ title, episodes }) {
@@ -36,13 +37,24 @@ function Top10Row({ title, episodes }) {
       onMouseEnter={() => setRowHovered(true)}
       onMouseLeave={() => setRowHovered(false)}
     >
-      <div className="px-8 md:px-[80px] mb-3">
-        <p className="text-[10px] font-bold text-[#8b5cf6] tracking-[2px] uppercase mb-0.5">
-          GLOBAL TRENDING
-        </p>
-        <h2 className="text-[18px] md:text-[22px] font-bold text-white/95 tracking-tight">
-          {title}
-        </h2>
+      {/* High-Fidelity Header */}
+      <div className="flex items-end justify-between px-8 md:px-[80px] mb-4">
+        <div className="flex flex-col">
+          <p className="text-[10px] font-bold text-[#8b5cf6] tracking-[2px] uppercase mb-1">
+            GLOBAL TRENDING
+          </p>
+          <h2 className="text-[18px] md:text-[22px] font-bold text-[#e5e5e5] leading-none tracking-tight">
+            {title}
+          </h2>
+        </div>
+        
+        <motion.a 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: rowHovered ? 1 : 0 }}
+          className="text-[13px] font-semibold text-[#8b5cf6] flex items-center gap-1 cursor-pointer transition-colors hover:text-[#a78bfa]"
+        >
+          See All <ChevronRight size={14} />
+        </motion.a>
       </div>
 
       <div className="relative group">
@@ -54,11 +66,11 @@ function Top10Row({ title, episodes }) {
             transition: 'opacity 0.2s ease',
             position: 'absolute',
             left: '0px',
-            top: '10px',
+            top: '0px',
             height: '240px',
             zIndex: 60,
             width: '60px',
-            background: 'linear-gradient(to right, rgba(5,5,8,0.95), transparent)',
+            background: 'linear-gradient(to right, rgba(20,20,20,0.95), transparent)',
             border: 'none',
             cursor: 'pointer',
             display: 'flex',
@@ -66,54 +78,42 @@ function Top10Row({ title, episodes }) {
             justifyContent: 'center',
           }}
         >
-          <ChevronLeft size={28} color="white" strokeWidth={2.5} />
+          <ChevronLeft size={36} color="white" strokeWidth={2.5} />
         </button>
 
         <div
           ref={rowRef}
           onScroll={onScroll}
-          onMouseDown={(e) => {
-            const el = rowRef.current;
-            if (!el) return;
-            el.isDown = true;
-            el.startX = e.pageX - el.offsetLeft;
-            el.scrollLeftInitial = el.scrollLeft;
-            el.style.cursor = 'grabbing';
-            el.style.scrollBehavior = 'auto';
-          }}
-          onMouseLeave={() => {
-            const el = rowRef.current;
-            if (!el) return;
-            el.isDown = false;
-            el.style.cursor = 'grab';
-          }}
-          onMouseUp={() => {
-            const el = rowRef.current;
-            if (!el) return;
-            el.isDown = false;
-            el.style.cursor = 'grab';
-            el.style.scrollBehavior = 'smooth';
-          }}
-          onMouseMove={(e) => {
-            const el = rowRef.current;
-            if (!el || !el.isDown) return;
-            e.preventDefault();
-            const x = e.pageX - el.offsetLeft;
-            const walk = (x - el.startX) * 1.5;
-            el.scrollLeft = el.scrollLeftInitial - walk;
-          }}
-          className="flex overflow-x-auto overflow-y-visible gap-12 px-8 md:px-[80px] pt-[10px] pb-[20px] no-scrollbar select-none"
+          className="flex overflow-x-auto overflow-y-visible gap-14 px-8 md:px-[80px] pt-4 pb-8 no-scrollbar select-none"
           style={{ cursor: 'grab', scrollSnapType: 'x proximity' }}
         >
           {episodes.slice(0, 10).map((ep, i) => (
-            <div key={ep.id} className="top10-card relative flex-shrink-0 group/card pointer-events-auto scroll-snap-align-start" style={{ width: 220, height: 240 }}>
-              <span className="rank-number">{i + 1}</span>
-              <div className="relative z-10 ml-10 w-40 h-60 rounded-lg overflow-hidden shadow-2xl transition-transform duration-300 group-hover/card:scale-105 group-hover/card:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+            <div 
+              key={ep.id} 
+              className="relative flex-shrink-0 flex items-center group/card scroll-snap-align-start" 
+              style={{ width: 180, height: 240 }}
+            >
+              {/* Massive Rank Number */}
+              <span 
+                className="absolute left-[-20px] bottom-[-20px] text-[180px] font-black leading-none select-none z-0"
+                style={{
+                  color: 'transparent',
+                  WebkitTextStroke: '2px rgba(255,255,255,0.25)',
+                  textShadow: '0 0 40px rgba(0,0,0,0.5)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {i + 1}
+              </span>
+
+              {/* Portrait Card */}
+              <div className="relative z-10 w-full h-full rounded-[4px] overflow-hidden shadow-2xl transition-all duration-300 group-hover/card:scale-105 group-hover/card:shadow-[0_0_30px_rgba(139,92,246,0.4)] cursor-pointer">
                 <img
                   src={ep.thumbnail?.startsWith('http') ? ep.thumbnail : `https://image.tmdb.org/t/p/w500${ep.thumbnail}`}
                   alt={ep.title}
                   className="w-full h-full object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
               </div>
             </div>
           ))}
@@ -127,11 +127,11 @@ function Top10Row({ title, episodes }) {
             transition: 'opacity 0.2s ease',
             position: 'absolute',
             right: '0px',
-            top: '10px',
-            height: '240px', // Exact card height
+            top: '0px',
+            height: '240px',
             zIndex: 60,
             width: '60px',
-            background: 'linear-gradient(to left, rgba(5,5,8,0.95), transparent)',
+            background: 'linear-gradient(to left, rgba(20,20,20,0.95), transparent)',
             border: 'none',
             cursor: 'pointer',
             display: 'flex',

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import EpisodeCard from './EpisodeCard';
 
 function EpisodeRow({ title, episodes, label, seeAll = true }) {
@@ -38,22 +39,27 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
       onMouseEnter={() => setRowHovered(true)}
       onMouseLeave={() => setRowHovered(false)}
     >
-      {/* Improvement 5: Section Labels Upgrade */}
-      <div className="flex items-end justify-between px-8 md:px-[80px] mb-3">
-        <div>
+      {/* High-Fidelity Header */}
+      <div className="flex items-end justify-between px-8 md:px-[80px] mb-4">
+        <div className="flex flex-col">
           {label && (
-            <p className="text-[10px] font-bold text-[#8b5cf6] tracking-[2px] uppercase mb-0.5">
+            <p className="text-[10px] font-bold text-[#8b5cf6] tracking-[2px] uppercase mb-1">
               {label}
             </p>
           )}
-          <h2 className="text-[18px] md:text-[22px] font-bold text-white/95 tracking-tight">
+          <h2 className="text-[18px] md:text-[22px] font-bold text-[#e5e5e5] leading-none tracking-tight">
             {title}
           </h2>
         </div>
+        
         {seeAll && (
-          <a className="text-[13px] font-bold text-[#8b5cf6] hover:text-[#a78bfa] transition-colors cursor-pointer">
-            See All →
-          </a>
+          <motion.a 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: rowHovered ? 1 : 0 }}
+            className="text-[13px] font-semibold text-[#8b5cf6] flex items-center gap-1 cursor-pointer transition-colors hover:text-[#a78bfa]"
+          >
+            See All <ChevronRight size={14} />
+          </motion.a>
         )}
       </div>
 

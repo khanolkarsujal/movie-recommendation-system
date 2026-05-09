@@ -1,5 +1,6 @@
 import React, { Component, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -32,6 +33,48 @@ function PageLoader() {
   );
 }
 
+// ─── Splash Screen ────────────────────────────────────────────────────────────
+function SplashScreen({ done }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0,
+      background: '#141414',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 99999,
+      opacity: done ? 0 : 1,
+      pointerEvents: done ? 'none' : 'all',
+      transition: 'opacity 0.5s ease',
+    }}>
+      <div style={{
+        width: 60, height: 60,
+        background: '#8b5cf6',
+        borderRadius: 14,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 28,
+        fontWeight: 900,
+        color: 'white',
+        animation: 'pulse 1s ease infinite alternate',
+      }}>S</div>
+    </div>
+  );
+}
+
+// ─── Page Wrapper ─────────────────────────────────────────────────────────────
+const PageWrapper = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.25 }}
+  >
+    {children}
+  </motion.div>
+);
+
 // ─── Error Boundary ───────────────────────────────────────────────────────────
 class ErrorBoundary extends Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -61,9 +104,35 @@ class ErrorBoundary extends Component {
 function App() {
   const location = useLocation();
   const isImmersive = location.pathname.startsWith('/watch');
+  const [splashDone, setSplashDone] = React.useState(false);
+  const [scrollPercent, setScrollPercent] = React.useState(0);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      setScrollPercent(scrolled);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--bg-base)', color: 'white' }}>
+      <SplashScreen done={splashDone} />
+      
+      {/* Scroll Progress Bar */}
+      <div 
+        className="fixed top-0 left-0 h-[2px] bg-[#8b5cf6] z-[9999] transition-all duration-100 ease-out"
+        style={{ width: `${scrollPercent}%` }}
+      />
+      
       {/* Navigation — hidden on profile select & watch screens */}
       {!isImmersive && <Sidebar />}
       {!isImmersive && <Navbar />}
@@ -72,15 +141,17 @@ function App() {
       <main className={`flex-grow min-w-0 ${!isImmersive ? 'pl-[var(--sidebar-width)]' : ''}`}>
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/"          element={<Home />} />
-              <Route path="/browse"    element={<Browse />} />
-              <Route path="/watchlist" element={<Watchlist />} />
-              <Route path="/watch"     element={<Watch />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/profile"   element={<Profile />} />
-              <Route path="*"          element={<NotFound />} />
-            </Routes>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path="/"          element={<PageWrapper><Home /></PageWrapper>} />
+                <Route path="/browse"    element={<PageWrapper><Browse /></PageWrapper>} />
+                <Route path="/watchlist" element={<PageWrapper><Watchlist /></PageWrapper>} />
+                <Route path="/watch"     element={<PageWrapper><Watch /></PageWrapper>} />
+                <Route path="/analytics" element={<PageWrapper><Analytics /></PageWrapper>} />
+                <Route path="/profile"   element={<PageWrapper><Profile /></PageWrapper>} />
+                <Route path="*"          element={<PageWrapper><NotFound /></PageWrapper>} />
+              </Routes>
+            </AnimatePresence>
           </Suspense>
         </ErrorBoundary>
 

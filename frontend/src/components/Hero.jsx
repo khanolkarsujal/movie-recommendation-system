@@ -261,16 +261,34 @@ const Hero = () => {
 
       {/* ── LAYER 3: Cinematic Depth Overlays ── */}
       <div className="absolute inset-0 z-10 pointer-events-none mix-blend-overlay opacity-30" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
-      <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, rgba(5,5,8,1) 0%, rgba(5,5,8,0.85) 30%, rgba(5,5,8,0.3) 60%, transparent 100%)" }} />
-      <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%)" }} />
-      <div className="absolute bottom-0 left-0 w-full h-[220px] z-10 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(5,5,8,0.75) 55%, #050508 100%)" }} />
+      
+      {/* Three-layer bottom & side gradient system */}
+      <div 
+        className="absolute inset-0 z-10 pointer-events-none" 
+        style={{ 
+          background: `
+            linear-gradient(to bottom, 
+              transparent 50%, 
+              rgba(20,20,20,0.8) 80%,
+              #141414 100%
+            ),
+            linear-gradient(to right,
+              rgba(0,0,0,0.95) 0%,
+              rgba(0,0,0,0.6) 30%,
+              rgba(0,0,0,0.2) 60%,
+              transparent 85%
+            )
+          ` 
+        }} 
+      />
+      <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.5) 100%)" }} />
 
       {/* Volume Toggle */}
       {showVideo && (
         <button 
           onClick={() => setMuted(!muted)}
           aria-label={muted ? "Unmute video" : "Mute video"}
-          className="absolute bottom-[160px] md:bottom-[220px] right-6 md:right-12 z-[30] w-10 h-10 rounded-full border border-white/20 bg-black/40 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/60 transition-all outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="absolute bottom-[240px] right-6 md:right-12 z-[30] w-10 h-10 rounded-full border border-white/20 bg-black/40 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white hover:bg-black/60 transition-all outline-none"
         >
           {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
@@ -285,13 +303,11 @@ const Hero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute left-[24px] md:left-[80px] bottom-[120px] md:bottom-[160px] z-20 w-full max-w-[640px] flex flex-col gap-5"
+            className="absolute left-[24px] md:left-[80px] bottom-[160px] z-20 w-full max-w-[640px] flex flex-col gap-5"
           >
             <div className="w-32 h-6 bg-white/10 rounded animate-pulse" />
             <div className="w-[80%] h-16 bg-white/10 rounded animate-pulse" />
-            <div className="flex gap-3"><div className="w-16 h-5 bg-white/10 rounded animate-pulse" /><div className="w-16 h-5 bg-white/10 rounded animate-pulse" /></div>
             <div className="w-[90%] h-20 bg-white/10 rounded animate-pulse" />
-            <div className="flex gap-4 mt-2"><div className="w-32 h-12 bg-white/10 rounded animate-pulse" /><div className="w-32 h-12 bg-white/10 rounded animate-pulse" /></div>
           </motion.div>
         ) : (
           /* ACTUAL CONTENT */
@@ -301,15 +317,26 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute left-[24px] md:left-[80px] bottom-[300px] md:bottom-[340px] z-20 w-full md:max-w-[640px] flex flex-col gap-4 md:gap-5 pr-[24px] md:pr-0"
-            style={{ y: -scrollY * 0.1, willChange: 'transform, opacity' }} // Subtle content scroll parallax
+            className="absolute left-[24px] md:left-[80px] bottom-[280px] md:bottom-[320px] z-20 w-full md:max-w-[640px] flex flex-col items-start pr-[24px] md:pr-0"
+            style={{ y: -scrollY * 0.1, willChange: 'transform, opacity' }}
           >
+            {/* Platform Badge */}
+            {movie.badge && (
+              <motion.div 
+                variants={itemVariants}
+                className="flex items-center gap-2 mb-2"
+              >
+                <div className="w-5 h-5 bg-[#8b5cf6] rounded-sm flex items-center justify-center text-[10px] font-black text-white">S</div>
+                <span className="text-[11px] font-bold tracking-[2.5px] text-[#8b5cf6] uppercase">{movie.badge}</span>
+              </motion.div>
+            )}
 
             {/* Title */}
             <motion.h1 
               variants={itemVariants}
-              className="text-[3rem] md:text-[4.8rem] leading-[0.95] font-[900] text-white tracking-[-0.04em]"
+              className="text-white tracking-[-0.04em] mb-3 leading-[1.05] font-[800]"
               style={{ 
+                fontSize: 'clamp(36px, 4vw, 64px)',
                 fontFamily: movie.id === 1 ? "'UnifrakturMaguntia', cursive" : "inherit",
                 textShadow: '0 4px 32px rgba(0,0,0,0.9)',
                 textWrap: 'balance'
@@ -318,52 +345,41 @@ const Hero = () => {
               {movie.title}
             </motion.h1>
 
-            {/* Enhanced Metadata */}
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 text-[13px] md:text-[14px] font-bold text-white">
+            {/* Metadata Row */}
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 text-[14px] font-medium text-white/90 mb-2">
+              <span className="text-[#46d369] font-bold">{movie.match || '98% Match'}</span>
               <span>{movie.year || '2028'}</span>
-              <span>82 Seasons</span>
-              <span className="border border-white/50 px-3 py-0.5 rounded-full text-[12px] font-medium">
-                {movie.genre || 'Cartoon'}
-              </span>
-              <div className="flex items-center gap-1 text-[#f59e0b]">
-                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                <span className="text-white font-bold ml-1">4.8</span>
-              </div>
+              <span className="px-1.5 py-0.5 border border-white/40 rounded-sm text-[11px] font-bold">{movie.rating || '16+'}</span>
+              <span>{movie.duration || '82 Seasons'}</span>
+              <span className="px-1.5 py-0.5 border border-white/40 rounded-sm text-[10px] font-black tracking-widest">4K</span>
             </motion.div>
 
             {/* Description */}
-            <motion.p variants={itemVariants} className="text-[14px] md:text-[16px] text-white/75 leading-[1.7] max-w-[560px]">
+            <motion.p 
+              variants={itemVariants} 
+              className="text-[15px] text-white/75 leading-[1.6] max-w-[480px] mb-[20px]"
+            >
               {movie.description}
             </motion.p>
 
             {/* Action Buttons */}
-            <motion.div variants={itemVariants} className="flex flex-row items-center gap-4 mt-4">
-              <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate(`/watch?title=${encodeURIComponent(movie.title)}`)}>
-                <button 
-                  aria-label={`Play ${movie.title}`}
-                  className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-105"
-                >
-                  <Play size={20} fill="white" stroke="white" className="ml-1" />
-                </button>
-                <span className="font-bold text-[15px] text-white tracking-wide">Play S1 E1</span>
-              </div>
+            <motion.div variants={itemVariants} className="flex flex-row items-center gap-3 mt-1">
+              <button 
+                onClick={() => navigate(`/watch?title=${encodeURIComponent(movie.title)}`)}
+                className="flex items-center justify-center gap-2.5 bg-white text-black px-7 py-2.5 rounded-[5px] font-bold text-[15px] transition-all hover:bg-white/90 active:scale-95 shadow-[0_4px_20px_rgba(255,255,255,0.15)] min-width-[140px]"
+              >
+                <Play size={20} fill="black" /> Play
+              </button>
               
               <button
-                aria-label={isInWatchlist(movie.id) ? `Remove ${movie.title} from Watchlist` : `Add ${movie.title} to Watchlist`}
-                onClick={() => {
-                  if (isInWatchlist(movie.id)) {
-                    removeFromWatchlist(movie.id);
-                  } else {
-                    addToWatchlist({ id: movie.id, title: movie.title, year: movie.year, thumbnail: movie.image, duration: movie.duration, genres: [movie.genre] });
-                  }
-                }}
-                className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 ml-4"
+                onClick={() => isInWatchlist(movie.id) ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
+                className="flex items-center justify-center gap-2.5 bg-[#6d6d6e]/70 text-white px-6 py-2.5 rounded-[5px] font-semibold text-[15px] transition-all hover:bg-[#6d6d6e]/90 active:scale-95"
               >
-                <span className="text-[20px] leading-none mb-1">+</span>
+                <Plus size={20} /> My List
               </button>
 
-              <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105">
-                <Info size={18} />
+              <button className="hidden lg:flex items-center justify-center gap-2.5 bg-transparent border-[1.5px] border-white/30 text-white px-6 py-2.5 rounded-[5px] font-semibold text-[15px] transition-all hover:bg-white/10 active:scale-95">
+                <Info size={20} /> More Info
               </button>
             </motion.div>
           </motion.div>
@@ -371,7 +387,7 @@ const Hero = () => {
       </AnimatePresence>
 
       {/* ── LAYER 5: Progress Indicators ── */}
-      <div className="absolute bottom-[270px] md:bottom-[290px] left-[24px] md:left-[80px] z-30 flex items-center gap-2">
+      <div className="absolute bottom-[250px] left-[24px] md:left-[80px] z-30 flex items-center gap-3">
         {FEATURED_MOVIES.map((_, idx) => {
           const isActive = idx === current;
           return (
@@ -381,22 +397,19 @@ const Hero = () => {
                 setCurrent(idx);
                 setShowVideo(false);
               }}
-              aria-label={`Jump to movie ${idx + 1}`}
-              className={`h-1.5 rounded-full cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] relative overflow-hidden bg-white/30 outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                isActive ? 'w-8 md:w-10' : 'w-1.5 hover:bg-white/50 hover:scale-125'
+              className={`relative cursor-pointer transition-all duration-400 outline-none ${
+                isActive ? 'w-7 h-1' : 'w-1.5 h-1.5 rounded-full bg-white/30 hover:bg-white/50'
               }`}
             >
-              {isActive && !prefersReducedMotion && (
-                <div
-                  className="absolute top-0 left-0 bottom-0 bg-white"
-                  style={{
-                    animation: paused ? 'none' : 'fillBar 8s linear forwards',
-                    width: paused ? '100%' : '0%'
-                  }}
-                />
-              )}
-              {isActive && prefersReducedMotion && (
-                <div className="absolute inset-0 bg-white" />
+              {isActive && (
+                <div className="w-full h-full bg-white rounded-full overflow-hidden">
+                  {!prefersReducedMotion && !paused && (
+                    <div
+                      className="h-full bg-[#8b5cf6] origin-left"
+                      style={{ animation: 'fillBar 8s linear forwards' }}
+                    />
+                  )}
+                </div>
               )}
             </button>
           );
@@ -405,8 +418,8 @@ const Hero = () => {
 
       <style>{`
         @keyframes fillBar {
-          from { width: 0%; }
-          to { width: 100%; }
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
         }
       `}</style>
     </section>

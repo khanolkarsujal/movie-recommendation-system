@@ -158,7 +158,7 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-[64px] right-0 h-[64px] flex items-center justify-between px-8 z-[99] transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${
         scrolled
-          ? 'bg-[#0d0d0d]/92 backdrop-blur-[20px] border-b border-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
+          ? 'bg-[#141414]/85 backdrop-blur-[20px] border-b border-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
           : 'bg-transparent border-transparent shadow-none'
       }`}
     >
@@ -172,16 +172,23 @@ const Navbar = () => {
                 key={link.label}
                 onMouseEnter={link.hasMegaMenu ? handleBrowseEnter : undefined}
                 onMouseLeave={link.hasMegaMenu ? handleBrowseLeave : undefined}
-                className="h-[64px] flex items-center"
+                className="h-[64px] flex items-center relative"
               >
                 <button
                   onClick={() => navigate(link.path)}
-                  className={`nav-link text-[15px] font-medium transition-colors duration-200 outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b5cf6]/80 ${
-                    isActive ? 'active text-white' : 'text-white/75 hover:text-white'
+                  className={`nav-link text-[15px] transition-all duration-200 outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b5cf6]/80 ${
+                    isActive ? 'font-semibold text-white' : 'font-normal text-white/65 hover:text-white'
                   }`}
                 >
                   {link.label}
                 </button>
+
+                {isActive && (
+                  <motion.div 
+                    layoutId="nav-dot"
+                    className="absolute bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#8b5cf6] rounded-full shadow-[0_0_8px_#8b5cf6]"
+                  />
+                )}
 
                 {/* Browse Mega Menu */}
                 {link.hasMegaMenu && (
@@ -287,9 +294,24 @@ const Navbar = () => {
                   </p>
                   
                   {searchResults.length === 0 ? (
-                    <div className="py-6 flex flex-col items-center justify-center text-center opacity-60">
-                      <Search size={24} className="mb-2 text-white/50" />
-                      <p className="text-[13px] text-white">No matches found for "{searchQuery}"</p>
+                    <div className="py-10 flex flex-col items-center justify-center text-center px-4">
+                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                        <Search size={24} className="text-white/20" />
+                      </div>
+                      <h3 className="text-[15px] font-bold text-white mb-1">No results for "{searchQuery}"</h3>
+                      <p className="text-[12px] text-white/40 mb-6">Try different keywords or browse our suggested genres below</p>
+                      
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {['Action', 'Sci-Fi', 'Drama'].map(suggest => (
+                          <button 
+                            key={suggest}
+                            onClick={() => setSearchQuery(suggest)}
+                            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] text-white/70 hover:bg-white/10 hover:text-white transition-all"
+                          >
+                            {suggest}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-1">
@@ -336,9 +358,11 @@ const Navbar = () => {
         <div className="relative h-[64px] flex items-center" ref={notificationsRef}>
           <button
             onClick={() => setNotificationsOpen(!notificationsOpen)}
-            className="text-white relative transition-transform duration-200 hover:scale-110 outline-none"
+            className="text-white relative group/bell transition-transform duration-200 hover:scale-110 outline-none"
           >
-            <Bell size={20} />
+            <div className="group-hover/bell:animate-[bellShake_0.6s_ease-in-out]">
+              <Bell size={20} />
+            </div>
             {unreadCount > 0 && (
               <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#ef4444] text-white text-[9px] flex items-center justify-center rounded-full font-bold border-2 border-[#111111] box-content">
                 {unreadCount}

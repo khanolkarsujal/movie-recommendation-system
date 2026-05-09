@@ -102,23 +102,23 @@ export default function Watchlist() {
       {/* Empty State */}
       {watchlist.length === 0 ? (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center py-32 text-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center py-40 text-center"
         >
-          <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-6">
-            <BookOpen size={40} className="text-white/20" />
+          <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-8 border border-white/5">
+            <span className="text-[60px] opacity-30 grayscale">🎬</span>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Nothing saved yet</h2>
-          <p className="text-white/40 mb-8 max-w-xs">
-            Add movies and shows to your watchlist so you never lose track of what to watch next.
+          <h2 className="text-[28px] font-bold text-[#e5e5e5] mb-2 tracking-tight">Your watchlist is empty</h2>
+          <p className="text-white/45 mb-10 max-w-sm text-[15px] leading-relaxed">
+            Movies and shows you save will appear here for you to watch whenever you're ready.
           </p>
-          <a
-            href="/browse"
-            className="px-6 py-3 bg-[var(--accent)] text-white rounded-lg font-bold hover:opacity-90 transition-opacity"
+          <button
+            onClick={() => navigate('/browse')}
+            className="px-8 py-3.5 bg-[#8b5cf6] text-white rounded-[5px] font-bold text-[15px] hover:bg-[#a78bfa] transition-all shadow-[0_4px_20px_rgba(139,92,246,0.3)] active:scale-95"
           >
-            Browse Titles
-          </a>
+            Browse Movies
+          </button>
         </motion.div>
       ) : (
         <motion.div

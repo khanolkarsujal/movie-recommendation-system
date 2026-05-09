@@ -106,24 +106,27 @@ function EpisodeCard({ episode, index, isContinueWatching = false }) {
         className="absolute left-1/2 overflow-hidden bg-[#141414] origin-center cursor-pointer shadow-[0_24px_80px_rgba(0,0,0,0.8)] border border-white/5"
         initial={{ width: 280, height: 158, x: '-50%', y: 0, scale: 1, borderRadius: 12 }}
         animate={{
-          width: hovered ? 340 : 280,
-          height: hovered ? 440 : 158,
-          y: hovered ? -120 : 0,
-          scale: hovered ? 1.15 : 1,
+          width: hovered ? 350 : 280,
+          height: hovered ? 460 : 158,
+          y: hovered ? -100 : 0, // Slightly less move up for safety
+          scale: hovered ? 1.1 : 1,
           borderRadius: 12
         }}
         transition={{ 
           duration: 0.4, 
-          ease: [0.22, 1, 0.36, 1] // Custom "weighty" ease
+          ease: [0.22, 1, 0.36, 1]
         }}
       >
         {/* ── Top Section: Media ── */}
-        <div className="relative w-full h-[190px] overflow-hidden">
+        <motion.div 
+          className="relative w-full overflow-hidden"
+          animate={{ height: hovered ? 200 : 158 }}
+        >
           <motion.img
             src={getImg(episode)}
             alt={episode.title}
             loading="lazy"
-            animate={{ scale: hovered ? 1.05 : 1 }}
+            animate={{ scale: hovered ? 1.1 : 1 }}
             transition={{ duration: 0.6 }}
             className="w-full h-full object-cover"
           />
@@ -186,7 +189,7 @@ function EpisodeCard({ episode, index, isContinueWatching = false }) {
               />
             </Suspense>
           )}
-        </div>
+        </motion.div>
 
         {/* ── Hover Details Section (Mind-blowing staggered entrance) ── */}
         <AnimatePresence>

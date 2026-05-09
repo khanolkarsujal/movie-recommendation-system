@@ -122,13 +122,15 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             overflowX: 'auto',
             overflowY: 'visible',
             gap: '20px',
-            padding: '10px 80px 20px 80px',
+            padding: '120px 80px 150px 80px', // Massive padding for expansion
+            marginTop: '-120px', // Offset the top padding
+            marginBottom: '-100px', // Offset the bottom padding
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             cursor: 'grab',
             scrollSnapType: 'x proximity'
           }}
-          className="row-scroll no-scrollbar select-none"
+          className="row-scroll no-scrollbar select-none relative z-10"
         >
           {episodes.map((ep, i) => (
             <div key={ep.id} className="scroll-snap-align-start">

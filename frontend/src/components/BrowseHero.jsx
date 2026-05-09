@@ -34,9 +34,8 @@ const BrowseHero = ({ movie }) => {
             {movie.title}
           </h1>
           
-          <div className="flex items-center gap-4 text-sm font-bold mb-6 text-white/80">
-            <span className="text-[#22c55e]">{movie.rating * 10}% Match</span>
-            <span>{movie.year}</span>
+          <div className="flex items-center gap-3 text-[14px] font-bold text-white mb-6">
+            <span className="text-white/60">{movie.year}</span>
             <span>{movie.duration}</span>
             <div className="flex gap-1.5">
               {movie.genres?.map(g => (

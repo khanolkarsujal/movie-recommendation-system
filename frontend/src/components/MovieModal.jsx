@@ -117,8 +117,7 @@ function MovieModal({ movie, onClose }) {
 
           {/* Detail Body */}
           <div className="flex-1 overflow-y-auto p-6 hide-scrollbar">
-            <div className="flex flex-wrap items-center gap-3 mb-5 text-[13px]">
-              <span className="font-bold" style={{ color: 'var(--green-match)' }}>98% Match</span>
+            <div className="flex items-center gap-3 text-[14px] font-bold text-white mb-6">
               <span className="text-white/60">{movie.year || 2025}</span>
               <span className="border border-white/30 px-1.5 py-0.5 rounded text-white/70 text-[11px]">{movie.rating >= 8.5 ? 'TV-MA' : 'PG-13'}</span>
               <span className="border border-white/30 px-1.5 py-0.5 rounded text-white/70 text-[11px]">HD</span>

@@ -10,17 +10,21 @@ import {
   Bell,
   Settings,
   LogOut,
-  Palette
+  Palette,
+  Heart,
+  Film,
 } from 'lucide-react';
 import avatarImg from '../assets/avatar.png';
 
 const navItems = [
-  { id: 'home', icon: Home, path: '/browse', label: 'Home' },
-  { id: 'analytics', icon: BarChart2, path: '/analytics', label: 'Analytics' },
-  { id: 'profile', icon: UserRound, path: '/profile', label: 'Profile' },
-  { id: 'calendar', icon: Calendar, path: '/schedule', label: 'Schedule' },
-  { id: 'lightning', icon: Zap, path: '/activity', label: 'Activity' },
-  { id: 'notifications', icon: Bell, path: '/notifications', label: 'Notifications', badge: 2 },
+  { id: 'home',          icon: Home,      path: '/browse',    label: 'Home' },
+  { id: 'movies',        icon: Film,      path: '/movies',    label: 'Browse' },
+  { id: 'watchlist',     icon: Heart,     path: '/watchlist', label: 'Watchlist' },
+  { id: 'analytics',    icon: BarChart2,  path: '/analytics', label: 'Analytics' },
+  { id: 'profile',      icon: UserRound,  path: '/profile',   label: 'Profile' },
+  { id: 'calendar',     icon: Calendar,   path: '/schedule',  label: 'Schedule' },
+  { id: 'lightning',    icon: Zap,        path: '/activity',  label: 'Activity' },
+  { id: 'notifications',icon: Bell,       path: '/notifications', label: 'Notifications', badge: 2 },
 ];
 
 // Tooltip Component

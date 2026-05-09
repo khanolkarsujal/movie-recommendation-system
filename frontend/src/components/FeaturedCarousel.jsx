@@ -112,6 +112,8 @@ const Indicators = memo(({ count, current, paused, onSelect }) => (
   </div>
 ));
 
+const getImg = (path) => path?.startsWith('http') ? path : `https://image.tmdb.org/t/p/w500${path}`;
+
 // ─── Single Carousel Card ────────────────────────────────────────────────────
 const CarouselCard = memo(({ item, position, onClick }) => {
   const isCenter = position === 0;
@@ -137,7 +139,7 @@ const CarouselCard = memo(({ item, position, onClick }) => {
     >
       {/* Thumbnail */}
       <img
-        src={item.thumbnail}
+        src={getImg(item.thumbnail)}
         alt={item.title}
         className="w-full h-full object-cover"
         style={{
@@ -145,6 +147,7 @@ const CarouselCard = memo(({ item, position, onClick }) => {
           transition: 'filter 0.6s ease',
         }}
         loading="lazy"
+        onError={(e) => { e.target.src = `https://picsum.photos/seed/${item.id || 'carousel'}/1200/600` }}
       />
 
       {/* Gradient overlays */}

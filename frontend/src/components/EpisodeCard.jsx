@@ -1,7 +1,10 @@
 import React, { useState, useCallback, useRef, memo } from 'react';
-import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
+import { Play, Plus, Heart, ThumbsUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { GENRE_COLORS } from '../data/movies';
+import useStore from '../store/useStore';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const CARD_GRADIENTS = [
@@ -52,8 +55,10 @@ const StarRating = memo(({ rating }) => {
   );
 });
 
+const getImg = (path) => path?.startsWith('http') ? path : `https://image.tmdb.org/t/p/w500${path}`;
+
 // ─── Image & Video with lazy load + fallback ────────────────────────────────
-const CardImage = memo(({ src, alt, gradient, hovered, showVideo }) => {
+const CardImage = memo(({ src, alt, gradient, hovered, showVideo, id }) => {
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
 
@@ -67,11 +72,14 @@ const CardImage = memo(({ src, alt, gradient, hovered, showVideo }) => {
           {/* Skeleton while loading */}
           {!loaded && <div className="skeleton absolute inset-0" style={{ borderRadius: 0 }} />}
           <img
-            src={src}
+            src={getImg(src)}
             alt={alt}
             loading="lazy"
             onLoad={() => setLoaded(true)}
-            onError={() => setErrored(true)}
+            onError={(e) => {
+              setErrored(true);
+              e.target.src = `https://picsum.photos/seed/${id || 'movie'}/400/225`;
+            }}
             className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{
               opacity: loaded ? 1 : 0,
@@ -108,6 +116,9 @@ function EpisodeCard({ episode, index }) {
   const [hovered, setHovered]     = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const hoverTimerRef = useRef(null);
+  const navigate = useNavigate();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useStore();
+  const inWatchlist = isInWatchlist(episode.id);
 
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
   const rColor = ratingColor(episode.rating || 7);
@@ -148,6 +159,7 @@ function EpisodeCard({ episode, index }) {
         gradient={gradient}
         hovered={hovered}
         showVideo={showVideo}
+        id={episode.id}
       />
 
       {/* ── Dark Gradient Overlays ── */}
@@ -235,16 +247,30 @@ function EpisodeCard({ episode, index }) {
               {/* Action Buttons */}
               <div className="flex items-center gap-2 mt-3">
                 <button
+                  onClick={() => navigate(`/watch?title=${encodeURIComponent(episode.title)}`)}
                   className="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 transition-transform hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
                   aria-label={`Play ${episode.title}`}
                 >
                   <Play size={13} fill="black" className="ml-0.5" />
                 </button>
                 <button
-                  className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white flex-shrink-0 transition-all hover:bg-white/20 hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                  aria-label="Add to watchlist"
+                  onClick={() => {
+                    if (inWatchlist) {
+                      removeFromWatchlist(episode.id);
+                      toast('Removed from Watchlist', { icon: '🗑️', style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } });
+                    } else {
+                      addToWatchlist(episode);
+                      toast.success(`Added to Watchlist`, { style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(139,92,246,0.4)' } });
+                    }
+                  }}
+                  className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 transition-all hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+                    inWatchlist
+                      ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-[var(--accent)]'
+                      : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
+                  }`}
+                  aria-label={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
                 >
-                  <Plus size={14} />
+                  <Heart size={13} fill={inWatchlist ? 'currentColor' : 'none'} />
                 </button>
                 <button
                   className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white flex-shrink-0 transition-all hover:bg-white/20 hover:scale-105 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"

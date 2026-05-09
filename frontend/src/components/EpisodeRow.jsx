@@ -121,10 +121,8 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             display: 'flex',
             overflowX: 'auto',
             overflowY: 'visible',
-            gap: '20px',
-            padding: '120px 80px 150px 80px', // Massive padding for expansion
-            marginTop: '-120px', // Offset the top padding
-            marginBottom: '-100px', // Offset the bottom padding
+            gap: '24px',
+            padding: '20px 80px 40px 80px',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             cursor: 'grab',

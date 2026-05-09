@@ -313,8 +313,6 @@ const Navbar = () => {
                           <div>
                             <h4 className="text-[14px] text-white font-bold mb-1">{res.title}</h4>
                             <div className="flex items-center gap-2 text-[11px] text-white/50">
-                              <span className="text-[var(--green-match)] font-semibold">{res.rating ? `${(res.rating * 10).toFixed(0)}% Match` : '98% Match'}</span>
-                              <span>·</span>
                               <span>{res.year || 2025}</span>
                               {res.genres && (
                                 <>

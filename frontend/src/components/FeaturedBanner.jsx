@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Heart, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import useStore from '../store/useStore';
 
 const FEATURED_ITEMS = [
@@ -14,8 +14,9 @@ const FEATURED_ITEMS = [
     rating: '9.0',
     genres: ['Fantasy', 'Adventure'],
     description: 'The final rune holds the power to unmake all of reality. One guardian stands between its keeper and an ancient god who wants it — at any cost.',
-    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop', // Placeholder for fantasy landscape
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop',
     progress: 80,
+    accent: '#8b5cf6'
   },
   {
     id: 102,
@@ -29,6 +30,7 @@ const FEATURED_ITEMS = [
     description: 'In a city that never sleeps, a rogue detective uncovers a conspiracy that goes all the way to the top of the megacorporations controlling the neon sprawl.',
     image: 'https://images.unsplash.com/photo-1533929736458-ca588d08c8be?q=80&w=2000&auto=format&fit=crop',
     progress: 0,
+    accent: '#3b82f6'
   }
 ];
 
@@ -44,141 +46,181 @@ function FeaturedBanner() {
     setCurrentIndex((prev) => (prev === 0 ? FEATURED_ITEMS.length - 1 : prev - 1));
   };
 
+  // Auto-rotate
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 8000);
+    return () => clearInterval(timer);
+  }, []);
+
   const currentItem = FEATURED_ITEMS[currentIndex];
   const inWatchlist = isInWatchlist(currentItem.id);
 
   return (
-    <div className="px-8 md:px-[80px] mb-16 relative">
-      {/* Header section outside the banner */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="px-8 md:px-[80px] mb-16 relative overflow-hidden">
+      {/* Header section */}
+      <div className="flex items-end justify-between mb-6">
         <div>
-          <p className="text-[10px] font-bold text-[#8b5cf6] tracking-[2px] uppercase mb-1">
+          <p className="text-[11px] font-black text-[#8b5cf6] tracking-[3px] uppercase mb-2">
             HANDPICKED FOR YOU
           </p>
-          <h2 className="text-[20px] md:text-[24px] font-bold text-white tracking-tight">
+          <h2 className="text-[28px] md:text-[32px] font-black text-white tracking-tighter leading-none">
             Featured Picks
           </h2>
         </div>
         
         {/* Navigation Arrows */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button 
             onClick={prevSlide}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110 active:scale-95"
           >
-            <ChevronLeft size={18} color="white" />
+            <ChevronLeft size={20} color="white" />
           </button>
           <button 
             onClick={nextSlide}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all hover:scale-110 active:scale-95"
           >
-            <ChevronRight size={18} color="white" />
+            <ChevronRight size={20} color="white" />
           </button>
         </div>
       </div>
 
       {/* The Banner Container */}
-      <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-2xl group">
+      <div className="relative w-full h-[460px] rounded-3xl overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.6)] group border border-white/5">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
             className="absolute inset-0"
           >
-            {/* Background Image */}
-            <img 
-              src={currentItem.image} 
-              alt={currentItem.title} 
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            {/* Cinematic Background Image with Ken Burns Effect */}
+            <motion.div
+              initial={{ scale: 1.1, x: 0 }}
+              animate={{ scale: 1, x: 0 }}
+              transition={{ duration: 8, ease: "linear" }}
+              className="absolute inset-0"
+            >
+              <img 
+                src={currentItem.image} 
+                alt={currentItem.title} 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </motion.div>
             
-            {/* Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#050508] via-[#050508]/80 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/60 via-transparent to-transparent" />
+            {/* Layered Gradient Overlays for Depth */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050508] via-[#050508]/90 to-transparent z-1" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent z-1" />
+            <div className="absolute inset-0 bg-black/10 z-1" />
 
-            {/* Content */}
-            <div className="absolute inset-0 p-10 flex flex-col justify-center max-w-[600px] z-10">
-              <p className="text-[11px] font-bold text-white/70 tracking-[2px] uppercase mb-2">
+            {/* Content with Staggered Entrance */}
+            <div className="absolute inset-0 p-12 md:p-16 flex flex-col justify-center max-w-[700px] z-10">
+              <motion.p 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="text-[12px] font-black text-white/50 tracking-[4px] uppercase mb-4"
+              >
                 {currentItem.label}
-              </p>
+              </motion.p>
               
-              <h3 className="text-[3rem] font-black text-white leading-none tracking-tight mb-4 drop-shadow-lg">
+              <motion.h3 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="text-[3.5rem] md:text-[4.5rem] font-black text-white leading-[0.9] tracking-tighter mb-6 drop-shadow-2xl italic"
+              >
                 {currentItem.title}
-              </h3>
+              </motion.h3>
 
-              {/* Meta Tags */}
-              <div className="flex flex-wrap items-center gap-3 text-[12px] font-bold mb-4">
-                <span className="bg-[#22c55e] text-white px-2 py-0.5 rounded-[4px]">
-                  {currentItem.match}
+              {/* Meta Tags Row */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="flex flex-wrap items-center gap-4 text-[13px] font-black mb-6"
+              >
+                <span className="text-white/60">{currentItem.year}</span>
+                <span className="text-white/20">•</span>
+                <span className="text-white/60">{currentItem.duration}</span>
+                <span className="text-white/20">•</span>
+                <span className="text-[#f59e0b] flex items-center gap-1.5 bg-[#f59e0b]/10 px-2 py-1 rounded-md">
+                  <Star size={14} fill="#f59e0b" /> {currentItem.rating}
                 </span>
-                <span className="text-white/80">{currentItem.year}</span>
-                <span className="text-white/40">•</span>
-                <span className="text-white/80">{currentItem.duration}</span>
-                <span className="text-white/40">•</span>
-                <span className="text-[#22c55e] flex items-center gap-1">
-                  ★ {currentItem.rating}
-                </span>
-                <span className="text-white/40">•</span>
-                {currentItem.genres.map((g, i) => (
-                  <span key={i} className="border border-[#f59e0b]/50 text-[#f59e0b] px-2 py-0.5 rounded-[4px] text-[10px] uppercase">
-                    {g}
-                  </span>
-                ))}
-              </div>
+              </motion.div>
 
               {/* Description */}
-              <p className="text-[14px] text-white/70 leading-relaxed mb-6 line-clamp-3">
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.7 }}
+                className="text-[16px] text-white/40 leading-relaxed mb-8 line-clamp-3 max-w-[500px] font-medium"
+              >
                 {currentItem.description}
-              </p>
+              </motion.p>
 
-              {/* Progress Bar (if continuing) */}
+              {/* Interactive Progress Bar */}
               {currentItem.progress > 0 && (
-                <div className="mb-6">
-                  <div className="flex justify-between text-[11px] text-white/50 font-bold mb-2">
+                <motion.div 
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: '100%' }}
+                  transition={{ delay: 0.7, duration: 0.8 }}
+                  className="mb-8 max-w-[400px]"
+                >
+                  <div className="flex justify-between text-[11px] text-[#8b5cf6] font-black mb-3 uppercase tracking-widest">
                     <span>Continue Watching</span>
                     <span>{currentItem.progress}%</span>
                   </div>
-                  <div className="w-full h-[2px] bg-white/20 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-[#8b5cf6]" 
-                      style={{ width: `${currentItem.progress}%` }} 
+                  <div className="w-full h-[4px] bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-[#8b5cf6] shadow-[0_0_12px_rgba(139,92,246,0.6)]" 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${currentItem.progress}%` }}
+                      transition={{ delay: 1, duration: 1.5, ease: "circOut" }}
                     />
                   </div>
-                </div>
+                </motion.div>
               )}
 
-              {/* Buttons */}
-              <div className="flex items-center gap-4">
-                <button className="flex items-center gap-2 bg-white text-black px-6 py-2.5 rounded-lg font-bold text-[14px] hover:bg-white/90 transition-all">
-                  <Play size={16} fill="black" />
-                  {currentItem.progress > 0 ? 'Continue' : 'Play'}
+              {/* Premium Buttons */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                className="flex items-center gap-5"
+              >
+                <button className="flex items-center gap-3 bg-white text-black px-8 py-3.5 rounded-xl font-black text-[15px] hover:bg-[#8b5cf6] hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-xl group">
+                  <Play size={20} fill="currentColor" stroke="none" className="group-hover:fill-white" />
+                  {currentItem.progress > 0 ? 'RESUME PLAY' : 'WATCH NOW'}
                 </button>
                 <button 
                   onClick={() => {
                     if (inWatchlist) removeFromWatchlist(currentItem.id);
                     else addToWatchlist(currentItem);
                   }}
-                  className="flex items-center gap-2 bg-white/10 border border-white/20 text-white px-6 py-2.5 rounded-lg font-bold text-[14px] hover:bg-white/20 transition-all backdrop-blur-md"
+                  className="flex items-center gap-3 bg-white/5 border-2 border-white/10 text-white px-8 py-3.5 rounded-xl font-black text-[15px] hover:bg-white/10 hover:border-white transition-all transform hover:scale-105 active:scale-95 backdrop-blur-xl"
                 >
-                  <Heart size={16} fill={inWatchlist ? 'white' : 'none'} color="white" />
-                  Watchlist
+                  <Heart size={20} fill={inWatchlist ? 'white' : 'none'} strokeWidth={2.5} />
+                  WATCHLIST
                 </button>
-              </div>
+              </motion.div>
             </div>
+
+            {/* Cinematic Overlay - Bottom Mask */}
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
           </motion.div>
         </AnimatePresence>
 
-        {/* Carousel Indicators inside banner */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+        {/* Dynamic Carousel Indicators */}
+        <div className="absolute bottom-10 right-16 flex flex-col gap-3 z-20">
           {FEATURED_ITEMS.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
-              className={`h-[4px] rounded-full transition-all duration-300 ${
-                i === currentIndex ? 'w-6 bg-white' : 'w-[4px] bg-white/40 hover:bg-white/60'
+              className={`w-[6px] transition-all duration-500 rounded-full ${
+                i === currentIndex ? 'h-10 bg-[#8b5cf6] shadow-[0_0_12px_rgba(139,92,246,0.8)]' : 'h-3 bg-white/20 hover:bg-white/40'
               }`}
             />
           ))}

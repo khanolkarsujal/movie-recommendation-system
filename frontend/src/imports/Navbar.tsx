@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
+// Note: if you are using 'motion/react' instead of 'framer-motion', just change the import above!
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, X, Settings, Heart, UserRound, Palette, LogOut, Film } from 'lucide-react';
 import { trendingNow, newReleases, generateEpisodes } from '../data/movies';
 import type { Notification, Movie } from './types';
+import { useStore } from '../store';
 
 const avatarImg = 'https://images.unsplash.com/photo-1581841064838-a470c740e8ee?w=200&h=200&fit=crop';
-
-// Navigation links removed - using sidebar as primary navigation
 
 const mockNotifications: Notification[] = [
   {
@@ -35,6 +35,85 @@ const mockNotifications: Notification[] = [
     thumb: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=100&q=80',
   },
 ];
+
+// --- 🌟 Navbar-Optimized AI Button ---
+const NavbarAiButton = () => {
+  const { toggleAiDrawer } = useStore();
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div className="relative flex items-center justify-center mr-2 ml-2">
+      {/* Tooltip */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-[48px] whitespace-nowrap bg-[#0B0F19] border border-white/10 rounded-lg px-3 py-1.5 text-[12px] font-semibold text-white shadow-xl flex items-center gap-1.5 pointer-events-none z-[100]"
+          >
+            Ask AI Assistant
+            <div className="absolute top-[-5px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-b-[6px] border-transparent border-b-[#0B0F19]" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div
+        className="relative w-9 h-9 cursor-pointer group flex items-center justify-center"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={toggleAiDrawer}
+      >
+        {/* Ambient Glow */}
+        <motion.div
+          className="absolute inset-0 rounded-full blur-[8px] z-[-1]"
+          animate={{ opacity: isHovered ? 1 : 0.4, scale: isHovered ? 1.2 : 1 }}
+          style={{ background: "linear-gradient(135deg, #00F2FE, #A18CD1)" }}
+          transition={{ duration: 0.3 }}
+        />
+
+        {/* Spinning Ring */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: isHovered ? 2 : 4, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-0 rounded-full z-0"
+          style={{ background: 'conic-gradient(from 0deg at 50% 50%, #00F2FE 0%, #4FACFE 25%, #A18CD1 50%, #FBC2EB 75%, #00F2FE 100%)' }}
+        />
+
+        {/* Dark Inner Core */}
+        <div className="absolute inset-[1.5px] z-10 bg-[#141414] rounded-full flex items-center justify-center transition-colors group-hover:bg-[#1a1a24]">
+          {/* Sparkle Logo */}
+          <motion.svg
+            width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+            animate={{ scale: isHovered ? 1.1 : 1, rotate: isHovered ? [0, 10, -5, 0] : 0 }}
+          >
+            <path d="M12 4L13.8 9.8L19.5 11.5L13.8 13.2L12 19L10.2 13.2L4.5 11.5L10.2 9.8L12 4Z" fill="url(#nav-sparkle)" />
+            <motion.path
+              d="M5.5 3L6.2 5.8L9 6.5L6.2 7.2L5.5 10L4.8 7.2L2 6.5L4.8 5.8L5.5 3Z"
+              fill={isHovered ? "#A855F7" : "#fff"}
+              animate={{ scale: isHovered ? [1, 1.3, 1] : 1 }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+            />
+            <motion.path
+              d="M18.5 14L19 16L21 16.5L19 17L18.5 19L18 17L16 16.5L18 16L18.5 14Z"
+              fill={isHovered ? "#06B6D4" : "#fff"}
+              animate={{ scale: isHovered ? [1, 1.4, 1] : 1 }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+            />
+            <defs>
+              <linearGradient id="nav-sparkle" x1="4.5" y1="4" x2="19.5" y2="19" gradientUnits="userSpaceOnUse">
+                <stop stopColor={isHovered ? "#06B6D4" : "#fff"} />
+                <stop offset="1" stopColor={isHovered ? "#3B82F6" : "#fff"} />
+              </linearGradient>
+            </defs>
+          </motion.svg>
+        </div>
+      </div>
+    </div>
+  );
+};
+// ------------------------------------------
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -114,11 +193,10 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-[64px] right-0 h-[64px] flex items-center justify-between px-8 z-[99] transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-        scrolled
+      className={`fixed top-0 left-[64px] right-0 h-[64px] flex items-center justify-between px-8 z-[99] transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled
           ? 'bg-[#141414]/85 backdrop-blur-[20px] border-b border-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
           : 'bg-transparent border-transparent shadow-none'
-      }`}
+        }`}
     >
       {/* Left side - Logo/Brand */}
       <div className="flex items-center">
@@ -133,15 +211,13 @@ const Navbar: React.FC = () => {
             initial={false}
             animate={{ width: searchOpen ? 240 : 20, opacity: 1 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className={`flex items-center overflow-hidden ${
-              searchOpen ? 'bg-white/10 border border-white/15 rounded-[20px] backdrop-blur-[8px]' : ''
-            }`}
+            className={`flex items-center overflow-hidden ${searchOpen ? 'bg-white/10 border border-white/15 rounded-[20px] backdrop-blur-[8px]' : ''
+              }`}
           >
             <button
               onClick={() => !searchOpen && setSearchOpen(true)}
-              className={`text-white transition-transform duration-200 outline-none flex-shrink-0 ${
-                searchOpen ? 'ml-3' : 'hover:scale-110'
-              }`}
+              className={`text-white transition-transform duration-200 outline-none flex-shrink-0 ${searchOpen ? 'ml-3' : 'hover:scale-110'
+                }`}
               aria-label="Search"
             >
               <Search size={20} className={searchOpen ? 'text-white/60' : ''} />
@@ -243,6 +319,9 @@ const Navbar: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* 🌟 NEW AI LOGO BUTTON PLACED HERE 🌟 */}
+        <NavbarAiButton />
 
         <div className="relative h-[64px] flex items-center" ref={notificationsRef}>
           <button

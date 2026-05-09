@@ -161,9 +161,9 @@ const SeasonTabs = ({ seasons, activeTab, setActiveTab }) => {
                 position: 'absolute',
                 bottom: 8, // aligned with the bottom of the buttons
                 height: 2,
-                background: '#3b82f6', // Matching the blue 'S' badge
+                background: '#8b5cf6', // Standardizing on Purple accent
                 borderRadius: 2,
-                boxShadow: '0 0 8px rgba(59,130,246,0.6)',
+                boxShadow: '0 0 10px rgba(139,92,246,0.8)',
                 zIndex: 2,
               }}
             />

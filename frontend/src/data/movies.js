@@ -32,7 +32,7 @@ const EPISODES_META = [
     rating: 8.9,
     genres: ['Action', 'Dark'],
     description: 'The demon lord makes his grand entrance, sending shockwaves through the realm.',
-    thumb: '/zYmZpY9id9Nc9S6X2Z6v1XjY1Y.jpg', // TMDB
+    thumb: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2094&auto=format&fit=crop',
   },
   {
     suffix: 'Demon Dies',
@@ -40,7 +40,7 @@ const EPISODES_META = [
     rating: 9.1,
     genres: ['Action', 'Fantasy'],
     description: 'An unexpected confrontation leads to a shocking sacrifice no one saw coming.',
-    thumb: '/qJ2tW6WMUDp9QmSbmrK5S2vYvBv.jpg', // TMDB
+    thumb: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2670&auto=format&fit=crop',
   },
   {
     suffix: 'Demon Resurrected',
@@ -48,7 +48,7 @@ const EPISODES_META = [
     rating: 8.6,
     genres: ['Horror', 'Dark'],
     description: 'Dark forces converge as the demon rises again — more powerful than before.',
-    thumb: '/8cdWjvZQUmOZpI75G7CY0xEwR1I.jpg', // TMDB
+    thumb: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2574&auto=format&fit=crop',
   },
   {
     suffix: 'Demon Dies Again',
@@ -56,7 +56,7 @@ const EPISODES_META = [
     rating: 8.4,
     genres: ['Action', 'Dark'],
     description: 'The group devises a risky plan, hoping to end the threat once and for all.',
-    thumb: '/v79pS7S0uU87Wf5n9Y8H7Y8H7Y8.jpg', // TMDB
+    thumb: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=2637&auto=format&fit=crop',
   },
   {
     suffix: 'Demon Returns',
@@ -64,7 +64,7 @@ const EPISODES_META = [
     rating: 8.8,
     genres: ['Horror', 'Fantasy'],
     description: 'Just when peace seemed possible, the demon lord reveals his true form.',
-    thumb: '/6Xp8j6P6qS6n9Z6v1XjY1Y.jpg', // TMDB
+    thumb: 'https://images.unsplash.com/photo-1533613220915-609f661a6fe1?q=80&w=2564&auto=format&fit=crop',
   },
 ];
 
@@ -72,11 +72,10 @@ export function generateEpisodes(seasonNum) {
   const count = SEASON_EPISODE_COUNTS[(seasonNum - 1) % SEASON_EPISODE_COUNTS.length];
   return Array.from({ length: count }, (_, i) => {
     const meta = EPISODES_META[i % EPISODES_META.length];
-    const thumb = meta.thumb;
     return {
       id: `s${seasonNum}e${i + 1}`,
       title: `Episode ${i + 1}: ${meta.suffix}`,
-      thumbnail: thumb,
+      thumbnail: meta.thumb,
       progress: seasonNum === 1 && i === 0 ? 100
                : seasonNum === 1 && i === 1 ? 60
                : 0,
@@ -94,17 +93,17 @@ export const trendingNow = [
   {
     id: 't1', title: 'Shadow Realm', duration: '1h 42m', progress: 0, rating: 8.3, year: 2026,
     genres: ['Fantasy', 'Dark'], description: 'A rogue assassin navigates a deadly underworld where shadows come to life.',
-    thumbnail: '/6Xp8j6P6qS6n9Z6v1XjY1Y.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2525&auto=format&fit=crop',
   },
   {
     id: 't2', title: 'Blood Covenant', duration: '1h 18m', progress: 35, rating: 8.7, year: 2027,
     genres: ['Action', 'Horror'], description: 'A templar knight forms a dark pact to exact revenge on a corrupt king.',
-    thumbnail: '/qJ2tW6WMUDp9QmSbmrK5S2vYvBv.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=2574&auto=format&fit=crop',
   },
   {
     id: 't3', title: 'Veil of Darkness', duration: '1h 55m', progress: 0, rating: 7.9, year: 2025,
     genres: ['Horror', 'Thriller'], description: 'Ancient darkness spreads across a sleeping city, and only one can stop it.',
-    thumbnail: '/zYmZpY9id9Nc9S6X2Z6v1XjY1Y.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2670&auto=format&fit=crop',
   },
 ];
 
@@ -112,12 +111,12 @@ export const newReleases = [
   {
     id: 'n1', title: 'Abyss Walkers', duration: '1h 50m', progress: 0, rating: 7.8, year: 2026,
     genres: ['Sci-Fi', 'Adventure'], description: 'Deep-sea explorers encounter something that was never meant to be found.',
-    thumbnail: '/8cdWjvZQUmOZpI75G7CY0xEwR1I.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2574&auto=format&fit=crop',
   },
   {
     id: 'n2', title: 'Demon Codex', duration: '24 min', progress: 0, rating: 8.2, year: 2026,
     genres: ['Anime', 'Action'], description: 'A forbidden text transforms its reader into something inhuman.',
-    thumbnail: '/v79pS7S0uU87Wf5n9Y8H7Y8H7Y8.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2094&auto=format&fit=crop',
   },
 ];
 
@@ -125,11 +124,11 @@ export const continueWatching = [
   {
     id: 'cw1', title: 'Blood Covenant', duration: 'S2:E4', progress: 65, rating: 8.7, year: 2027,
     genres: ['Action', 'Horror'], description: 'The templar knight faces his ultimate test against the vampire queen.',
-    thumbnail: '/qJ2tW6WMUDp9QmSbmrK5S2vYvBv.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=2574&auto=format&fit=crop',
   },
   {
     id: 'cw2', title: 'The Last Rune', duration: '2h 01m', progress: 15, rating: 9.0, year: 2027,
     genres: ['Fantasy', 'Adventure'], description: 'The final rune holds the power to unmake all of reality.',
-    thumbnail: '/8cdWjvZQUmOZpI75G7CY0xEwR1I.jpg',
+    thumbnail: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2670&auto=format&fit=crop',
   },
 ];

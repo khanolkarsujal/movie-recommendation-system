@@ -301,16 +301,9 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute left-[24px] md:left-[80px] bottom-[120px] md:bottom-[160px] z-20 w-full md:max-w-[640px] flex flex-col gap-4 md:gap-5 pr-[24px] md:pr-0"
+            className="absolute left-[24px] md:left-[80px] bottom-[300px] md:bottom-[340px] z-20 w-full md:max-w-[640px] flex flex-col gap-4 md:gap-5 pr-[24px] md:pr-0"
             style={{ y: -scrollY * 0.1, willChange: 'transform, opacity' }} // Subtle content scroll parallax
           >
-            {/* Platform Badge */}
-            <motion.div variants={itemVariants} className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-lg" style={{ backgroundColor: movie.accent }}>
-                <span className="text-[11px] font-bold text-white leading-none">S</span>
-              </div>
-              <span className="text-[12px] md:text-[13px] font-bold text-white/90 tracking-[1.5px] uppercase">{movie.badge}</span>
-            </motion.div>
 
             {/* Title */}
             <motion.h1 
@@ -326,28 +319,16 @@ const Hero = () => {
             </motion.h1>
 
             {/* Enhanced Metadata */}
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2 md:gap-3 text-[13px] md:text-[14px] font-medium text-white/90">
-              <span className="bg-[#22c55e] text-white px-2 py-0.5 rounded-[4px] font-bold text-[13px] shadow-[0_2px_8px_rgba(34,197,94,0.3)]">
-                {movie.match}
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 text-[13px] md:text-[14px] font-bold text-white">
+              <span>{movie.year || '2028'}</span>
+              <span>82 Seasons</span>
+              <span className="border border-white/50 px-3 py-0.5 rounded-full text-[12px] font-medium">
+                {movie.genre || 'Cartoon'}
               </span>
-              <span className="hidden md:inline px-1">·</span>
-              <span>{movie.year}</span>
-              <span className="px-1">·</span>
-              <span>{movie.duration}</span>
-              <span className="px-1">·</span>
-              <span>{movie.genre}</span>
-              <span className="px-1">·</span>
-              <span className="border border-white/40 px-1.5 rounded-[3px] text-[11px] leading-tight flex items-center h-[18px]">
-                {movie.rating}
-              </span>
-              <span className="px-1">·</span>
-              <span className="border border-white/40 px-1.5 rounded-[3px] text-[11px] leading-tight flex items-center h-[18px]">
-                {movie.quality}
-              </span>
-              <span className="px-1">·</span>
-              <span className="border border-white/40 px-1.5 rounded-[3px] text-[11px] leading-tight flex items-center h-[18px]">
-                {movie.audio}
-              </span>
+              <div className="flex items-center gap-1 text-[#f59e0b]">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                <span className="text-white font-bold ml-1">4.8</span>
+              </div>
             </motion.div>
 
             {/* Description */}
@@ -356,40 +337,33 @@ const Hero = () => {
             </motion.p>
 
             {/* Action Buttons */}
-            <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 mt-2">
-              <button 
-                aria-label={`Play ${movie.title}`}
-                onClick={() => navigate(`/watch?title=${encodeURIComponent(movie.title)}`)}
-                className="flex items-center justify-center gap-2.5 bg-white text-black px-7 py-3 md:py-3.5 rounded-md font-bold text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white/90 hover:scale-[1.04] hover:-translate-y-[2px] active:scale-[0.97] shadow-[0_8px_24px_rgba(255,255,255,0.15)] outline-none focus-visible:ring-4 focus-visible:ring-white/50"
-              >
-                <Play size={18} fill="black" />
-                Play
-              </button>
+            <motion.div variants={itemVariants} className="flex flex-row items-center gap-4 mt-4">
+              <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate(`/watch?title=${encodeURIComponent(movie.title)}`)}>
+                <button 
+                  aria-label={`Play ${movie.title}`}
+                  className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:bg-white/30 group-hover:scale-105"
+                >
+                  <Play size={20} fill="white" stroke="white" className="ml-1" />
+                </button>
+                <span className="font-bold text-[15px] text-white tracking-wide">Play S1 E1</span>
+              </div>
               
               <button
                 aria-label={isInWatchlist(movie.id) ? `Remove ${movie.title} from Watchlist` : `Add ${movie.title} to Watchlist`}
                 onClick={() => {
                   if (isInWatchlist(movie.id)) {
                     removeFromWatchlist(movie.id);
-                    toast('Removed from Watchlist', { icon: '🗑️', style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } });
                   } else {
                     addToWatchlist({ id: movie.id, title: movie.title, year: movie.year, thumbnail: movie.image, duration: movie.duration, genres: [movie.genre] });
-                    toast.success('Added to Watchlist ✓', { style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(139,92,246,0.4)' } });
                   }
                 }}
-                className={`flex items-center justify-center gap-2 border text-white px-5 py-3 md:py-3.5 rounded-md font-semibold text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md ${
-                  isInWatchlist(movie.id)
-                    ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-[var(--accent)]'
-                    : 'bg-white/10 border-white/20 hover:bg-white/20'
-                }`}
+                className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105 ml-4"
               >
-                <Heart size={18} fill={isInWatchlist(movie.id) ? 'currentColor' : 'none'} />
-                {isInWatchlist(movie.id) ? 'Saved' : 'Watchlist'}
+                <span className="text-[20px] leading-none mb-1">+</span>
               </button>
 
-              <button className="hidden md:flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white px-5 py-3.5 rounded-md font-medium text-[15px] transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white/15 hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md">
+              <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-105">
                 <Info size={18} />
-                More Info
               </button>
             </motion.div>
           </motion.div>

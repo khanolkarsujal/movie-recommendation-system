@@ -3,10 +3,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import EpisodeCard from './EpisodeCard';
 
 function EpisodeRow({ title, episodes, label, seeAll = true }) {
-  const rowRef        = useRef(null);
-  const [rowHovered,  setRowHovered]  = useState(false);
-  const [showLeft,    setShowLeft]    = useState(false);
-  const [showRight,   setShowRight]   = useState(true);
+  const rowRef = useRef(null);
+  const [rowHovered, setRowHovered] = useState(false);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(true);
 
   const scroll = (dir) => {
     rowRef.current?.scrollBy({
@@ -39,14 +39,14 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
       onMouseLeave={() => setRowHovered(false)}
     >
       {/* Improvement 5: Section Labels Upgrade */}
-      <div className="flex items-end justify-between px-8 md:px-16 mb-4">
+      <div className="flex items-end justify-between px-8 md:px-[80px] mb-3">
         <div>
           {label && (
-            <p className="text-[11px] font-bold text-[#8b5cf6] tracking-[1.5px] uppercase mb-1">
+            <p className="text-[10px] font-bold text-[#8b5cf6] tracking-[2px] uppercase mb-0.5">
               {label}
             </p>
           )}
-          <h2 className="text-[18px] md:text-[20px] font-bold text-white/90">
+          <h2 className="text-[18px] md:text-[22px] font-bold text-white/95 tracking-tight">
             {title}
           </h2>
         </div>
@@ -59,7 +59,7 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
 
       {/* Row Wrapper for arrows positioning */}
       <div className="relative group">
-        {/* Left Arrow - Bug 6 Fix */}
+        {/* Left Arrow */}
         <button
           onClick={() => scroll('left')}
           style={{
@@ -68,12 +68,11 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             transition: 'opacity 0.2s ease',
             position: 'absolute',
             left: '0px',
-            top: '65px', // Center of 130px card
-            transform: 'translateY(-50%)',
-            zIndex: 50,
-            width: '48px',
-            height: '100px',
-            background: 'linear-gradient(to right, rgba(0,0,0,0.9), transparent)',
+            top: '10px', // Start of card
+            height: '158px',
+            zIndex: 60,
+            width: '60px',
+            background: 'linear-gradient(to right, rgba(5,5,8,0.95), transparent)',
             border: 'none',
             cursor: 'pointer',
             display: 'flex',
@@ -81,35 +80,68 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             justifyContent: 'center',
           }}
         >
-          <ChevronLeft size={28} color="white" strokeWidth={2.5} />
+          <ChevronLeft size={36} color="white" strokeWidth={2.5} />
         </button>
 
         {/* Cards container */}
         <div
           ref={rowRef}
           onScroll={onScroll}
+          onMouseDown={(e) => {
+            const el = rowRef.current;
+            if (!el) return;
+            el.isDown = true;
+            el.startX = e.pageX - el.offsetLeft;
+            el.scrollLeftInitial = el.scrollLeft;
+            el.style.cursor = 'grabbing';
+            el.style.scrollBehavior = 'auto'; // Disable smooth scroll during drag
+          }}
+          onMouseLeave={() => {
+            const el = rowRef.current;
+            if (!el) return;
+            el.isDown = false;
+            el.style.cursor = 'grab';
+          }}
+          onMouseUp={() => {
+            const el = rowRef.current;
+            if (!el) return;
+            el.isDown = false;
+            el.style.cursor = 'grab';
+            el.style.scrollBehavior = 'smooth';
+          }}
+          onMouseMove={(e) => {
+            const el = rowRef.current;
+            if (!el || !el.isDown) return;
+            e.preventDefault();
+            const x = e.pageX - el.offsetLeft;
+            const walk = (x - el.startX) * 1.5; // Drag speed factor
+            el.scrollLeft = el.scrollLeftInitial - walk;
+          }}
           style={{
             display: 'flex',
             overflowX: 'auto',
             overflowY: 'visible',
-            gap: '12px',
-            padding: '8px 80px 180px 80px', // Space for hover
+            gap: '20px',
+            padding: '10px 80px 20px 80px',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
+            cursor: 'grab',
+            scrollSnapType: 'x proximity'
           }}
-          className="row-scroll no-scrollbar"
+          className="row-scroll no-scrollbar select-none"
         >
           {episodes.map((ep, i) => (
-            <EpisodeCard 
-              key={ep.id} 
-              episode={ep} 
-              index={i} 
-              isContinueWatching={isContinueWatching} 
-            />
+            <div key={ep.id} className="scroll-snap-align-start">
+              <EpisodeCard
+                episode={ep}
+                index={i}
+                isContinueWatching={isContinueWatching}
+              />
+            </div>
           ))}
         </div>
 
-        {/* Right Arrow - Bug 6 Fix */}
+        {/* Right Arrow */}
         <button
           onClick={() => scroll('right')}
           style={{
@@ -118,12 +150,11 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             transition: 'opacity 0.2s ease',
             position: 'absolute',
             right: '0px',
-            top: '65px', // Center of 130px card
-            transform: 'translateY(-50%)',
-            zIndex: 50,
-            width: '48px',
-            height: '100px',
-            background: 'linear-gradient(to left, rgba(0,0,0,0.9), transparent)',
+            top: '10px',
+            height: '158px',
+            zIndex: 60,
+            width: '60px',
+            background: 'linear-gradient(to left, rgba(5,5,8,0.95), transparent)',
             border: 'none',
             cursor: 'pointer',
             display: 'flex',
@@ -131,7 +162,7 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             justifyContent: 'center',
           }}
         >
-          <ChevronRight size={28} color="white" strokeWidth={2.5} />
+          <ChevronRight size={36} color="white" strokeWidth={2.5} />
         </button>
       </div>
     </div>

@@ -160,10 +160,10 @@ const SeasonTabs = ({ seasons, activeTab, setActiveTab }) => {
               style={{
                 position: 'absolute',
                 bottom: 8, // aligned with the bottom of the buttons
-                height: 3,
-                background: 'linear-gradient(90deg, #8b5cf6, #a78bfa)',
-                borderRadius: 3,
-                boxShadow: '0 0 8px rgba(139,92,246,0.6)',
+                height: 2,
+                background: '#3b82f6', // Matching the blue 'S' badge
+                borderRadius: 2,
+                boxShadow: '0 0 8px rgba(59,130,246,0.6)',
                 zIndex: 2,
               }}
             />
@@ -192,22 +192,6 @@ const SeasonTabs = ({ seasons, activeTab, setActiveTab }) => {
                 >
                   <span className="relative z-10 flex items-center">
                     {season}
-                    
-                    {/* Episode Count Badge */}
-                    <span 
-                      className="ml-[6px] inline-flex items-center justify-center px-[7px] py-[1px] rounded-[10px] text-[11px] font-semibold transition-all duration-200"
-                      style={isActive ? {
-                        background: 'rgba(139,92,246,0.3)',
-                        color: 'rgba(255,255,255,0.9)',
-                        border: '1px solid rgba(139,92,246,0.4)',
-                      } : {
-                        background: 'rgba(255,255,255,0.1)',
-                        color: 'rgba(255,255,255,0.6)',
-                        border: '1px solid transparent',
-                      }}
-                    >
-                      {count}
-                    </span>
                   </span>
 
                   {/* Hover underline (for inactive tabs) */}

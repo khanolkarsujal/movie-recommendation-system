@@ -1,37 +1,16 @@
 import React from 'react';
 import Sidebar from './components/Sidebar';
-import { Search, Play, Plus, Info } from 'lucide-react';
+import Navbar from './components/Navbar';
+import { Play, Plus, Info } from 'lucide-react';
 
 function App() {
   return (
     <div className="flex min-h-screen bg-[#0d0d0d] text-white">
       <Sidebar />
+      <Navbar />
       
       {/* Main Content Area */}
       <main className="flex-grow pl-16">
-        {/* Header */}
-        <header className="flex items-center justify-between p-6 bg-gradient-to-b from-black/50 to-transparent absolute top-0 left-16 right-0 z-10">
-          <nav className="flex items-center gap-8 ml-4">
-            <a href="#" className="text-white font-medium hover:text-white/80 transition-colors">Home</a>
-            <a href="#" className="text-gray-400 font-medium hover:text-white/80 transition-colors">Browse</a>
-            <a href="#" className="text-gray-400 font-medium hover:text-white/80 transition-colors">Kids</a>
-            <a href="#" className="text-gray-400 font-medium hover:text-white/80 transition-colors">Support</a>
-            <a href="#" className="text-gray-400 font-medium hover:text-white/80 transition-colors">FAQ</a>
-          </nav>
-          
-          <div className="flex items-center gap-6 mr-4">
-            <button className="text-gray-400 hover:text-white transition-colors">
-              <Search size={22} />
-            </button>
-            <div className="relative">
-              <div className="w-2 h-2 bg-red-500 rounded-full absolute -top-0.5 -right-0.5 border border-[#0d0d0d]" />
-              <button className="text-gray-400 hover:text-white transition-colors">
-                <Search size={22} className="opacity-0" /> {/* Spacer for the real bell if I had one here */}
-                {/* Reusing icons since I'm focusing on the sidebar design but making the UI look complete */}
-              </button>
-            </div>
-          </div>
-        </header>
 
         {/* Hero Section */}
         <div className="relative h-[85vh] w-full overflow-hidden">

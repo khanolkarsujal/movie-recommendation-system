@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -11,7 +12,6 @@ import Home from './pages/Home';
  *   • Mounts the current page inside <main>
  *
  * State / data logic lives in the page components (pages/Home.jsx).
- * When react-router-dom is added, <Routes> will replace <Home /> here.
  */
 function App() {
   return (
@@ -24,7 +24,14 @@ function App() {
 
       {/* Page content — offset left for sidebar width (64px) */}
       <main className="flex-grow pl-[64px]">
-        <Home />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/analytics" element={<div className="p-8">Analytics Page</div>} />
+          <Route path="/profile" element={<div className="p-8">Profile Page</div>} />
+          <Route path="/schedule" element={<div className="p-8">Schedule Page</div>} />
+          <Route path="/activity" element={<div className="p-8">Activity Page</div>} />
+          <Route path="/notifications" element={<div className="p-8">Notifications Page</div>} />
+        </Routes>
       </main>
     </div>
   );

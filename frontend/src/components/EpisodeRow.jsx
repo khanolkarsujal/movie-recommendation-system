@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import EpisodeCard from './EpisodeCard';
 
@@ -11,93 +11,104 @@ function EpisodeRow({ title, episodes }) {
   const scroll = (direction) => {
     const el = scrollRef.current;
     if (!el) return;
-    const amount = direction === 'right' ? 480 : -480;
+    // Scroll by roughly the visible container width minus one card to keep context
+    const scrollAmount = Math.max(el.clientWidth - 280, 500); 
+    const amount = direction === 'right' ? scrollAmount : -scrollAmount;
     el.scrollBy({ left: amount, behavior: 'smooth' });
   };
 
   const handleScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    setCanScrollLeft(el.scrollLeft > 5);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
   };
+
+  // Initial check in case window size changes
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('resize', handleScroll);
+    return () => window.removeEventListener('resize', handleScroll);
+  }, [episodes]);
 
   return (
     <div
-      className="relative mb-10"
+      className="relative mb-12 group/row"
       onMouseEnter={() => setSectionHovered(true)}
       onMouseLeave={() => setSectionHovered(false)}
     >
-      {/* Section header */}
-      <div className="flex items-center justify-between px-[80px] mb-3">
-        <h2 className="text-[16px] font-semibold text-white tracking-tight">
+      {/* Section Header */}
+      <div className="flex items-center justify-between px-[24px] md:px-[80px] mb-3 md:mb-4">
+        <h2 className="text-[18px] md:text-[20px] font-bold text-white/90 tracking-tight flex items-center gap-3 hover:text-white transition-colors cursor-pointer group/title">
           {title}
+          <div className="opacity-0 group-hover/title:opacity-100 -translate-x-4 group-hover/title:translate-x-0 transition-all duration-300 flex items-center text-[12px] font-bold text-[#8b5cf6]">
+            Explore All <ChevronRight size={14} className="ml-0.5" />
+          </div>
         </h2>
-        <button className="flex items-center gap-1 text-[13px] text-white/40 hover:text-white/80 transition-colors duration-200">
-          View All
-          <ChevronRight size={14} />
-        </button>
       </div>
 
-      {/* Scroll wrapper with fade edges */}
+      {/* Scroll Wrapper */}
       <div className="relative">
-        {/* Left fade edge */}
+        {/* Left Fade Edge */}
         <div
-          className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+          className="absolute left-0 top-0 bottom-[24px] w-[24px] md:w-[80px] z-10 pointer-events-none"
           style={{
-            background: 'linear-gradient(to right, #0d0d0d, transparent)',
+            background: 'linear-gradient(to right, #050508, transparent)',
             opacity: canScrollLeft ? 1 : 0,
-            transition: 'opacity 0.2s ease',
+            transition: 'opacity 0.3s ease',
           }}
         />
-        {/* Right fade edge */}
+        
+        {/* Right Fade Edge */}
         <div
-          className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+          className="absolute right-0 top-0 bottom-[24px] w-[24px] md:w-[80px] z-10 pointer-events-none"
           style={{
-            background: 'linear-gradient(to left, #0d0d0d, transparent)',
+            background: 'linear-gradient(to left, #050508, transparent)',
             opacity: canScrollRight ? 1 : 0,
-            transition: 'opacity 0.2s ease',
+            transition: 'opacity 0.3s ease',
           }}
         />
 
-        {/* Left arrow button */}
+        {/* Left Scroll Button */}
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="absolute left-[60px] top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-black/70 backdrop-blur-sm text-white hover:bg-black/90 hover:border-white/40 transition-all duration-200"
+            className="absolute left-[8px] md:left-[24px] top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-full max-h-[158px] rounded-r-lg flex items-center justify-center bg-black/40 hover:bg-black/80 text-white transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-white"
             style={{
               opacity: sectionHovered ? 1 : 0,
-              transform: `translateY(-50%) scale(${sectionHovered ? 1 : 0.8})`,
-              transition: 'opacity 0.2s ease, transform 0.2s ease',
+              transform: `translateY(-50%) translateX(${sectionHovered ? '0' : '-10px'})`,
               pointerEvents: sectionHovered ? 'auto' : 'none',
+              backdropFilter: 'blur(4px)'
             }}
+            aria-label="Scroll left"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={32} className="opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 hover:scale-125" />
           </button>
         )}
 
-        {/* Right arrow button */}
+        {/* Right Scroll Button */}
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-black/70 backdrop-blur-sm text-white hover:bg-black/90 hover:border-white/40 transition-all duration-200"
+            className="absolute right-[8px] md:right-[24px] top-1/2 -translate-y-1/2 z-20 w-10 md:w-12 h-full max-h-[158px] rounded-l-lg flex items-center justify-center bg-black/40 hover:bg-black/80 text-white transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-white"
             style={{
               opacity: sectionHovered ? 1 : 0,
-              transform: `translateY(-50%) scale(${sectionHovered ? 1 : 0.8})`,
-              transition: 'opacity 0.2s ease, transform 0.2s ease',
+              transform: `translateY(-50%) translateX(${sectionHovered ? '0' : '10px'})`,
               pointerEvents: sectionHovered ? 'auto' : 'none',
+              backdropFilter: 'blur(4px)'
             }}
+            aria-label="Scroll right"
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={32} className="opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 hover:scale-125" />
           </button>
         )}
 
-        {/* Horizontal scroll strip */}
+        {/* Horizontal Card Strip */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex flex-row gap-3 overflow-x-auto overflow-y-visible pb-6 px-[80px]"
-          style={{ scrollbarWidth: 'none' }}
+          className="flex flex-row gap-3 overflow-x-auto overflow-y-visible pb-6 pt-2 px-[24px] md:px-[80px]"
+          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           {episodes.map((episode, index) => (
             <EpisodeCard key={episode.id} episode={episode} index={index} />

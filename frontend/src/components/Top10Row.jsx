@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import EpisodeCard from './EpisodeCard';
 
-function EpisodeRow({ title, episodes, label, seeAll = true }) {
+function Top10Row({ title, episodes }) {
   const rowRef        = useRef(null);
   const [rowHovered,  setRowHovered]  = useState(false);
   const [showLeft,    setShowLeft]    = useState(false);
@@ -30,36 +30,22 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
     return () => el?.removeEventListener('scroll', onScroll);
   }, []);
 
-  const isContinueWatching = title.toLowerCase().includes('continue watching');
-
   return (
     <div
       className="movie-row relative mb-12"
       onMouseEnter={() => setRowHovered(true)}
       onMouseLeave={() => setRowHovered(false)}
     >
-      {/* Improvement 5: Section Labels Upgrade */}
-      <div className="flex items-end justify-between px-8 md:px-16 mb-4">
-        <div>
-          {label && (
-            <p className="text-[11px] font-bold text-[#8b5cf6] tracking-[1.5px] uppercase mb-1">
-              {label}
-            </p>
-          )}
-          <h2 className="text-[18px] md:text-[20px] font-bold text-white/90">
-            {title}
-          </h2>
-        </div>
-        {seeAll && (
-          <a className="text-[13px] font-bold text-[#8b5cf6] hover:text-[#a78bfa] transition-colors cursor-pointer">
-            See All →
-          </a>
-        )}
+      <div className="px-8 md:px-16 mb-6">
+        <p className="text-[11px] font-bold text-[#8b5cf6] tracking-[1.5px] uppercase mb-1">
+          GLOBAL TRENDING
+        </p>
+        <h2 className="text-[20px] font-bold text-white/90">
+          {title}
+        </h2>
       </div>
 
-      {/* Row Wrapper for arrows positioning */}
       <div className="relative group">
-        {/* Left Arrow - Bug 6 Fix */}
         <button
           onClick={() => scroll('left')}
           style={{
@@ -68,11 +54,11 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             transition: 'opacity 0.2s ease',
             position: 'absolute',
             left: '0px',
-            top: '65px', // Center of 130px card
+            top: '120px', // Center of 240px card
             transform: 'translateY(-50%)',
             zIndex: 50,
             width: '48px',
-            height: '100px',
+            height: '140px',
             background: 'linear-gradient(to right, rgba(0,0,0,0.9), transparent)',
             border: 'none',
             cursor: 'pointer',
@@ -84,32 +70,26 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
           <ChevronLeft size={28} color="white" strokeWidth={2.5} />
         </button>
 
-        {/* Cards container */}
         <div
           ref={rowRef}
           onScroll={onScroll}
-          style={{
-            display: 'flex',
-            overflowX: 'auto',
-            overflowY: 'visible',
-            gap: '12px',
-            padding: '8px 80px 180px 80px', // Space for hover
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
-          className="row-scroll no-scrollbar"
+          className="flex overflow-x-auto overflow-y-visible gap-16 px-8 md:px-16 pb-4 no-scrollbar"
+          style={{ scrollPaddingLeft: '80px' }}
         >
-          {episodes.map((ep, i) => (
-            <EpisodeCard 
-              key={ep.id} 
-              episode={ep} 
-              index={i} 
-              isContinueWatching={isContinueWatching} 
-            />
+          {episodes.slice(0, 10).map((ep, i) => (
+            <div key={ep.id} className="top10-card relative flex-shrink-0 group/card" style={{ width: 220, height: 240 }}>
+              <span className="rank-number">{i + 1}</span>
+              <div className="relative z-10 ml-10 w-40 h-60 rounded-lg overflow-hidden shadow-2xl transition-transform duration-300 group-hover/card:scale-105 group-hover/card:shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+                <img 
+                  src={ep.thumbnail?.startsWith('http') ? ep.thumbnail : `https://image.tmdb.org/t/p/w500${ep.thumbnail}`} 
+                  alt={ep.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* Right Arrow - Bug 6 Fix */}
         <button
           onClick={() => scroll('right')}
           style={{
@@ -118,11 +98,11 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
             transition: 'opacity 0.2s ease',
             position: 'absolute',
             right: '0px',
-            top: '65px', // Center of 130px card
+            top: '120px',
             transform: 'translateY(-50%)',
             zIndex: 50,
             width: '48px',
-            height: '100px',
+            height: '140px',
             background: 'linear-gradient(to left, rgba(0,0,0,0.9), transparent)',
             border: 'none',
             cursor: 'pointer',
@@ -138,4 +118,4 @@ function EpisodeRow({ title, episodes, label, seeAll = true }) {
   );
 }
 
-export default memo(EpisodeRow);
+export default memo(Top10Row);

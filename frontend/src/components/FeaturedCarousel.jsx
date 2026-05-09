@@ -120,8 +120,8 @@ const getImg = (path) => path?.startsWith('http') ? path : `https://image.tmdb.o
 // ─── Single Carousel Card ────────────────────────────────────────────────────
 const CarouselCard = memo(({ item, position, onClick }) => {
   const isCenter = position === 0;
-  const isLeft   = position === -1;
-  const isRight  = position === 1;
+  const isLeft = position === -1;
+  const isRight = position === 1;
   const isHidden = Math.abs(position) > 1;
 
   const navigate = useNavigate();
@@ -130,10 +130,10 @@ const CarouselCard = memo(({ item, position, onClick }) => {
 
   if (isHidden) return null;
 
-  const scale   = isCenter ? 1 : 0.82;
+  const scale = isCenter ? 1 : 0.82;
   const opacity = isCenter ? 1 : 0.45;
-  const zIndex  = isCenter ? 10 : 5;
-  const x       = isCenter ? '0%' : isLeft ? '-72%' : '72%';
+  const zIndex = isCenter ? 10 : 5;
+  const x = isCenter ? '0%' : isLeft ? '-72%' : '72%';
 
   return (
     <motion.div
@@ -236,11 +236,10 @@ const CarouselCard = memo(({ item, position, onClick }) => {
               {item.progress > 0 ? 'Continue' : 'Play Now'}
             </button>
             <button
-              className={`flex items-center justify-center gap-2 border text-white px-5 py-3 rounded-lg font-semibold text-[14px] transition-all hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md ${
-                inWatchlist
+              className={`flex items-center justify-center gap-2 border text-white px-5 py-3 rounded-lg font-semibold text-[14px] transition-all hover:-translate-y-[2px] outline-none focus-visible:ring-4 focus-visible:ring-white/50 backdrop-blur-md ${inWatchlist
                   ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-[var(--accent)]'
                   : 'bg-white/10 border-white/20 hover:bg-white/20'
-              }`}
+                }`}
               onClick={(e) => {
                 e.stopPropagation();
                 if (inWatchlist) {
@@ -266,9 +265,9 @@ const CarouselCard = memo(({ item, position, onClick }) => {
 // ─── Main Carousel Component ──────────────────────────────────────────────────
 function FeaturedCarousel() {
   const [current, setCurrent] = useState(0);
-  const [paused,  setPaused]  = useState(false);
-  const [modal,   setModal]   = useState(null);
-  const N                     = CAROUSEL_ITEMS.length;
+  const [paused, setPaused] = useState(false);
+  const [modal, setModal] = useState(null);
+  const N = CAROUSEL_ITEMS.length;
 
   // Auto-advance every 6s
   useEffect(() => {
@@ -289,7 +288,7 @@ function FeaturedCarousel() {
   // Keyboard
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === 'ArrowLeft')  prev();
+      if (e.key === 'ArrowLeft') prev();
       if (e.key === 'ArrowRight') next();
     };
     window.addEventListener('keydown', onKey);

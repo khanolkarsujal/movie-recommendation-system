@@ -17,8 +17,8 @@ import {
 import avatarImg from '../assets/avatar.png';
 
 const navItems = [
-  { id: 'home',          icon: Home,      path: '/browse',    label: 'Home' },
-  { id: 'movies',        icon: Film,      path: '/movies',    label: 'Browse' },
+  { id: 'home',          icon: Home,      path: '/',          label: 'Home' },
+  { id: 'movies',        icon: Film,      path: '/browse',    label: 'Browse' },
   { id: 'watchlist',     icon: Heart,     path: '/watchlist', label: 'Watchlist' },
   { id: 'analytics',    icon: BarChart2,  path: '/analytics', label: 'Analytics' },
   { id: 'profile',      icon: UserRound,  path: '/profile',   label: 'Profile' },

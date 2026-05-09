@@ -187,7 +187,7 @@ const Hero = () => {
 
   return (
     <section 
-      className="relative w-full h-[85vh] md:h-screen overflow-hidden bg-[#050508]"
+      className="relative w-full h-screen min-h-screen overflow-hidden bg-[#050508]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onMouseMove={handleMouseMove}

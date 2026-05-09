@@ -73,9 +73,8 @@ function App() {
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/"          element={<Profile />} />
-              <Route path="/browse"    element={<Home />} />
-              <Route path="/movies"    element={<Browse />} />
+              <Route path="/"          element={<Home />} />
+              <Route path="/browse"    element={<Browse />} />
               <Route path="/watchlist" element={<Watchlist />} />
               <Route path="/watch"     element={<Watch />} />
               <Route path="/analytics" element={<Analytics />} />

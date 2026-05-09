@@ -273,3 +273,49 @@ html {
 .row-scroll::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOP 10 RANK NUMBERS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.rank-number {
+  font-size: 120px;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 3px rgba(255,255,255,0.4);
+  position: absolute;
+  left: -20px;
+  bottom: -15px;
+  z-index: 0;
+  font-family: 'Arial Black', sans-serif;
+  line-height: 1;
+  user-select: none;
+  transition: -webkit-text-stroke 0.3s ease;
+}
+
+.top10-card:hover .rank-number {
+  -webkit-text-stroke: 3px var(--accent);
+}
+
+/* ── AI Button Pulse Ring ────────────────────────────────────────────────── */
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0;   }
+}
+
+.ai-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  animation: pulse-ring 2s ease infinite;
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.text-shadow-strong {
+  text-shadow: 0 4px 24px rgba(0,0,0,0.8);
+}

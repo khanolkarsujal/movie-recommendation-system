@@ -25,10 +25,7 @@ export default function AiButton() {
           className="fixed bottom-8 right-8 z-[500]"
         >
           {/* Pulsing ring */}
-          <div
-            className="absolute inset-0 rounded-full animate-ping opacity-30"
-            style={{ background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', animationDuration: '2s' }}
-          />
+          <div className="ai-pulse-ring" />
 
           {/* Tooltip */}
           <AnimatePresence>
@@ -39,7 +36,7 @@ export default function AiButton() {
                 exit={{ opacity: 0, x: 8 }}
                 className="absolute right-[68px] top-1/2 -translate-y-1/2 whitespace-nowrap bg-[#1a1a22] border border-white/10 rounded-lg px-3 py-2 text-[12px] font-semibold text-white shadow-xl backdrop-blur-md pointer-events-none"
               >
-                ✨ Get AI Recommendations
+                ✨ AI Movie Assistant
                 <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-6 border-transparent border-l-[#1a1a22]" />
               </motion.div>
             )}
@@ -58,6 +55,9 @@ export default function AiButton() {
             }}
           >
             <Sparkles size={22} />
+            
+            {/* Notification Dot */}
+            <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-[#050508] shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
           </button>
         </motion.div>
       )}

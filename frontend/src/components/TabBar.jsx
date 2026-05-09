@@ -4,4 +4,4 @@
  * `import TabBar from './TabBar'` path per the folder structure spec.
  * All sliding-indicator logic and CSS stay in SeasonTabs.jsx.
  */
-export { default } from './SeasonTabs';
+export { default } from './SeasonTabBar';

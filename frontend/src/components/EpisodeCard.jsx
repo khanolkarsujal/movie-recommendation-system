@@ -1,12 +1,23 @@
 import React, { useState, useCallback, useRef, memo } from 'react';
-import { Play, Heart, ThumbsUp, ChevronDown } from 'lucide-react';
+import { Play, Heart, ChevronDown, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { GENRE_COLORS } from '../data/movies';
 import useStore from '../store/useStore';
 
-const getImg = (path) => path?.startsWith('http') ? path : `https://image.tmdb.org/t/p/w500${path}`;
+const getImg = (episode) => {
+  // Use TMDB paths if they exist (though mock data might not have them yet, we prepare the logic)
+  if (episode.poster_path) return `https://image.tmdb.org/t/p/w500${episode.poster_path}`;
+  if (episode.backdrop_path) return `https://image.tmdb.org/t/p/w780${episode.backdrop_path}`;
+  
+  // Fallback for current mock data which uses thumbnail or thumb
+  const path = episode.thumbnail || episode.thumb;
+  if (path?.startsWith('http')) return path;
+  if (path) return `https://image.tmdb.org/t/p/w500${path}`;
+  
+  // Last resort
+  return `https://picsum.photos/seed/${episode.id || 'movie'}/400/225`;
+};
 
 function matchColor(score) {
   if (score >= 75) return '#22c55e';
@@ -14,10 +25,9 @@ function matchColor(score) {
   return '#ef4444';
 }
 
-function EpisodeCard({ episode, index }) {
+function EpisodeCard({ episode, index, isContinueWatching = false }) {
   const [hovered, setHovered] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [animating, setAnimating] = useState(false);
   const hoverTimerRef = useRef(null);
   const navigate = useNavigate();
@@ -38,11 +48,9 @@ function EpisodeCard({ episode, index }) {
   }, []);
 
   const handleCardClick = useCallback((e) => {
-    // 1. Animate card
     setAnimating(true);
     setTimeout(() => setAnimating(false), 150);
 
-    // 2. Set Hero Movie for swap
     const normalizedHero = {
       id: episode.id,
       title: episode.title,
@@ -53,16 +61,14 @@ function EpisodeCard({ episode, index }) {
       rating: '16+',
       quality: ['HD'],
       description: episode.description || 'Experience this incredible title now streaming.',
-      image: getImg(episode.thumbnail),
+      image: getImg(episode),
       logo: episode.title,
       video: 'https://www.w3schools.com/html/mov_bbb.mp4',
       isCustom: true
     };
     
-    setTimeout(() => {
-      setHeroMovie(normalizedHero);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300);
+    setHeroMovie(normalizedHero);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [episode, matchScore, setHeroMovie]);
 
   return (
@@ -83,194 +89,112 @@ function EpisodeCard({ episode, index }) {
         className="absolute left-1/2 rounded-md shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden bg-[#141414] origin-bottom cursor-pointer"
         initial={{ width: 220, height: 130, x: '-50%', y: 0, scale: 1, borderRadius: 8 }}
         animate={{
-          width: hovered ? 280 : 220,
-          height: hovered ? 'auto' : 130,
-          scale: hovered ? 1.05 : 1,
-          y: hovered ? -30 : 0, // Moves upward from bottom edge
+          width: hovered ? 260 : 220,
+          height: hovered ? 180 : 130, // Max 200px tall per audit
+          y: hovered ? -40 : 0,
+          scale: hovered ? 1.1 : 1,
           borderRadius: hovered ? 12 : 8
         }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-        style={{ minHeight: hovered ? 320 : 130 }}
+        style={{ minHeight: hovered ? 180 : 130 }}
       >
         {/* ── BG Image / Video ── */}
-        <div className="relative w-full overflow-hidden" style={{ height: 157 }}>
+        <div className="relative w-full overflow-hidden" style={{ height: 110 }}>
           <img
-            src={getImg(episode.thumbnail)}
+            src={getImg(episode)}
             alt={episode.title}
             loading="lazy"
-            onError={(e) => e.target.src = `https://picsum.photos/seed/${episode.id || 'movie'}/400/225`}
             className="w-full h-full object-cover"
           />
           
-
-
-          {!hovered && (
-            <div className="absolute bottom-2 right-2 z-20 bg-black/60 backdrop-blur-sm rounded-[4px] px-1.5 py-0.5">
-              <span className="text-[11px] font-semibold text-white/90">{episode.duration || '22m'}</span>
+          {/* Progress bar for continue watching (always visible) */}
+          {isContinueWatching && episode.progress > 0 && (
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white/20">
+              <div 
+                className="h-full bg-[#8b5cf6]" 
+                style={{ width: `${episode.progress}%` }} 
+              />
             </div>
           )}
 
-          {/* Center play overlay */}
-          <AnimatePresence>
-            {hovered && !showVideo && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
-              >
-                <div className="w-12 h-12 rounded-full bg-black/50 border border-white/20 flex items-center justify-center backdrop-blur-md">
-                  <Play size={20} fill="white" className="ml-1 opacity-80" />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!hovered && (
+            <div className="absolute bottom-2 right-2 z-20 bg-black/60 backdrop-blur-sm rounded-[4px] px-1.5 py-0.5">
+              <span className="text-[10px] font-semibold text-white/90">{episode.duration || '22m'}</span>
+            </div>
+          )}
 
-          {/* Video */}
-          <AnimatePresence>
-            {showVideo && (
-              <motion.video
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
+          {/* Video Overlay */}
+          {showVideo && (
+            <Suspense fallback={null}>
+              <video
                 src="https://www.w3schools.com/html/mov_bbb.mp4"
-                autoPlay muted loop playsInline
+                autoPlay
+                muted
+                loop
                 className="absolute inset-0 w-full h-full object-cover z-10"
-                style={{ filter: 'brightness(0.85) saturate(1.1)' }}
               />
-            )}
-          </AnimatePresence>
-          
-          {/* Gradient for title if no video */}
-          {!showVideo && !hovered && <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/80 to-transparent" />}
+            </Suspense>
+          )}
         </div>
 
-        {/* ── Base Title if not hovered ── */}
-        {!hovered && (
-          <div className="absolute bottom-0 left-0 right-0 z-20 px-3 pb-3 pointer-events-none">
-            <h3 className="text-[13px] font-bold text-white leading-tight line-clamp-1 drop-shadow-md">
+        {/* ── Content ── */}
+        <div className="px-3 py-2">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <h3 className="text-[13px] font-bold text-white leading-tight line-clamp-1">
               {episode.title}
             </h3>
+            {hovered && (
+              <span className="text-[10px] text-white/50 whitespace-nowrap">
+                {isContinueWatching ? `${Math.round(24 * (1 - episode.progress/100))} min left` : ''}
+              </span>
+            )}
           </div>
-        )}
 
-        {/* ── Hover Expansion Panel ── */}
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2, delay: 0.1 }}
-            className="px-4 py-3 bg-[#141414] w-full"
-          >
-            <h3 className="text-[15px] font-bold text-white leading-tight line-clamp-1">
-              {episode.title}
-            </h3>
-
-            {/* Match score bar */}
-            <div className="w-full h-[3px] bg-white/15 rounded-[2px] mt-2 mb-1.5 overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${matchScore}%` }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="h-full rounded-[2px]"
-                style={{ backgroundColor: matchColor(matchScore) }}
-              />
-            </div>
-            
-            {/* Metadata row */}
-            <div className="flex items-center gap-2 mb-2 text-[12px]">
-              <span className="font-bold" style={{ color: matchColor(matchScore) }}>{matchScore}% Match</span>
-              <span className="text-white/60">· {episode.year || 2026} · {episode.duration || '22m'} · <span className="border border-white/30 px-1 rounded-[3px] text-[10px]">HD</span></span>
-            </div>
-
-            {/* Genres */}
-            {episode.genres?.length > 0 && (
-              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-                {episode.genres.slice(0, 2).map(g => (
-                  <span key={g} className="text-[11px] text-white/70 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: GENRE_COLORS[g] || '#fff' }} />
-                    {g}
-                  </span>
-                ))}
+          {hovered ? (
+            <div className="space-y-2">
+              {/* Match bar */}
+              <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${matchScore}%` }}
+                  className="h-full"
+                  style={{ backgroundColor: matchColor(matchScore) }}
+                />
               </div>
-            )}
 
-            {/* Description */}
-            {episode.description && (
-              <p className="text-[11px] text-white/55 leading-[1.4] mb-3 line-clamp-2">
-                {episode.description}
-              </p>
-            )}
+              {/* Meta row */}
+              <div className="flex items-center gap-2 text-[10px] text-white/60">
+                <span className="font-bold text-[#22c55e]">{matchScore}% Match</span>
+                <span>{episode.year || 2026}</span>
+                <span>{episode.duration || '22m'}</span>
+                <span className="border border-white/30 px-1 rounded-[2px] text-[8px] font-bold">HD</span>
+              </div>
 
-            {/* ACTION BUTTONS ROW */}
-            <div className="flex items-center justify-start gap-2 pt-1 pb-1">
-              {/* Play Button */}
-              <button
-                onClick={(e) => { e.stopPropagation(); navigate(`/watch?title=${encodeURIComponent(episode.title)}`) }}
-                className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:bg-white/85 hover:scale-[1.08] active:scale-95 shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
-                title="Play"
-              >
-                <Play size={14} fill="black" className="ml-0.5 text-black" />
-              </button>
-              
-              {/* Watchlist Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (inWatchlist) {
-                    removeFromWatchlist(episode.id);
-                    toast('Removed from Watchlist', { icon: '🗑️', style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontSize: '14px', borderRadius: '10px' } });
-                  } else {
-                    addToWatchlist(episode);
-                    toast.success(`Added to Watchlist ✓`, { style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(139,92,246,0.4)', fontSize: '14px', borderRadius: '10px' }, iconTheme: { primary: '#8b5cf6', secondary: '#fff' } });
-                  }
-                }}
-                className="w-[34px] h-[34px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-300 hover:scale-[1.2] active:scale-95"
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  borderColor: inWatchlist ? '#8b5cf6' : 'rgba(255,255,255,0.4)',
-                }}
-                title={inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
-              >
-                <motion.div animate={{ scale: inWatchlist ? [1, 1.2, 1] : 1 }}>
-                  <Heart size={14} fill={inWatchlist ? '#8b5cf6' : 'none'} color={inWatchlist ? '#8b5cf6' : 'white'} />
-                </motion.div>
-              </button>
-
-              {/* Like Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setLiked(!liked);
-                  if (!liked) toast('Marked as Liked ✓', { style: { background: '#1a1a22', color: '#fff', border: '1px solid rgba(34,197,94,0.4)', fontSize: '14px', borderRadius: '10px' }, iconTheme: { primary: '#22c55e', secondary: '#fff' } });
-                }}
-                className="w-[34px] h-[34px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-300 hover:scale-[1.2] active:scale-95"
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  borderColor: liked ? '#22c55e' : 'rgba(255,255,255,0.4)',
-                }}
-                title="Like"
-              >
-                <motion.div animate={{ scale: liked ? [1, 1.2, 1] : 1 }}>
-                  <ThumbsUp size={14} fill={liked ? '#22c55e' : 'none'} color={liked ? '#22c55e' : 'white'} />
-                </motion.div>
-              </button>
-
-              {/* More Info Button - pushes to right */}
-              <button
-                className="w-[34px] h-[34px] rounded-full border-[1.5px] border-white/40 bg-white/10 flex items-center justify-center transition-all duration-300 hover:bg-white/20 hover:scale-[1.1] active:scale-95 ml-auto text-white"
-                title="More Info"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // More info logic could go here
-                }}
-              >
-                <ChevronDown size={14} />
-              </button>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-1">
+                <button className="w-7 h-7 rounded-full bg-white flex items-center justify-center hover:bg-white/80 transition-colors">
+                  <Play size={12} fill="black" stroke="black" />
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); inWatchlist ? removeFromWatchlist(episode.id) : addToWatchlist(episode); }}
+                  className="w-7 h-7 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors"
+                >
+                  <Heart size={12} fill={inWatchlist ? '#8b5cf6' : 'none'} color={inWatchlist ? '#8b5cf6' : 'white'} />
+                </button>
+                <button className="w-7 h-7 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors ml-auto">
+                  <ChevronDown size={12} />
+                </button>
+                {isContinueWatching && (
+                  <button className="w-7 h-7 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
             </div>
-          </motion.div>
-        )}
+          ) : (
+            <div className="h-4" /> // Spacer
+          )}
+        </div>
       </motion.div>
     </div>
   );

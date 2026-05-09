@@ -132,28 +132,28 @@
 
   /* ── CAROUSEL SIZING ── */
   --row-padding: 120px; /* 60px padding on each side */
-  --row-gap: 6px; /* gap-1.5 is 0.375rem = 6px */
-  --cards-per-view: 8;
+  --row-gap: 16px; /* gap-4 is 1rem = 16px */
+  --cards-per-view: 4;
   --card-width: calc((100vw - var(--row-padding) - (var(--row-gap) * (var(--cards-per-view) - 1))) / var(--cards-per-view));
 }
 
 @media (max-width: 1536px) {
-  :root { --cards-per-view: 6; }
+  :root { --cards-per-view: 4; }
 }
 @media (max-width: 1280px) {
-  :root { --cards-per-view: 5; }
+  :root { --cards-per-view: 3; }
 }
 @media (max-width: 1024px) {
-  :root { --cards-per-view: 4; }
+  :root { --cards-per-view: 2.5; }
 }
 @media (max-width: 768px) {
   :root { 
     --row-padding: 40px; /* px-5 is 20px * 2 */
-    --cards-per-view: 3; 
+    --cards-per-view: 2.2; 
   }
 }
 @media (max-width: 480px) {
-  :root { --cards-per-view: 2.2; } /* Peek effect on mobile */
+  :root { --cards-per-view: 1.2; } /* Peek effect on mobile */
 }
 
 

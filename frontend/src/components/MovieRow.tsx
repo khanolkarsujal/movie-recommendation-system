@@ -198,7 +198,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.1}
           onDragEnd={handleDragEnd}
-          className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing"
+          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing"
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           {movies.map((movie, index) => (

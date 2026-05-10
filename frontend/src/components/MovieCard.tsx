@@ -175,7 +175,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
         {/* Deep Cinematic Gradient Overlay */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 38%, transparent 65%)',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.7) 25%, transparent 50%)',
         }} />
 
         {/* Top Badges (Left) */}
@@ -195,7 +195,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         {/* Top Metadata (Right) */}
         <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
           {movie.duration && (
-            <div className="bg-black/55 backdrop-blur-sm border border-white/10 px-2 py-0.5 rounded-md text-[10px] text-white/90 font-semibold tracking-wide">
+            <div className="bg-white/10 backdrop-blur-md border border-white/30 px-2.5 py-[3px] rounded-full text-[10px] text-white/95 font-semibold tracking-wider shadow-sm flex items-center justify-center">
               {movie.duration}
             </div>
           )}

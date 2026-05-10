@@ -70,17 +70,17 @@ export const Top10Card: React.FC<Top10CardProps> = ({
     >
       {/* Large rank number */}
       <div
-        className="flex-shrink-0 select-none pointer-events-none flex items-end justify-center pb-2"
+        className="flex-shrink-0 select-none pointer-events-none flex items-end justify-center pb-2 transition-all duration-300"
         style={{
-          width: '80px',
+          width: '50px',
           height: '100%',
-          fontSize: rank < 10 ? '138px' : '98px',
+          fontSize: rank < 10 ? '72px' : '56px',
           fontWeight: 900,
           fontFamily: '"Helvetica Neue", Arial, sans-serif',
-          lineHeight: 0.82,
-          color: 'transparent',
-          WebkitTextStroke: '2px rgba(255, 255, 255, 0.38)',
-          textShadow: 'none',
+          lineHeight: 0.85,
+          color: isHovered ? 'rgba(139, 92, 246, 0.9)' : 'transparent',
+          WebkitTextStroke: isHovered ? '1.5px rgba(139, 92, 246, 1)' : '1.5px rgba(255, 255, 255, 0.38)',
+          textShadow: isHovered ? '0 0 20px rgba(139,92,246,0.5)' : 'none',
         }}
       >
         {rank}
@@ -100,7 +100,7 @@ export const Top10Card: React.FC<Top10CardProps> = ({
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.25) 45%, transparent 70%)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.7) 25%, transparent 50%)',
           }}
         />
 

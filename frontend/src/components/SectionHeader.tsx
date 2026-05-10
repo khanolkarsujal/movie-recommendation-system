@@ -57,8 +57,8 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         <div className="flex items-center gap-1.5 group/title">
           <h2
             style={{
-              fontSize: 20,
-              fontWeight: 600,
+              fontSize: 22,
+              fontWeight: 700,
               color: isHovered ? '#fff' : '#e0e0e0',
               lineHeight: 1.2,
               margin: 0,

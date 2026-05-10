@@ -13,114 +13,117 @@ interface LoadingScreenProps {
 }
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({
-  message, // OTT Standard: Default to no message. Let the logo do the talking.
+  message,
   fullscreen = true,
 }) => {
   return (
     <div
       className={`
         ${fullscreen ? 'fixed inset-0' : 'absolute inset-0'}
-        z-[9999] bg-[#141414] flex flex-col items-center justify-center overflow-hidden
+        z-[9999] bg-[#050508] flex flex-col items-center justify-center overflow-hidden
       `}
     >
-      {/* Cinematic Theater Spotlight Effect */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.08)_0%,transparent_60%)] pointer-events-none" />
-
-      {/* Animated brand logo */}
+      {/* Deep cinematic background glow */}
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{
-          scale: 1,
-          opacity: 1,
-        }}
-        transition={{
-          duration: 1.5,
-          ease: [0.22, 1, 0.36, 1], // Cinematic smooth ease-out
-        }}
-        className="relative z-10 flex flex-col items-center"
-      >
-        <div className="relative mb-8">
-          {/* Subtle Ambient Glow (Replaces the harsh blur) */}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.15)_0%,transparent_50%)] pointer-events-none"
+      />
+
+      <div className="relative z-10 flex flex-col items-center justify-center">
+        {/* Main Emblem - Cinematic Play/S Logo Reveal */}
+        <div className="relative w-32 h-32 flex items-center justify-center mb-8">
+          {/* Pulsing outer rings */}
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: [0, 0.4, 0], scale: [0.5, 1.5, 2] }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                delay: i * 0.8,
+                ease: "easeOut",
+              }}
+              className="absolute inset-0 rounded-full border border-[var(--brand-purple)]/30"
+            />
+          ))}
+
+          {/* Core glowing orb */}
           <motion.div
-            animate={{
-              opacity: [0.4, 0.8, 0.4],
-              scale: [1, 1.05, 1],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute inset-0 blur-2xl bg-[var(--brand-purple)]/50 rounded-full"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="absolute w-16 h-16 rounded-full bg-[var(--brand-purple)] blur-xl opacity-40"
           />
 
-          {/* Logo Container - Clean, Glassmorphic, TV-App Style */}
-          <motion.div
-            className="relative w-28 h-28 rounded-[28px] bg-gradient-to-br from-[#2a2a2a] to-[#141414] flex items-center justify-center
-                     shadow-[0_20px_40px_rgba(0,0,0,0.8)] border border-white/5"
+          {/* Logo Mark - sleek glowing 'S' / Stream symbol */}
+          <motion.svg
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            className="relative z-10 drop-shadow-[0_0_15px_rgba(139,92,246,0.8)]"
           >
-            <svg
-              width="56"
-              height="56"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Logo Path Drawing Animation (Netflix/Max style reveal) */}
-              <motion.path
-                d="M12 2L2 7L12 12L22 7L12 2Z"
-                fill="url(#logo-gradient)"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-              />
-              <motion.path
-                d="M2 17L12 22L22 17"
-                stroke="url(#logo-gradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ delay: 0.8, duration: 1, ease: "easeInOut" }}
-              />
-              <motion.path
-                d="M2 12L12 17L22 12"
-                stroke="url(#logo-gradient)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ delay: 0.6, duration: 1, ease: "easeInOut" }}
-              />
-
-              {/* Premium Gradient for the SVG */}
-              <defs>
-                <linearGradient id="logo-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#ffffff" />
-                  <stop offset="1" stopColor="var(--brand-purple, #8b5cf6)" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </motion.div>
+            <motion.path
+              d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 16.5V7.5L16 12L10 16.5Z"
+              fill="url(#premium-glow)"
+              initial={{ pathLength: 0, opacity: 0, scale: 0.8 }}
+              animate={{ pathLength: 1, opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+            />
+            <defs>
+              <linearGradient id="premium-glow" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#ffffff" />
+                <stop offset="0.5" stopColor="#e2e8f0" />
+                <stop offset="1" stopColor="var(--brand-purple, #8b5cf6)" />
+              </linearGradient>
+            </defs>
+          </motion.svg>
         </div>
 
-        {/* Elegant Progress/Buffer Ring (Replaces the horizontal bar and dots) */}
-        <div className="relative flex flex-col items-center">
-          <Spinner size={32} className="text-[var(--brand-purple)]" />
-
-          {/* Optional Message: Styled like a TV setup screen (e.g. "Optimizing Video...") */}
-          {message && (
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
-              className="mt-6 text-white/50 text-[11px] font-bold tracking-[0.2em] uppercase"
-            >
-              {message}
-            </motion.p>
-          )}
+        {/* Cinematic Text Reveal */}
+        <div className="overflow-hidden mb-8 h-8 flex items-center justify-center">
+          <motion.h1
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="text-white text-2xl font-black tracking-[0.2em] uppercase"
+            style={{ textShadow: '0 4px 20px rgba(139,92,246,0.5)' }}
+          >
+            StreamVault
+          </motion.h1>
         </div>
-      </motion.div>
+
+        {/* Premium Progress Bar */}
+        <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden relative">
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: '0%' }}
+            transition={{
+              duration: 2,
+              ease: [0.22, 1, 0.36, 1],
+              repeat: Infinity,
+              repeatType: "loop",
+              repeatDelay: 0.5
+            }}
+            className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-transparent via-[var(--brand-purple)] to-white rounded-full"
+          />
+        </div>
+
+        {/* Optional Sub-message */}
+        {message && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="mt-6 text-white/40 text-[11px] font-bold tracking-[0.2em] uppercase"
+          >
+            {message}
+          </motion.p>
+        )}
+      </div>
     </div>
   );
 };

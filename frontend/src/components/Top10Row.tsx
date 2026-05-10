@@ -142,7 +142,7 @@ export const Top10Row: React.FC<Top10RowProps> = ({
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.1}
           onDragEnd={handleDragEnd}
-          className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing py-4"
+          className="flex gap-5 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing py-4"
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           {top10Movies.map((movie, index) => (

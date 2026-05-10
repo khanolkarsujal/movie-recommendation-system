@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Play, Trash2, Info, Plus, Check, Filter, SortAsc } from 'lucide-react';
+import { Heart, Play, Trash2, Info, Plus, Check, Filter, SortAsc, Film, Bookmark, Grid, List } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useStore } from '../store';
+import { MovieRow } from '../components/MovieRow';
+import { trendingNow } from '../data/movies';
 import type { Movie } from './types';
 
 interface WatchlistCardProps {
@@ -213,87 +215,115 @@ const Watchlist: React.FC = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-12"
+        className="mb-8 flex items-start justify-between"
       >
-        <div className="flex items-center gap-4 mb-3">
-          <div className="w-12 h-12 rounded-full bg-[var(--brand-purple)]/20 flex items-center justify-center">
-            <Heart size={24} className="text-[var(--brand-purple)]" fill="currentColor" />
-          </div>
-          <h1 className="text-5xl font-black text-white tracking-tight">My Watchlist</h1>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <p className="text-white/40 text-[16px]">
+        <div>
+          <h1 className="text-[40px] font-medium text-white tracking-tight mb-3">My Watchlist</h1>
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--brand-purple)]/20 text-[var(--brand-purple)] text-[14px] font-medium tracking-wide">
             {watchlist.length} {watchlist.length === 1 ? 'title' : 'titles'} saved
-          </p>
-
-          {watchlist.length > 0 && (
-            <>
-              <span className="text-white/20">•</span>
-              <div className="flex items-center gap-2">
-                <SortAsc size={16} className="text-white/40" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-transparent border-none text-white/60 text-[14px] outline-none cursor-pointer
-                           hover:text-white transition-colors"
-                >
-                  <option value="recent">Recently Added</option>
-                  <option value="title">Title (A-Z)</option>
-                  <option value="year">Year</option>
-                </select>
-              </div>
-            </>
-          )}
+          </div>
         </div>
+        <div className="flex items-center gap-3">
+          <button className="w-10 h-10 rounded-[8px] border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors bg-transparent outline-none">
+            <Grid size={18} />
+          </button>
+          <button className="w-10 h-10 rounded-[8px] border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors bg-transparent outline-none">
+            <List size={18} />
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Filters and Sort */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        className="flex items-center justify-between mb-8 pb-8 border-b border-white/10"
+      >
+        <div className="flex items-center gap-3">
+          {['All', 'Movies', 'TV Shows', 'Documentaries'].map(tab => {
+            const isActive = (filterGenre === 'all' && tab === 'All') || filterGenre === tab;
+            return (
+              <button 
+                key={tab}
+                onClick={() => setFilterGenre(tab === 'All' ? 'all' : tab)}
+                className={`px-5 py-2.5 rounded-[8px] text-[14px] font-medium transition-all outline-none ${
+                  isActive
+                  ? 'border border-white/30 text-white bg-white/5'
+                  : 'border border-white/10 text-white/60 hover:border-white/20 hover:text-white'
+                }`}
+              >
+                {tab}
+              </button>
+            )
+          })}
+        </div>
+        
+        <button className="flex items-center gap-2 px-5 py-2.5 rounded-[8px] border border-white/10 text-white/80 hover:text-white hover:border-white/30 transition-all text-[14px] font-medium outline-none">
+          <SortAsc size={16} /> Sort
+        </button>
       </motion.div>
 
       {/* Content */}
       {watchlist.length === 0 ? (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col items-center justify-center py-32 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="flex flex-col items-center justify-center py-20 text-center"
         >
+          {/* Bookmark Icon Circle */}
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", duration: 0.8, delay: 0.3 }}
-            className="w-32 h-32 rounded-full bg-[var(--brand-purple)]/10 flex items-center justify-center mb-8
-                     border-2 border-[var(--brand-purple)]/20 relative"
+            className="w-24 h-24 rounded-full flex items-center justify-center mb-8
+                     border border-[var(--brand-purple)]/30 bg-[var(--brand-purple)]/10 relative"
           >
-            <div className="absolute inset-0 rounded-full bg-[var(--brand-purple)]/5 animate-pulse" />
-            <Heart size={56} className="text-[var(--brand-purple)]/40" />
+            <Bookmark size={32} className="text-[var(--brand-purple)]" strokeWidth={1.5} />
           </motion.div>
 
-          <h2 className="text-[36px] font-bold text-white mb-3 tracking-tight">
+          <h2 className="text-[28px] font-medium text-white mb-3 tracking-tight">
             Your watchlist is empty
           </h2>
-          <p className="text-white/45 mb-12 max-w-md text-[16px] leading-relaxed">
-            Discover amazing movies and shows, then add them here to watch later.
-            Build your perfect entertainment queue.
+          <p className="text-white/50 mb-10 max-w-sm text-[15px] leading-relaxed">
+            Browse content and tap the bookmark icon to save movies and shows for later.
           </p>
 
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <button
               onClick={() => navigate('/browse')}
-              className="px-8 py-4 bg-[var(--brand-purple)] text-white rounded-[6px] font-bold text-[15px]
-                       hover:bg-[var(--brand-purple)]/90 transition-all
-                       shadow-[0_8px_32px_rgba(139,92,246,0.4)] active:scale-95 outline-none
-                       flex items-center gap-2"
+              className="px-6 py-3 bg-transparent text-white rounded-[8px] font-medium text-[15px]
+                       border border-white/20 hover:bg-white/5 transition-all
+                       flex items-center gap-2 outline-none"
             >
-              <Plus size={20} />
+              <Bookmark size={16} />
               Browse Content
             </button>
             <button
               onClick={() => navigate('/')}
-              className="px-8 py-4 bg-white/10 text-white rounded-[6px] font-semibold text-[15px]
-                       hover:bg-white/15 border border-white/10 hover:border-white/20
-                       transition-all active:scale-95 outline-none"
+              className="px-6 py-3 bg-transparent text-white/80 rounded-[8px] font-medium text-[15px]
+                       hover:text-white border border-white/20 hover:bg-white/5
+                       transition-all outline-none"
             >
               Go Home
             </button>
+          </div>
+          
+          {/* Recommended section to prevent "dead end" empty states */}
+          <div className="mt-24 w-full max-w-[1400px] text-left">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+            >
+              <MovieRow
+                title="Recommended for you"
+                label="YOU MIGHT LIKE"
+                movies={trendingNow.slice(0, 8)}
+                className="!px-0"
+              />
+            </motion.div>
           </div>
         </motion.div>
       ) : (

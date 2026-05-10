@@ -91,31 +91,21 @@ const Home: React.FC = () => {
       {/* ─── HERO ─── */}
       <Hero />
 
-      {/* ─── Hero → Content Gradient Bridge ─── */}
-      <div style={{
-        height: 80,
-        marginTop: -80,
-        background: 'linear-gradient(to bottom, transparent 0%, #111113 100%)',
-        position: 'relative',
-        zIndex: 10,
-        pointerEvents: 'none',
-      }} />
-
       {/* ─── MAIN CONTENT AREA ─── */}
-      <div style={{ position: 'relative', zIndex: 20 }}>
+      <div className="-mt-[120px]" style={{ position: 'relative', zIndex: 20 }}>
 
         {/* Genre Filter Bar — sticky Netflix-style tab row */}
         <div
           style={{
             position: 'sticky',
-            top: 64,
+            top: 72,
             zIndex: 50,
-            padding: '12px 60px',
+            padding: '24px 60px',
             background: 'linear-gradient(to bottom, rgba(17,17,19,0.97) 0%, rgba(17,17,19,0.9) 100%)',
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
             borderBottom: '1px solid rgba(255,255,255,0.04)',
-            marginBottom: 4,
+            marginBottom: 24,
           }}
         >
           <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />

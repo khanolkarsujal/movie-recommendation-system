@@ -33,8 +33,9 @@ const BrowseHero: React.FC<BrowseHeroProps> = ({ onSearch }) => {
           alt="Browse Hero"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-black/20 z-10" />
+        <div className="absolute inset-0 bg-black/30 z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.75)_0%,transparent_80%)] z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#111113] via-transparent to-black/40 z-10" />
       </div>
 
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-8">
@@ -51,17 +52,17 @@ const BrowseHero: React.FC<BrowseHeroProps> = ({ onSearch }) => {
             Find your next obsession among thousands of curated titles
           </p>
 
-          <div className="relative group max-w-[540px] mx-auto w-full">
+          <div className="relative group w-[55vw] max-w-[720px] min-w-[300px] mx-auto mt-4">
             <input
               ref={inputRef}
               type="text"
               placeholder="Search movies, shows, genres..."
               onChange={handleSearchChange}
               aria-label="Search content"
-              className="w-full h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-8 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#8b5cf6]/50 transition-all text-[15px]"
+              className="w-full h-[60px] bg-white/5 backdrop-blur-2xl border border-white/10 rounded-full px-8 pl-14 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30 focus:bg-white/10 focus:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all duration-300 text-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
             />
             <div
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#8b5cf6] rounded-full flex items-center justify-center text-white shadow-[0_0_15px_#8b5cf6] pointer-events-none"
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-white/50 group-focus-within:text-white/90 transition-colors pointer-events-none"
               aria-hidden="true"
             >
               <Search size={16} />

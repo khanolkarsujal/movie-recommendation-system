@@ -42,7 +42,7 @@ const NavbarAiButton = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="relative flex items-center justify-center mr-2 ml-2">
+    <div className="relative flex items-center justify-center">
       {/* Tooltip */}
       <AnimatePresence>
         {isHovered && (
@@ -191,65 +191,45 @@ const Navbar: React.FC = () => {
 
   const unreadCount = mockNotifications.filter(n => n.unread).length;
 
+  const getPageTitle = () => {
+    switch (location.pathname) {
+      case '/': return 'Home';
+      case '/browse': return 'Browse Content';
+      case '/watchlist': return 'My Watchlist';
+      case '/activity': return 'Recent Activity';
+      case '/analytics': return 'Analytics';
+      case '/profile': return 'Profile Settings';
+      case '/schedule': return 'Release Schedule';
+      default: return 'Streamify';
+    }
+  };
+
   return (
     <nav
-      className={`fixed top-0 left-[64px] right-0 h-[64px] flex items-center justify-between px-6 z-[99] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled
+      className={`fixed top-0 left-[64px] right-0 h-[72px] flex items-center justify-between px-[60px] z-[99] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled
           ? 'bg-[#111113]/95 backdrop-blur-[24px] border-b border-white/[0.06] shadow-[0_1px_20px_rgba(0,0,0,0.5)]'
-          : 'bg-gradient-to-b from-[rgba(0,0,0,0.55)] to-transparent border-transparent shadow-none'
+          : 'bg-transparent border-transparent shadow-none'
         }`}
     >
-      {/* Left side - Primary Nav links */}
-      <div className="flex items-center gap-0.5">
-        {[
-          { label: 'Home', path: '/' },
-          { label: 'Browse', path: '/browse' },
-          { label: 'Kids', path: '/kids' },
-          { label: 'Support', path: '/support' },
-          { label: 'FAQ', path: '/faq' },
-        ].map(({ label, path }) => {
-          const isActive = location.pathname === path;
-          return (
-            <button
-              key={label}
-              onClick={() => navigate(path)}
-              className="outline-none"
-              style={{
-                padding: '5px 12px',
-                fontSize: 13.5,
-                fontWeight: isActive ? 500 : 400,
-                color: isActive ? '#fff' : 'rgba(255,255,255,0.55)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: 6,
-                transition: 'color 0.15s ease',
-                whiteSpace: 'nowrap',
-                letterSpacing: '0.01em',
-              }}
-              onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.9)'; }}
-              onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)'; }}
-            >
-              {label}
-            </button>
-          );
-        })}
+      {/* 🌟 Left Side: Page Title */}
+      <div className="flex items-center">
+        <h1 className="text-white text-[20px] font-bold tracking-tight">
+          {getPageTitle()}
+        </h1>
       </div>
 
-      <div className="flex items-center gap-5">
-        <div className="relative flex items-center justify-end h-[64px]">
-          <button
-            onClick={() => navigate('/browse', { state: { focusSearch: true } })}
-            className="text-white hover:scale-110 transition-transform duration-200 outline-none flex-shrink-0"
-            aria-label="Search"
-          >
-            <Search size={20} />
-          </button>
+      {/* 🌟 Right Side: Actions */}
+      <div className="flex items-center gap-8">
+        
+        {/* Labeled AI Button */}
+        <div className="flex items-center gap-3 cursor-pointer group hover:bg-white/5 px-3 py-1.5 rounded-full transition-colors">
+          <NavbarAiButton />
+          <span className="text-[13px] font-semibold text-white/70 group-hover:text-white transition-colors">
+            Ask AI
+          </span>
         </div>
 
-        {/* 🌟 NEW AI LOGO BUTTON PLACED HERE 🌟 */}
-        <NavbarAiButton />
-
-        <div className="relative h-[64px] flex items-center" ref={notificationsRef}>
+        <div className="relative h-[72px] flex items-center" ref={notificationsRef}>
           <button
             onClick={() => setNotificationsOpen(!notificationsOpen)}
             className="text-white relative group/bell transition-transform duration-200 hover:scale-110 outline-none"
@@ -302,7 +282,7 @@ const Navbar: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        <div className="relative h-[64px] flex items-center" ref={avatarMenuRef}>
+        <div className="relative h-[72px] flex items-center" ref={avatarMenuRef}>
           <button
             onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
             className="w-8 h-8 rounded-full border border-white/25 overflow-hidden cursor-pointer transition-all duration-200 hover:border-white/70 hover:scale-105 outline-none"

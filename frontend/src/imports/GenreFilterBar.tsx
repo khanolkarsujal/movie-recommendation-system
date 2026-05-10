@@ -27,34 +27,36 @@ const GenreFilterBar: React.FC<GenreFilterBarProps> = ({ activeGenre, setActiveG
             aria-selected={isActive}
             aria-label={`Filter by ${g}`}
             style={{
-              padding: '5px 16px',
-              fontSize: 12.5,
-              fontWeight: isActive ? 600 : 400,
+              padding: '6px 20px',
+              fontSize: 13,
+              fontWeight: isActive ? 600 : 500,
               whiteSpace: 'nowrap',
               borderRadius: 999,
               border: isActive
-                ? '1px solid rgba(139,92,246,0.5)'
-                : '1px solid rgba(255,255,255,0.1)',
+                ? '1px solid rgba(139,92,246,0.8)'
+                : '1px solid rgba(255,255,255,0.15)',
               background: isActive
-                ? 'rgba(139,92,246,0.18)'
-                : 'rgba(255,255,255,0.03)',
-              color: isActive ? '#c4b5fd' : 'rgba(255,255,255,0.55)',
+                ? 'rgba(139,92,246,0.25)'
+                : 'rgba(255,255,255,0.05)',
+              color: isActive ? '#fff' : 'rgba(255,255,255,0.6)',
               cursor: 'pointer',
               outline: 'none',
-              transition: 'all 0.18s ease',
-              letterSpacing: isActive ? '0.01em' : '0',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: isActive ? '0 0 16px rgba(139,92,246,0.4)' : 'none',
               flexShrink: 0,
             }}
             onMouseEnter={(e) => {
               if (!isActive) {
-                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.85)';
-                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.2)';
+                (e.currentTarget as HTMLButtonElement).style.color = '#fff';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.4)';
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.1)';
               }
             }}
             onMouseLeave={(e) => {
               if (!isActive) {
-                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)';
-                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.1)';
+                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.6)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.15)';
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)';
               }
             }}
           >

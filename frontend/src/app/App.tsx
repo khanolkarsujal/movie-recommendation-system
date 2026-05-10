@@ -13,6 +13,8 @@ import Watch from '../imports/Watch';
 import Watchlist from '../imports/Watchlist';
 import Profile from '../imports/Profile';
 import Analytics from '../imports/Analytics';
+import Activity from '../imports/Activity';
+import Schedule from '../imports/Schedule';
 import NotFound from '../imports/NotFound';
 
 // Enhanced Global Components
@@ -34,7 +36,7 @@ function AppContent() {
       {!isWatchPage && !isProfilePage && <Sidebar />}
 
       {/* Main Content */}
-      <main className="min-h-screen bg-[var(--bg-page)]">
+      <main className={`min-h-screen bg-[var(--bg-page)] ${(!isWatchPage && !isProfilePage) ? 'pl-[64px]' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/browse" element={<Browse />} />
@@ -42,6 +44,8 @@ function AppContent() {
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/activity" element={<Activity />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -50,8 +54,6 @@ function AppContent() {
       <KeyboardShortcuts />
       <NetworkStatus />
       <AiDrawer />
-      {!isWatchPage && <AiButton />}
-      {!isWatchPage && <BackToTop />}
 
       {/* Toast Notifications */}
       <Toaster

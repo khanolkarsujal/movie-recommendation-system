@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  Clock,
 } from 'lucide-react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
@@ -483,19 +484,18 @@ const Hero: React.FC = () => {
             background: `
               linear-gradient(
                 to bottom,
-                rgba(5,5,8,0.15) 0%,
-                transparent 30%,
-                transparent 50%,
-                rgba(20,20,20,0.7) 75%,
-                #141414 100%
+                rgba(17,17,19,0.15) 0%,
+                transparent 25%,
+                transparent 40%,
+                rgba(17,17,19,0.4) 65%,
+                rgba(17,17,19,0.9) 85%,
+                #111113 100%
               ),
               linear-gradient(
                 to right,
-                rgba(5,5,8,0.97) 0%,
-                rgba(5,5,8,0.82) 20%,
-                rgba(5,5,8,0.55) 40%,
-                rgba(5,5,8,0.18) 60%,
-                transparent 78%
+                rgba(0,0,0,0.7) 0%,
+                rgba(0,0,0,0.4) 30%,
+                transparent 60%
               )
             `,
           }}
@@ -628,7 +628,7 @@ const Hero: React.FC = () => {
                     fontFamily:
                       movie.id === 1
                         ? "'UnifrakturMaguntia', cursive"
-                        : 'inherit',
+                        : '"Cinzel", "Baskerville", serif',
                   }}
                 >
                   {movie.title}
@@ -651,9 +651,9 @@ const Hero: React.FC = () => {
                 >
                   <span style={{ color: 'rgba(255,255,255,0.9)' }}>{movie.year}</span>
                   <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>•</span>
-                  <span style={{ color: 'rgba(255,255,255,0.9)' }}>{movie.duration}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={14} opacity={0.7} /> {movie.duration}</span>
                   <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>•</span>
-                  <span style={{ color: 'rgba(255,255,255,0.9)' }}>{movie.genre}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.9)', padding: '2px 8px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 4, fontSize: 13, background: 'rgba(255,255,255,0.05)', cursor: 'pointer' }} className="hover:bg-white/20 transition-colors">{movie.genre}</span>
                   <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>•</span>
 
                   {/* Star rating */}
@@ -668,8 +668,8 @@ const Hero: React.FC = () => {
                   style={{
                     margin: '0 0 24px',
                     fontSize: 15,
-                    lineHeight: 1.65,
-                    color: 'rgba(255,255,255,0.72)',
+                    lineHeight: 1.8,
+                    color: 'rgba(255,255,255,0.85)',
                     maxWidth: 460,
                     display: '-webkit-box',
                     WebkitLineClamp: 3,
@@ -686,38 +686,20 @@ const Hero: React.FC = () => {
                   style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 12 }}
                 >
                   {/* Circular Play + label */}
+                  {/* Main Play Button */}
                   <motion.button
                     onClick={handlePlay}
-                    whileHover={{ scale: 1.06 }}
-                    whileTap={{ scale: 0.94 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     aria-label={`Play ${movie.title}`}
+                    className="flex items-center justify-center gap-2.5 bg-white hover:bg-gray-200 text-black px-8 py-3 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-colors duration-200"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      background: 'transparent',
-                      color: '#fff',
                       border: 'none',
                       cursor: 'pointer',
-                      padding: 0,
                     }}
                   >
-                    <span
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: '50%',
-                        background: '#fff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-                      }}
-                    >
-                      <Play size={18} fill="black" strokeWidth={0} style={{ marginLeft: 2 }} />
-                    </span>
-                    <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: '0.01em' }}>Play S1 E1</span>
+                    <Play size={18} fill="black" strokeWidth={0} />
+                    <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: '0.01em' }}>Play</span>
                   </motion.button>
 
                   {/* + icon circle */}
@@ -727,8 +709,8 @@ const Hero: React.FC = () => {
                     whileTap={{ scale: 0.92 }}
                     aria-label={inList ? 'Remove from My List' : 'Add to My List'}
                     style={{
-                      width: 36,
-                      height: 36,
+                      width: 44,
+                      height: 44,
                       borderRadius: '50%',
                       background: 'rgba(255,255,255,0.15)',
                       border: '1.5px solid rgba(255,255,255,0.3)',
@@ -741,7 +723,7 @@ const Hero: React.FC = () => {
                       transition: 'background 0.2s',
                     }}
                   >
-                    {inList ? <Check size={16} /> : <Plus size={16} />}
+                    {inList ? <Check size={18} /> : <Plus size={18} />}
                   </motion.button>
 
                   {/* Info icon circle */}
@@ -750,8 +732,8 @@ const Hero: React.FC = () => {
                     whileTap={{ scale: 0.92 }}
                     aria-label="More information"
                     style={{
-                      width: 36,
-                      height: 36,
+                      width: 44,
+                      height: 44,
                       borderRadius: '50%',
                       background: 'rgba(255,255,255,0.12)',
                       border: '1.5px solid rgba(255,255,255,0.25)',
@@ -764,7 +746,7 @@ const Hero: React.FC = () => {
                       transition: 'background 0.2s',
                     }}
                   >
-                    <Info size={16} />
+                    <Info size={18} />
                   </motion.button>
                 </motion.div>
               </motion.div>
@@ -776,8 +758,8 @@ const Hero: React.FC = () => {
         <div
           style={{
             position: 'absolute',
-            bottom: 40,
-            left: 100,
+            bottom: 148,
+            right: 100,
             zIndex: 30,
             display: 'flex',
             alignItems: 'center',
@@ -805,10 +787,11 @@ const Hero: React.FC = () => {
                   borderRadius: active ? 2 : '50%',
                   background: active
                     ? 'transparent'
-                    : 'rgba(255,255,255,0.28)',
+                    : 'rgba(255,255,255,0.6)',
                   transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
                   overflow: 'hidden',
                   position: 'relative',
+                  boxShadow: !active ? '0 2px 8px rgba(0,0,0,0.5)' : 'none',
                 }}
               >
                 {active && (
@@ -827,10 +810,11 @@ const Hero: React.FC = () => {
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: '#fff',
+                      background: 'var(--brand-purple, #8b5cf6)',
                       borderRadius: 2,
                       transformOrigin: 'left center',
                       animation: `fillBar ${ADVANCE_MS}ms linear forwards`,
+                      boxShadow: '0 0 10px rgba(139,92,246,0.6)',
                     }}
                   />
                 )}
@@ -839,8 +823,9 @@ const Hero: React.FC = () => {
                     style={{
                       position: 'absolute',
                       inset: 0,
-                      background: '#fff',
+                      background: 'var(--brand-purple, #8b5cf6)',
                       borderRadius: 2,
+                      boxShadow: '0 0 10px rgba(139,92,246,0.6)',
                     }}
                   />
                 )}
@@ -929,7 +914,7 @@ const Hero: React.FC = () => {
               aria-label={muted ? 'Unmute preview' : 'Mute preview'}
               style={{
                 position: 'absolute',
-                bottom: 40,
+                bottom: 140,
                 right: 40,
                 zIndex: 30,
                 width: 38,
@@ -950,7 +935,7 @@ const Hero: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* ═══ LAYER 10 — Bottom accent line ═══ */}
+        {/* ═══ LAYER 10 — Ambient cinematic bottom glow ═══ */}
         <div
           aria-hidden="true"
           style={{
@@ -958,14 +943,16 @@ const Hero: React.FC = () => {
             bottom: 0,
             left: 0,
             right: 0,
-            height: 1,
+            height: 160,
             zIndex: 25,
             background: `linear-gradient(
-              to right,
-              rgba(${accentRgb},0.6) 0%,
-              rgba(${accentRgb},0.15) 40%,
-              transparent 70%
+              to top,
+              rgba(${accentRgb}, 0.15) 0%,
+              rgba(${accentRgb}, 0.04) 40%,
+              transparent 100%
             )`,
+            filter: 'blur(16px)',
+            pointerEvents: 'none',
             transition: 'background 1.8s ease',
           }}
         />

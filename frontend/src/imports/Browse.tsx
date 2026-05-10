@@ -72,14 +72,34 @@ const Browse: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
-      <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />
+    <div className="min-h-screen bg-[var(--bg-page)] relative">
+      {/* If actively filtering, keep the genre bar at the top so users can quickly switch categories */}
+      {isFiltering && (
+        <div className="sticky top-[72px] z-50 px-8 md:px-[60px] py-5 bg-[var(--bg-page)]/95 backdrop-blur-xl border-b border-white/5 mb-6">
+          <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />
+        </div>
+      )}
 
       {!isFiltering ? (
         <>
           <BrowseHero onSearch={handleSearch} />
 
-          <div className="relative z-20 -mt-20 space-y-8 pb-24">
+          {/* Genre Bar: Placed directly under the Hero, but becomes sticky when scrolling past */}
+          <div
+            className="sticky top-[72px] z-50 px-8 md:px-[60px] py-6"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(17,17,19,0.97) 0%, rgba(17,17,19,0.9) 100%)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              borderBottom: '1px solid rgba(255,255,255,0.04)',
+              marginTop: '-40px',
+              marginBottom: '24px',
+            }}
+          >
+            <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />
+          </div>
+
+          <div className="relative z-20 space-y-8 pb-24">
             <Top10Row
               title="Top 10 in Your Country Today"
               label="TOP 10"

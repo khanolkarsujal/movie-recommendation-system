@@ -100,10 +100,16 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
       <div className="relative w-full h-full overflow-hidden bg-[var(--bg-card)]" style={{ borderRadius: 8 }}>
         {/* Thumbnail Image */}
         <img
-          src={movie.thumbnail || 'https://via.placeholder.com/230x130/181818/666?text=No+Image'}
+          src={movie.thumbnail || movie.image || 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=260&h=146&auto=format&fit=crop'}
           alt={movie.title}
           className={`w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-0' : 'opacity-100'}`}
           loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=260&h=146&auto=format&fit=crop') {
+              target.src = 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=260&h=146&auto=format&fit=crop';
+            }
+          }}
         />
 
         {/* Video Preview */}

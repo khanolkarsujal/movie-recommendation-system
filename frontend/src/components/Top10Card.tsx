@@ -90,10 +90,16 @@ export const Top10Card: React.FC<Top10CardProps> = ({
       <div className="relative flex-shrink-0 h-full overflow-hidden bg-[var(--bg-card)]" style={{ width: '200px', borderRadius: 8 }}>
         {/* Poster image */}
         <img
-          src={movie.thumbnail || 'https://via.placeholder.com/200x158/181818/666?text=No+Image'}
+          src={movie.thumbnail || movie.image || 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=200&h=158&auto=format&fit=crop'}
           alt={`#${rank} ${movie.title}`}
           className="w-full h-full object-cover"
           loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=200&h=158&auto=format&fit=crop') {
+              target.src = 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=200&h=158&auto=format&fit=crop';
+            }
+          }}
         />
 
         {/* Gradient overlay */}

@@ -92,9 +92,15 @@ export const HoverCardPopup: React.FC<HoverCardPopupProps> = ({
         {/* Thumbnail & Video */}
         <div className="relative w-full h-[158px] bg-black">
           <img
-            src={movie.thumbnail || 'https://via.placeholder.com/280x158/181818/666?text=No+Image'}
+            src={movie.thumbnail || movie.image || 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=280&h=158&auto=format&fit=crop'}
             alt={movie.title}
             className={`w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-0' : 'opacity-100'}`}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=280&h=158&auto=format&fit=crop') {
+                target.src = 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=280&h=158&auto=format&fit=crop';
+              }
+            }}
           />
           {movie.trailerUrl && (
             <video

@@ -150,12 +150,18 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
         {/* Thumbnail Image */}
         <motion.img
-          src={movie.thumbnail || 'https://via.placeholder.com/260x146/181818/666?text=No+Image'}
+          src={movie.thumbnail || movie.image || 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=260&h=146&auto=format&fit=crop'}
           alt={movie.title}
           className="absolute inset-0 w-full h-full object-cover transform-gpu transition-transform duration-1000 ease-out group-hover:scale-105"
           loading="lazy"
           animate={{ opacity: showTrailer ? 0 : 1 }}
           transition={{ duration: 0.6 }}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=260&h=146&auto=format&fit=crop') {
+              target.src = 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=260&h=146&auto=format&fit=crop';
+            }
+          }}
         />
 
         {/* Trailer Video */}

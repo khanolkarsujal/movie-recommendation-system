@@ -157,8 +157,8 @@ const Watchlist: React.FC = () => {
       <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-8 relative">
         
         {/* Left Column: Playlist Hero (Sticky) */}
-        <div className="lg:w-[400px] lg:sticky lg:top-32 h-fit">
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl p-6 flex flex-col">
+        <div className="lg:w-[380px] lg:sticky lg:top-32 h-fit">
+          <div className="relative rounded-[32px] overflow-hidden shadow-2xl p-8 flex flex-col border border-white/5 bg-[#1a1a1a]/40 backdrop-blur-md">
             {/* Blurred Background */}
             <div 
               className="absolute inset-0 z-0 bg-cover bg-center scale-110 blur-3xl opacity-40"
@@ -178,13 +178,13 @@ const Watchlist: React.FC = () => {
 
               {/* Text Info */}
               <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Watch later</h1>
-              <p className="text-[15px] font-bold text-white mb-1">Sujal Khanolkar Discipline</p>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/60 mb-6">
+              <p className="text-[15px] font-bold text-white/90 mb-1">Sujal Khanolkar Discipline</p>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/40 mb-8 font-medium">
                 <span>{watchlist.length} videos</span>
                 <span>•</span>
                 <span>No views</span>
                 <span>•</span>
-                <span>Last updated on May 10, 2026</span>
+                <span>Updated today</span>
               </div>
 
               {/* Quick Actions */}
@@ -198,14 +198,14 @@ const Watchlist: React.FC = () => {
               </div>
 
               {/* Play / Shuffle Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3">
                 <button 
                   onClick={() => navigate('/watch')}
-                  className="flex-1 flex items-center justify-center gap-2 h-12 bg-white text-black rounded-full font-bold text-[14px] hover:bg-white/90 transition-all active:scale-95 whitespace-nowrap px-4"
+                  className="flex-1 flex items-center justify-center gap-2 h-11 bg-white text-black rounded-full font-bold text-[14px] hover:bg-white/90 transition-all active:scale-95 whitespace-nowrap px-4"
                 >
                   <Play size={18} fill="black" /> Play all
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 h-12 bg-white/10 text-white rounded-full font-bold text-[14px] hover:bg-white/20 transition-all border border-white/10 active:scale-95 whitespace-nowrap px-4 backdrop-blur-sm">
+                <button className="flex-1 flex items-center justify-center gap-2 h-11 bg-white/10 text-white rounded-full font-bold text-[14px] hover:bg-white/20 transition-all border border-white/5 active:scale-95 whitespace-nowrap px-4">
                   <Shuffle size={18} /> Shuffle
                 </button>
               </div>
@@ -218,12 +218,14 @@ const Watchlist: React.FC = () => {
           {/* Header & Filters */}
           <div className="flex flex-col mb-6 gap-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center p-1 bg-white/5 rounded-xl border border-white/5 h-10">
+              <div className="flex items-center p-1 bg-white/5 rounded-xl border border-white/5 h-10 group/sort cursor-pointer hover:bg-white/10 transition-colors px-4">
                 <button 
-                  className="flex items-center gap-2 px-3 h-full text-[13px] font-bold text-white/90 hover:text-white"
+                  className="flex items-center gap-2 h-full text-[13px] font-bold text-white/80 group-hover/sort:text-white transition-colors"
                   onClick={() => setSortBy('recent')}
                 >
-                  Manual <ChevronDown size={14} />
+                  <SortAsc size={16} className="text-white/40" />
+                  Manual
+                  <ChevronDown size={14} className="text-white/40" />
                 </button>
               </div>
               
@@ -279,11 +281,10 @@ const Watchlist: React.FC = () => {
           {/* Recommended (at bottom if list is short) */}
           {watchlist.length > 0 && watchlist.length < 5 && (
             <div className="mt-16 pt-16 border-t border-white/5">
-               <MovieRow
+              <MovieRow
                 title="Recommended for you"
                 label="YOU MIGHT LIKE"
                 movies={trendingNow.slice(0, 8)}
-                className="!px-0"
                 variant="mobile"
               />
             </div>

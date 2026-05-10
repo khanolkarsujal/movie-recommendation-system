@@ -9,3 +9,4 @@ export { ProgressBar } from './ProgressBar';
 export { IconButton } from './IconButton';
 export { Button } from './Button';
 export { SkeletonCard } from './SkeletonCard';
+export { Tooltip } from './Tooltip';

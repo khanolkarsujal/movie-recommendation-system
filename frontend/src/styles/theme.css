@@ -134,7 +134,7 @@
   --row-padding: 120px; /* 60px padding on each side */
   --row-gap: 12px;
   --cards-per-view: 5;
-  --card-width: calc((100% - var(--row-padding) - (var(--row-gap) * (var(--cards-per-view) - 1))) / var(--cards-per-view));
+  --card-width: calc((100vw - 64px - var(--row-padding) - (var(--row-gap) * (var(--cards-per-view) - 1))) / var(--cards-per-view));
 }
 
 @media (max-width: 1536px) {

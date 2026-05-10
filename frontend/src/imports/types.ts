@@ -50,7 +50,7 @@ export interface Genre {
 
 export interface NavItem {
   id: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<any>;
   path: string;
   label: string;
   badge?: number;

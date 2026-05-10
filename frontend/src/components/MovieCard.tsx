@@ -51,8 +51,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Timeout refs
-  const hoverTimeoutRef = useRef<NodeJS.Timeout>();
-  const trailerTimeoutRef = useRef<NodeJS.Timeout>();
+  const hoverTimeoutRef = useRef<any>(null);
+  const trailerTimeoutRef = useRef<any>(null);
 
   const inWatchlist = isInWatchlist(movie.id);
 
@@ -125,28 +125,28 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   return (
     <motion.div
-      className="relative cursor-pointer group aspect-video flex-shrink-0 z-0 hover:z-50 outline-none focus-visible:ring-4 focus-visible:ring-[#8b5cf6]/50 rounded-xl"
-      style={{ width: 'var(--card-width, 260px)' }} // Increased base width slightly for a more premium feel
+      className="relative cursor-pointer group aspect-video flex-shrink-0 z-0 hover:z-50 outline-none"
+      style={{ width: 'var(--card-width, 260px)', borderRadius: 8 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handlePlayClick}
-      whileHover={{ y: -6, scale: 1.05 }} // Lifts up and scales slightly
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      whileHover={{ y: -6, scale: 1.05, zIndex: 50 }}
+      transition={{ type: "spring", stiffness: 260, damping: 20, mass: 0.8 }}
       role="button"
       tabIndex={0}
     >
-      {/* 🌟 Background Ambient Glow (Activates on hover) */}
+      {/* Ambient Glow (on hover) */}
       <div
-        className={`absolute inset-0 -z-10 blur-2xl transition-opacity duration-500 ${isHovered ? 'opacity-40' : 'opacity-0'}`}
+        className={`absolute inset-0 -z-10 blur-3xl transition-opacity duration-700 ${isHovered ? 'opacity-50' : 'opacity-0'}`}
         style={{
           background: movie.accent
-            ? `radial-gradient(circle at bottom, ${movie.accent} 0%, transparent 70%)`
-            : 'radial-gradient(circle at bottom, #8b5cf6 0%, transparent 70%)'
+            ? `radial-gradient(circle at 50% 120%, ${movie.accent} 0%, transparent 65%)`
+            : 'radial-gradient(circle at 50% 120%, #8b5cf6 0%, transparent 65%)'
         }}
       />
 
-      {/* 🌟 Main Card Container */}
-      <div className="w-full h-full rounded-xl overflow-hidden relative bg-[#141414] border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.5)] group-hover:border-white/15 transition-colors duration-300">
+      {/* Main Card Container */}
+      <div className="w-full h-full overflow-hidden relative bg-[#1c1c1e]" style={{ borderRadius: 8 }}>
 
         {/* Thumbnail Image */}
         <motion.img
@@ -174,7 +174,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         )}
 
         {/* Deep Cinematic Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 38%, transparent 65%)',
+        }} />
 
         {/* Top Badges (Left) */}
         {badge && (
@@ -191,9 +193,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         )}
 
         {/* Top Metadata (Right) */}
-        <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5 drop-shadow-md">
+        <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
           {movie.duration && (
-            <div className="bg-black/60 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded text-[10px] text-white/90 font-bold tracking-wide">
+            <div className="bg-black/55 backdrop-blur-sm border border-white/10 px-2 py-0.5 rounded-md text-[10px] text-white/90 font-semibold tracking-wide">
               {movie.duration}
             </div>
           )}
@@ -223,65 +225,62 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
         {/* Bottom Content Area */}
         <motion.div
-          className="absolute bottom-0 left-0 right-0 p-3 z-10 flex flex-col justify-end"
-          animate={{ y: showQuickActions ? -12 : 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-8 z-10 flex flex-col justify-end"
+          animate={{ y: showQuickActions ? -10 : 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 28 }}
         >
           {/* Title */}
-          <h3 className="text-white text-[15px] font-bold line-clamp-1 leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <h3 className="text-white text-[13px] font-semibold line-clamp-1 leading-tight tracking-[0.01em] drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">
             {movie.title}
           </h3>
 
-          {/* Match Score & Genres */}
-          <div className="flex items-center gap-2 mt-1">
-            {movie.rating && (
-              <span className="text-[#22c55e] text-[11px] font-black tracking-wide drop-shadow-md">
-                {movie.rating} Match
-              </span>
-            )}
-            {/* If you have genres in your type, they'd look great here: */}
-            {/* <span className="text-white/50 text-[10px] font-medium">• Action • Sci-Fi</span> */}
+          {/* Metadata */}
+          <div className="flex items-center gap-1.5 mt-0.5 text-[11px] font-medium text-white/55">
+            <span>{movie.year || '2024'}</span>
+            <span className="w-[3px] h-[3px] rounded-full bg-white/30" />
+            <span className="truncate">{movie.genres?.[0] || movie.genre || 'Sci-Fi'}</span>
           </div>
         </motion.div>
 
-        {/* 🌟 Floating Glass Quick Actions */}
+        {/* Floating Quick Actions */}
         <AnimatePresence>
           {showQuickActions && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="absolute bottom-3 left-3 right-3 z-20 flex items-center gap-2"
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ type: "spring", stiffness: 420, damping: 28 }}
+              className="absolute bottom-3 left-3 right-3 z-20 flex items-center gap-1.5"
             >
-              {/* Play Button (Primary) */}
+              {/* Play Button */}
               <button
                 onClick={handlePlayClick}
-                className="flex-1 h-8 rounded-lg bg-white flex items-center justify-center gap-1.5 transition-all hover:bg-gray-200 active:scale-95 shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                className="flex-1 h-7 rounded-full bg-white flex items-center justify-center gap-1.5 transition-all duration-150 hover:bg-white/90 active:scale-95 shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
               >
-                <Play size={14} fill="black" className="text-black" />
-                <span className="text-black text-[12px] font-bold">Play</span>
+                <Play size={12} fill="black" className="text-black" />
+                <span className="text-black text-[11px] font-bold tracking-[0.02em]">Play</span>
               </button>
 
               {/* Watchlist Button */}
               <button
                 onClick={handleWatchlistClick}
-                className={`w-8 h-8 rounded-lg backdrop-blur-md border flex items-center justify-center transition-all active:scale-95 shadow-lg ${inWatchlist
-                  ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/50 text-[#8b5cf6]'
-                  : 'bg-black/40 border-white/20 text-white hover:bg-white/20 hover:border-white/40'
-                  }`}
+                className={`w-7 h-7 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-150 active:scale-95 ${
+                  inWatchlist
+                    ? 'bg-[#8b5cf6]/25 border-[#8b5cf6]/60 text-[#c4b5fd]'
+                    : 'bg-black/50 border-white/20 text-white hover:bg-white/15 hover:border-white/35'
+                }`}
                 aria-label={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
               >
-                {inWatchlist ? <Check size={16} /> : <Plus size={16} />}
+                {inWatchlist ? <Check size={13} /> : <Plus size={13} />}
               </button>
 
               {/* Info Button */}
               <button
                 onClick={handleInfoClick}
-                className="w-8 h-8 rounded-lg bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-white/40 transition-all active:scale-95 shadow-lg"
+                className="w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/15 hover:border-white/35 transition-all duration-150 active:scale-95"
                 aria-label="More info"
               >
-                <Info size={16} />
+                <Info size={13} />
               </button>
             </motion.div>
           )}

@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useId,
 } from 'react';
+// @ts-ignore
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -118,7 +119,7 @@ const HoverPopup: React.FC<HoverPopupProps> = ({
 }) => {
   const [inWatchlist, setInWatchlist] = useState(false);
   const [liked, setLiked] = useState(false);
-  const matchScore = Math.round((episode.rating ?? 7) * 10);
+  const matchScore = Math.round(Number(episode.rating ?? 7) * 10);
   const color = matchColor(matchScore);
 
   return createPortal(
@@ -221,7 +222,9 @@ const HoverPopup: React.FC<HoverPopupProps> = ({
             fontSize: 12,
           }}
         >
-          <span style={{ color, fontWeight: 700 }}>{matchScore}% Match</span>
+          <span style={{ color: '#facc15', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ fontSize: 10 }}>★</span> {(matchScore / 10).toFixed(1)}
+          </span>
           <span style={{ color: 'rgba(255,255,255,0.4)' }}>·</span>
           {episode.episodeNumber && (
             <>
@@ -250,23 +253,8 @@ const HoverPopup: React.FC<HoverPopupProps> = ({
           </span>
         </div>
 
-        {/* Match bar */}
-        <div
-          style={{
-            height: 2,
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: 1,
-            marginBottom: 10,
-            overflow: 'hidden',
-          }}
-        >
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${matchScore}%` }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            style={{ height: '100%', background: color, borderRadius: 1 }}
-          />
-        </div>
+        {/* Metadata Spacer */}
+        <div style={{ marginBottom: 10 }} />
 
         {/* Continue watching info */}
         {isContinueWatching && episode.progress !== undefined && (
@@ -423,8 +411,8 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({
   onHidePopup,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const showTimer = useRef<ReturnType<typeof setTimeout>>();
-  const hideTimer = useRef<ReturnType<typeof setTimeout>>();
+  const showTimer = useRef<any>(null);
+  const hideTimer = useRef<any>(null);
 
   const handleEnter = useCallback(() => {
     clearTimeout(hideTimer.current);
@@ -640,7 +628,7 @@ const EpisodeRow: React.FC<EpisodeRowProps> = ({
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [rowHovered, setRowHovered] = useState(false);
   const [popup, setPopup] = useState<PopupState | null>(null);
-  const popupLeaveTimer = useRef<ReturnType<typeof setTimeout>>();
+  const popupLeaveTimer = useRef<any>(null);
   const navigate = useNavigate();
   const rowId = useId();
 

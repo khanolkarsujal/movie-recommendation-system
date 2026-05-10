@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion'; // Assuming standard framer-motion, adjust to 'motion/react' if using the specific new package
 import {
   BarChart2,
   TrendingUp,
-  Users,
   Star,
   Clock,
-  Play,
   Heart,
   Target,
   Award,
@@ -37,36 +35,36 @@ interface ActivityDay {
 
 const STATS: Stat[] = [
   {
-    label: 'Hours Watched',
+    label: 'HOURS WATCHED',
     value: '142h',
     change: '+12h this week',
     trend: 'up',
     icon: Clock,
-    color: '#8b5cf6',
+    color: '#8b5cf6', // Brand Purple
   },
   {
-    label: 'Shows Completed',
+    label: 'SHOWS COMPLETED',
     value: '23',
     change: '+3 this month',
     trend: 'up',
     icon: Star,
-    color: '#22c55e',
+    color: '#22c55e', // Green
   },
   {
-    label: 'Watchlist Items',
+    label: 'WATCHLIST ITEMS',
     value: '47',
     change: '+8 recently',
     trend: 'up',
     icon: Heart,
-    color: '#ef4444',
+    color: '#ef4444', // Red
   },
   {
-    label: 'Avg. Rating Given',
+    label: 'AVG. RATING',
     value: '4.6',
     change: 'All time high',
     trend: 'up',
     icon: Award,
-    color: '#f59e0b',
+    color: '#f59e0b', // Amber
   },
 ];
 
@@ -94,21 +92,29 @@ const Analytics: React.FC = () => {
   const maxHours = Math.max(...ACTIVITY_DATA.map((d) => d.hours));
 
   return (
-    <div className="min-h-screen pt-32 px-6 md:px-[60px] pb-20 bg-[var(--bg-page)]">
+    // OTT Tweak: Deep #141414 background with hidden overflow for background glowing orbs
+    <div className="relative min-h-screen pt-32 px-4 md:px-12 pb-20 bg-[#141414] text-white overflow-hidden">
+
+      {/* Ambient Background Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[var(--brand-purple)]/20 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[40%] right-[-10%] w-[30%] h-[30%] rounded-full bg-blue-600/10 blur-[100px] pointer-events-none" />
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-12"
+        className="relative z-10 mb-12"
       >
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-12 h-12 rounded-full bg-[var(--brand-purple)]/20 flex items-center justify-center">
-            <BarChart2 size={24} className="text-[var(--brand-purple)]" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--brand-purple)] to-purple-900 flex items-center justify-center shadow-lg shadow-[var(--brand-purple)]/20">
+            <BarChart2 size={28} className="text-white" />
           </div>
-          <h1 className="text-5xl font-black text-white tracking-tight">Your Analytics</h1>
+          <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-tight">
+            Your Analytics
+          </h1>
         </div>
-        <p className="text-white/40 text-[16px]">
-          Track your watching habits and discover your entertainment patterns
+        <p className="text-white/50 text-lg max-w-xl">
+          Track your watching habits and discover your entertainment patterns across the universe of cinema.
         </p>
       </motion.div>
 
@@ -117,7 +123,7 @@ const Analytics: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-12"
+        className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
       >
         {STATS.map(({ label, value, change, trend, icon: Icon, color }, index) => (
           <motion.div
@@ -125,38 +131,39 @@ const Analytics: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + index * 0.05 }}
-            className="group relative rounded-[12px] p-6 bg-[var(--bg-card)] border border-[var(--border-default)]
-                     hover:border-[var(--border-brand)] transition-all duration-300 hover:-translate-y-1
-                     hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)]"
+            // OTT Tweak: Glassmorphism cards with cinematic hover lift
+            className="group relative rounded-2xl p-6 bg-[#1c1c1c]/80 backdrop-blur-xl border border-white/5
+                     hover:border-white/20 transition-all duration-500 hover:-translate-y-2
+                     hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.7)]"
           >
-            {/* Glow effect on hover */}
+            {/* Inner Glow effect on hover */}
             <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[12px] blur-xl"
-              style={{ background: `radial-gradient(circle at 50% 50%, ${color}20 0%, transparent 70%)` }}
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
+              style={{ background: `radial-gradient(circle at top right, ${color}15 0%, transparent 60%)` }}
             />
 
             <div className="relative">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-6">
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300
-                           group-hover:scale-110"
-                  style={{ background: `${color}20` }}
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shadow-inner"
+                  style={{ backgroundColor: `${color}15`, border: `1px solid ${color}30` }}
                 >
                   <Icon size={22} style={{ color }} />
                 </div>
                 {trend && (
-                  <div className="flex items-center gap-1 text-[12px] font-semibold"
+                  <div className="flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-full bg-white/5"
                     style={{ color: trend === 'up' ? '#22c55e' : '#ef4444' }}>
                     <TrendingUp size={14} />
+                    <span>{trend === 'up' ? '+' : '-'}</span>
                   </div>
                 )}
               </div>
 
               <div>
-                <p className="text-[36px] font-black text-white leading-none mb-2">{value}</p>
-                <p className="text-[14px] font-medium text-white/50 mb-1">{label}</p>
+                <p className="text-4xl font-black text-white leading-none mb-2 tracking-tighter drop-shadow-md">{value}</p>
+                <p className="text-xs font-bold text-white/40 mb-1 tracking-widest">{label}</p>
                 {change && (
-                  <p className="text-[12px] text-white/30">{change}</p>
+                  <p className="text-sm text-white/30 font-medium">{change}</p>
                 )}
               </div>
             </div>
@@ -164,20 +171,20 @@ const Analytics: React.FC = () => {
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Genre Distribution */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-[12px] p-8 bg-[var(--bg-card)] border border-[var(--border-default)]"
+          className="rounded-3xl p-8 bg-[#1c1c1c]/80 backdrop-blur-xl border border-white/5"
         >
           <div className="flex items-center gap-3 mb-8">
-            <Target size={20} className="text-[var(--brand-purple)]" />
-            <h2 className="text-[22px] font-bold text-white">Genre Breakdown</h2>
+            <Target size={24} className="text-[var(--brand-purple)]" />
+            <h2 className="text-2xl font-bold text-white">Top Genres</h2>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-6">
             {GENRE_DATA.map((genre, index) => (
               <motion.div
                 key={genre.name}
@@ -187,23 +194,26 @@ const Analytics: React.FC = () => {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: genre.color }}
-                    />
-                    <span className="text-[15px] font-semibold text-white">{genre.name}</span>
+                    <span className="text-base font-semibold text-white/90">{genre.name}</span>
                   </div>
-                  <span className="text-[13px] text-white/40">{genre.hours.toFixed(1)}h</span>
+                  <span className="text-sm font-medium text-white/50">{genre.hours.toFixed(1)}h</span>
                 </div>
 
-                <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
+                {/* OTT Tweak: Glowing Progress Bars */}
+                <div className="relative h-2.5 bg-black/50 rounded-full overflow-hidden shadow-inner">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${genre.percentage}%` }}
-                    transition={{ delay: 0.5 + index * 0.05, duration: 0.8, ease: 'easeOut' }}
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: genre.color }}
-                  />
+                    transition={{ delay: 0.5 + index * 0.05, duration: 1, ease: 'easeOut' }}
+                    className="h-full rounded-full relative"
+                    style={{
+                      backgroundColor: genre.color,
+                      boxShadow: `0 0 12px ${genre.color}90` // Neon glow effect
+                    }}
+                  >
+                    {/* Glossy highlight line */}
+                    <div className="absolute top-0 inset-x-0 h-[1px] bg-white/30" />
+                  </motion.div>
                 </div>
               </motion.div>
             ))}
@@ -215,25 +225,24 @@ const Analytics: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-[12px] p-8 bg-[var(--bg-card)] border border-[var(--border-default)]"
+          className="rounded-3xl p-8 bg-[#1c1c1c]/80 backdrop-blur-xl border border-white/5 flex flex-col"
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
             <div className="flex items-center gap-3">
-              <Calendar size={20} className="text-[var(--brand-purple)]" />
-              <h2 className="text-[22px] font-bold text-white">Weekly Activity</h2>
+              <Calendar size={24} className="text-[var(--brand-purple)]" />
+              <h2 className="text-2xl font-bold text-white">Watch History</h2>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex p-1 bg-black/40 rounded-xl border border-white/5">
               {(['week', 'month', 'year'] as const).map((period) => (
                 <button
                   key={period}
                   onClick={() => setSelectedPeriod(period)}
-                  className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold uppercase tracking-wider
-                           transition-all outline-none ${
-                    selectedPeriod === period
-                      ? 'bg-[var(--brand-purple)] text-white'
-                      : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
-                  }`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider
+                           transition-all outline-none ${selectedPeriod === period
+                      ? 'bg-[var(--brand-purple)] text-white shadow-lg'
+                      : 'text-white/40 hover:text-white hover:bg-white/5'
+                    }`}
                 >
                   {period}
                 </button>
@@ -241,7 +250,7 @@ const Analytics: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-end justify-between gap-3 h-48">
+          <div className="flex items-end justify-between gap-2 sm:gap-4 h-56 mt-auto">
             {ACTIVITY_DATA.map((data, index) => {
               const heightPercent = (data.hours / maxHours) * 100;
               return (
@@ -250,25 +259,29 @@ const Analytics: React.FC = () => {
                     className="w-full relative group/bar cursor-pointer"
                     initial={{ height: 0 }}
                     animate={{ height: `${heightPercent}%` }}
-                    transition={{ delay: 0.5 + index * 0.05, duration: 0.6, ease: 'easeOut' }}
+                    transition={{ delay: 0.5 + index * 0.05, duration: 0.8, type: 'spring', bounce: 0.3 }}
                   >
+                    {/* Bar Chart Tweak: Premium gradient bars with hover lift */}
                     <div
-                      className="w-full h-full rounded-t-lg bg-gradient-to-t from-[var(--brand-purple)] to-[var(--brand-purple)]/60
-                               group-hover/bar:from-[var(--brand-purple)]/90 group-hover/bar:to-[var(--brand-purple)]/80
+                      className="w-full h-full rounded-t-md bg-gradient-to-t from-[var(--brand-purple)]/40 to-[var(--brand-purple)]
+                               group-hover/bar:from-[var(--brand-purple)] group-hover/bar:to-purple-400
                                transition-all duration-300"
                     />
 
-                    {/* Tooltip */}
+                    {/* Premium Tooltip */}
                     <div
-                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5
-                               bg-black border border-white/20 rounded-lg opacity-0 group-hover/bar:opacity-100
-                               transition-opacity pointer-events-none whitespace-nowrap"
+                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-3 py-2
+                               bg-[#2a2a2a] border border-white/10 rounded-lg opacity-0 group-hover/bar:opacity-100
+                               group-hover/bar:-translate-y-2 transition-all duration-300 pointer-events-none whitespace-nowrap
+                               shadow-xl z-20"
                     >
-                      <p className="text-white text-[12px] font-bold">{data.hours.toFixed(1)}h</p>
+                      <p className="text-white text-sm font-black">{data.hours.toFixed(1)} <span className="text-white/50 text-xs font-medium">hrs</span></p>
+                      {/* Tooltip caret */}
+                      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#2a2a2a] rotate-45 border-r border-b border-white/10" />
                     </div>
                   </motion.div>
 
-                  <span className="text-[12px] font-semibold text-white/40">{data.day}</span>
+                  <span className="text-xs font-bold text-white/40 uppercase tracking-widest">{data.day}</span>
                 </div>
               );
             })}
@@ -276,22 +289,24 @@ const Analytics: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Achievement Section */}
+      {/* Achievement Section - Video Game / OTT Trophy Style */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="mt-6 rounded-[12px] p-8 bg-gradient-to-r from-[var(--brand-purple)]/10 to-transparent
-                 border border-[var(--brand-purple)]/20"
+        className="relative z-10 mt-8 rounded-2xl overflow-hidden group cursor-pointer"
       >
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-[var(--brand-purple)]/20 flex items-center justify-center">
-            <Award size={32} className="text-[var(--brand-purple)]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-purple)]/20 via-[var(--brand-purple)]/5 to-transparent z-0" />
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-[var(--brand-purple)]/30 via-transparent to-transparent transition-opacity duration-500 z-0" />
+
+        <div className="relative z-10 p-6 md:p-8 flex items-center gap-6 border border-[var(--brand-purple)]/30 rounded-2xl bg-[#1c1c1c]/40 backdrop-blur-sm">
+          <div className="w-16 h-16 shrink-0 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center shadow-[0_0_20px_rgba(251,191,36,0.4)]">
+            <Award size={32} className="text-white" />
           </div>
           <div>
-            <h3 className="text-[20px] font-bold text-white mb-1">🎉 Achievement Unlocked</h3>
-            <p className="text-white/60 text-[14px]">
-              Binge Master: Watched 5+ hours this week! Keep the momentum going.
+            <h3 className="text-xl font-black text-white mb-1 tracking-tight">🎉 Achievement Unlocked: Binge Master</h3>
+            <p className="text-white/60 text-sm md:text-base font-medium">
+              You've watched 5+ hours this week! Your dedication to cinema is legendary. Keep the momentum going.
             </p>
           </div>
         </div>

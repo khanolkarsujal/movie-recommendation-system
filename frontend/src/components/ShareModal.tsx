@@ -172,8 +172,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, movie }
                   {movie.rating && (
                     <>
                       <span>•</span>
-                      <span className="text-[var(--status-match-green)] font-semibold">
-                        {movie.rating} Match
+                      <span className="text-[#facc15] font-semibold flex items-center gap-1">
+                        ★ {typeof movie.rating === 'string' ? (parseInt(movie.rating) / 10).toFixed(1) : (movie.rating / 10).toFixed(1)}
                       </span>
                     </>
                   )}

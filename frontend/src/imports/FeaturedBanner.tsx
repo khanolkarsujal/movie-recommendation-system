@@ -1,125 +1,129 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
-import { Play, Plus, Info } from 'lucide-react';
+import { Play, Info, Star, Clock, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useStore } from '../store';
 
 const FeaturedBanner: React.FC = () => {
   const navigate = useNavigate();
-  const { addToWatchlist, isInWatchlist } = useStore();
 
-  const featuredMovie = {
+  // Static high-quality featured content
+  const featured = {
     id: 'featured-1',
-    title: 'Eternal Horizon',
-    description:
-      'In a world where time itself is currency, one rebel must break the cycle to save humanity from eternal servitude. An epic tale of sacrifice, rebellion, and the true meaning of freedom.',
-    genres: ['Sci-Fi', 'Thriller', 'Action'],
-    rating: '9.4',
-    year: 2024,
-    duration: '2h 18m',
-    thumbnail: 'https://picsum.photos/seed/featured1/1920/600',
+    title: 'Interstellar: The Final Frontier',
+    description: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity\'s survival. A cinematic masterpiece that explores the bond between a father and daughter across time and space.',
+    image: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=2072',
+    rating: '9.8',
+    match: '99%',
+    year: '2024',
+    duration: '2h 49m',
+    genres: ['Sci-Fi', 'Drama', 'Adventure'],
+    accent: '#8b5cf6'
   };
 
-  const handlePlay = useCallback(() => {
-    navigate(`/watch?title=${encodeURIComponent(featuredMovie.title)}`);
-  }, [navigate, featuredMovie.title]);
-
-  const handleAddToList = useCallback(() => {
-    addToWatchlist(featuredMovie);
-  }, [addToWatchlist, featuredMovie]);
-
-  const inWatchlist = isInWatchlist(featuredMovie.id);
+  const handlePlay = () => {
+    navigate(`/watch?title=${encodeURIComponent(featured.title)}`);
+  };
 
   return (
-    <div className="relative px-8 md:px-[80px] mb-8">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative rounded-2xl overflow-hidden group cursor-pointer"
-        style={{ aspectRatio: '21/9' }}
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="relative w-full aspect-[21/9] md:aspect-[25/9] rounded-3xl overflow-hidden group shadow-2xl"
+    >
+      {/* Background Image with Parallax-like Zoom */}
+      <div className="absolute inset-0">
         <img
-          src={featuredMovie.thumbnail}
-          alt={featuredMovie.title}
-          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          src={featured.image}
+          alt={featured.title}
+          className="w-full h-full object-cover transition-transform duration-[10s] ease-out group-hover:scale-110"
         />
+        {/* Cinematic Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-black/20 z-10" />
+        
+        {/* Animated Dust Particles or subtle overlay can go here */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] z-10" />
+      </div>
 
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"
-          style={{
-            background:
-              'linear-gradient(90deg, rgba(5,5,8,0.95) 0%, rgba(5,5,8,0.7) 40%, transparent 100%)',
-          }}
-        />
+      {/* Content */}
+      <div className="relative z-20 h-full flex flex-col justify-center px-8 md:px-16 max-w-3xl gap-4 md:gap-6">
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center gap-2"
+        >
+          <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+            Featured Premiere
+          </span>
+          <span className="flex items-center gap-1 text-[#facc15] text-xs md:text-sm font-bold">
+            <Star size={14} fill="currentColor" /> {featured.rating}
+          </span>
+        </motion.div>
 
-        <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-12 lg:px-16">
-          <div className="max-w-xl">
-            <span className="inline-block px-3 py-1 bg-[var(--accent)] text-white text-xs font-bold tracking-[1.5px] rounded mb-4">
-              FEATURED
-            </span>
+        {/* Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-2xl"
+        >
+          {featured.title}
+        </motion.h1>
 
-            <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight">
-              {featuredMovie.title}
-            </h2>
-
-            <p className="text-white/80 text-[15px] md:text-[16px] leading-relaxed mb-6 max-w-lg line-clamp-3">
-              {featuredMovie.description}
-            </p>
-
-            <div className="flex items-center gap-3 text-white/60 text-sm mb-6">
-              <span className="text-[var(--accent)] font-bold">★ {featuredMovie.rating}</span>
-              <span>•</span>
-              <span>{featuredMovie.year}</span>
-              <span>•</span>
-              <span>{featuredMovie.duration}</span>
-              <span>•</span>
-              <div className="flex gap-2">
-                {featuredMovie.genres.map((genre) => (
-                  <span key={genre}>{genre}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handlePlay}
-                className="flex items-center gap-2 px-8 py-3 bg-white hover:bg-white/90 text-black font-bold rounded-lg transition-all hover:scale-105 shadow-lg outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                <Play size={20} fill="currentColor" />
-                Play
-              </button>
-
-              <button
-                onClick={handleAddToList}
-                className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-bold rounded-lg border border-white/30 transition-all hover:scale-105 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-              >
-                {inWatchlist ? (
-                  <>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                    </svg>
-                    In My List
-                  </>
-                ) : (
-                  <>
-                    <Plus size={20} />
-                    My List
-                  </>
-                )}
-              </button>
-
-              <button
-                className="w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-full border border-white/30 transition-all hover:scale-110 flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                aria-label="More info"
-              >
-                <Info size={20} />
-              </button>
-            </div>
+        {/* Metadata */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="flex items-center gap-4 text-white/70 text-xs md:text-sm font-medium"
+        >
+          <span className="flex items-center gap-1.5"><Calendar size={14} /> {featured.year}</span>
+          <span className="w-1 h-1 rounded-full bg-white/30" />
+          <span className="flex items-center gap-1.5"><Clock size={14} /> {featured.duration}</span>
+          <span className="w-1 h-1 rounded-full bg-white/30" />
+          <div className="flex gap-2">
+            {featured.genres.map(genre => (
+              <span key={genre} className="px-2 py-0.5 bg-white/5 rounded border border-white/10">{genre}</span>
+            ))}
           </div>
-        </div>
-      </motion.div>
-    </div>
+        </motion.div>
+
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-white/60 text-sm md:text-lg leading-relaxed line-clamp-3 md:line-clamp-none max-w-2xl"
+        >
+          {featured.description}
+        </motion.p>
+
+        {/* Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex items-center gap-4 mt-2"
+        >
+          <button
+            onClick={handlePlay}
+            className="flex items-center gap-2 bg-white text-black px-6 md:px-8 py-3 rounded-xl font-bold hover:bg-white/90 transition-all active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+          >
+            <Play size={20} fill="currentColor" /> Play Now
+          </button>
+          <button className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 text-white px-6 md:px-8 py-3 rounded-xl font-bold hover:bg-white/20 transition-all active:scale-95">
+            <Info size={20} /> More Info
+          </button>
+        </motion.div>
+      </div>
+
+      {/* Glossy Reflection Effect */}
+      <div className="absolute inset-0 pointer-events-none z-30 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+    </motion.div>
   );
 };
 

@@ -65,29 +65,29 @@ export const Top10Card: React.FC<Top10CardProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+      whileHover={{ scale: 1.05, y: -4 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 20, mass: 0.8 }}
     >
-      {/* Large rank number (left side) */}
+      {/* Large rank number */}
       <div
         className="flex-shrink-0 select-none pointer-events-none flex items-end justify-center pb-2"
         style={{
           width: '80px',
           height: '100%',
-          fontSize: rank < 10 ? '140px' : '100px',
+          fontSize: rank < 10 ? '138px' : '98px',
           fontWeight: 900,
-          fontFamily: 'Arial Black, sans-serif',
-          lineHeight: 0.8,
-          color: '#1a1a1a',
-          WebkitTextStroke: '3px rgba(255, 255, 255, 0.5)',
-          textShadow: '0 4px 16px rgba(0, 0, 0, 0.8)',
+          fontFamily: '"Helvetica Neue", Arial, sans-serif',
+          lineHeight: 0.82,
+          color: 'transparent',
+          WebkitTextStroke: '2px rgba(255, 255, 255, 0.38)',
+          textShadow: 'none',
         }}
       >
         {rank}
       </div>
 
-      {/* Movie poster card (right side) */}
-      <div className="relative flex-shrink-0 h-full rounded-[4px] overflow-hidden bg-[var(--bg-card)]" style={{ width: '200px' }}>
+      {/* Movie poster card */}
+      <div className="relative flex-shrink-0 h-full overflow-hidden bg-[var(--bg-card)]" style={{ width: '200px', borderRadius: 8 }}>
         {/* Poster image */}
         <img
           src={movie.thumbnail || 'https://via.placeholder.com/200x158/181818/666?text=No+Image'}
@@ -96,11 +96,11 @@ export const Top10Card: React.FC<Top10CardProps> = ({
           loading="lazy"
         />
 
-        {/* Gradient overlays */}
+        {/* Gradient overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.25) 45%, transparent 70%)',
           }}
         />
 
@@ -153,16 +153,17 @@ export const Top10Card: React.FC<Top10CardProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Hover shadow effect */}
+        {/* Hover shadow */}
         <AnimatePresence>
           {isHovered && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 rounded-[4px] pointer-events-none"
+              className="absolute inset-0 pointer-events-none"
               style={{
-                boxShadow: 'var(--shadow-card-hover)',
+                borderRadius: 8,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.85), 0 2px 8px rgba(0,0,0,0.5)',
               }}
             />
           )}

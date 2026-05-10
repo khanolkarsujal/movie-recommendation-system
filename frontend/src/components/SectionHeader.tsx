@@ -1,6 +1,6 @@
 /**
  * SectionHeader Component
- * Full-width section titles with optional "See All" link
+ * Premium section title with animated "Explore All" reveal on hover
  */
 
 import React, { useState } from 'react';
@@ -31,62 +31,84 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 
   return (
     <div
-      className={`
-        flex items-center justify-between
-        py-4
-        ${paddingClass}
-        ${className}
-      `}
+      className={`flex items-center justify-between py-2 ${paddingClass} ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Left: Label + Title */}
-      <div className="flex flex-col gap-1">
+      <div className="flex items-baseline gap-2.5 min-w-0">
         {label && (
           <span
-            className="
-              text-[var(--brand-purple)]
-              text-[11px]
-              font-bold
-              uppercase
-              tracking-[2px]
-              leading-none
-            "
+            style={{
+              fontSize: 9,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '2.5px',
+              color: 'rgba(139,92,246,0.85)',
+              lineHeight: 1,
+              flexShrink: 0,
+            }}
           >
             {label}
           </span>
         )}
-        <h2
-          className="
-            text-white
-            text-[20px]
-            font-bold
-            leading-tight
-          "
-        >
-          {title}
-        </h2>
-      </div>
 
-      {/* Right: See All link (appears on hover) */}
-      {showSeeAll && onSeeAll && (
-        <button
-          onClick={onSeeAll}
-          className={`
-            flex items-center gap-1
-            text-[var(--text-secondary)]
-            text-[14px]
-            font-semibold
-            transition-all duration-300
-            hover:text-white
-            ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2'}
-          `}
-          aria-label="See all"
-        >
-          <span>See All</span>
-          <ChevronRight size={16} />
-        </button>
-      )}
+        {/* Title + "Explore All" inline reveal */}
+        <div className="flex items-center gap-1.5 group/title">
+          <h2
+            style={{
+              fontSize: 20,
+              fontWeight: 600,
+              color: isHovered ? '#fff' : '#e0e0e0',
+              lineHeight: 1.2,
+              margin: 0,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              letterSpacing: '-0.01em',
+              transition: 'color 0.2s ease',
+            }}
+          >
+            {title}
+          </h2>
+
+          {/* Slide-in "Explore All" */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              opacity: isHovered ? 1 : 0,
+              transform: isHovered ? 'translateX(0)' : 'translateX(-6px)',
+              transition: 'opacity 0.22s ease, transform 0.22s ease',
+              cursor: onSeeAll ? 'pointer' : 'default',
+              pointerEvents: isHovered ? 'auto' : 'none',
+            }}
+            onClick={onSeeAll}
+            role={onSeeAll ? 'button' : undefined}
+            tabIndex={onSeeAll && isHovered ? 0 : -1}
+            onKeyDown={(e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && onSeeAll) onSeeAll();
+            }}
+          >
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 500,
+                color: 'rgba(167,139,250,0.9)',
+                whiteSpace: 'nowrap',
+                letterSpacing: '0.01em',
+              }}
+            >
+              Explore All
+            </span>
+            <ChevronRight
+              size={13}
+              style={{ color: 'rgba(167,139,250,0.9)', flexShrink: 0, marginTop: 1 }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Star } from 'lucide-react';
 import { Badge } from './Badge';
 
 interface MatchScoreProps {
@@ -14,12 +15,6 @@ interface MatchScoreProps {
   rating?: string; // "PG" | "PG-13" | "R" | "16+"
   variant?: 'full' | 'compact' | 'with-bar';
   className?: string;
-}
-
-function getScoreColor(score: number): string {
-  if (score >= 75) return '#46d369'; // Green
-  if (score >= 40) return '#f59e0b'; // Yellow
-  return '#ef4444'; // Red
 }
 
 function parseScore(score: number | string): number {
@@ -38,17 +33,13 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   variant = 'full',
   className = '',
 }) => {
-  const numericScore = parseScore(score);
-  const scoreColor = getScoreColor(numericScore);
+  const numericScore = typeof score === 'string' ? parseFloat(score.replace('%', '')) : score;
 
   return (
     <div className={`flex items-center gap-2.5 text-[12px] ${className}`}>
-      {/* Match Score */}
-      <span
-        className="font-bold"
-        style={{ color: scoreColor }}
-      >
-        {numericScore}% Match
+      {/* Star Rating */}
+      <span className="flex items-center gap-1 font-bold text-[#facc15]">
+        <Star size={12} fill="currentColor" /> {numericScore >= 10 ? (numericScore / 10).toFixed(1) : numericScore.toFixed(1)}
       </span>
 
       {/* Metadata */}
@@ -78,18 +69,6 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
         </>
       )}
 
-      {/* Progress Bar Variant */}
-      {variant === 'with-bar' && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
-          <div
-            className="h-full transition-all duration-500"
-            style={{
-              width: `${numericScore}%`,
-              backgroundColor: scoreColor,
-            }}
-          />
-        </div>
-      )}
     </div>
   );
 };

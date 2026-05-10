@@ -1,12 +1,26 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useLocation } from 'react-router-dom';
 
 interface BrowseHeroProps {
   onSearch?: (query: string) => void;
 }
 
 const BrowseHero: React.FC<BrowseHeroProps> = ({ onSearch }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.focusSearch) {
+      // Small timeout to ensure animation/mounting is done
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
+
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     onSearch?.(e.target.value);
   }, [onSearch]);
@@ -39,6 +53,7 @@ const BrowseHero: React.FC<BrowseHeroProps> = ({ onSearch }) => {
 
           <div className="relative group max-w-[540px] mx-auto w-full">
             <input
+              ref={inputRef}
               type="text"
               placeholder="Search movies, shows, genres..."
               onChange={handleSearchChange}

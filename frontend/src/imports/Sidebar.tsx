@@ -131,32 +131,6 @@ const NavIcon: React.FC<NavIconProps> = ({
     <div
       style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}
     >
-      {/* Left accent bar */}
-      <AnimatePresence>
-        {active && (
-          <motion.span
-            layoutId="sidebar-active-bar"
-            initial={{ scaleY: 0, opacity: 0 }}
-            animate={{ scaleY: 1, opacity: 1 }}
-            exit={{ scaleY: 0, opacity: 0 }}
-            transition={EASE_SPRING}
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: 3,
-              height: 22,
-              borderRadius: '0 3px 3px 0',
-              background: '#8b5cf6',
-              boxShadow: '0 0 8px rgba(139,92,246,0.7)',
-              transformOrigin: 'center',
-            }}
-          />
-        )}
-      </AnimatePresence>
-
       <motion.button
         role="button"
         tabIndex={0}
@@ -168,37 +142,34 @@ const NavIcon: React.FC<NavIconProps> = ({
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); }
         }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.92 }}
+        whileHover={{ scale: 1.12 }}
+        whileTap={{ scale: 0.9 }}
         transition={EASE_SPRING}
         style={{
           position: 'relative',
-          width: 42,
-          height: 42,
-          borderRadius: 12,
+          width: 40,
+          height: 40,
+          borderRadius: 10,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
           border: 'none',
           outline: 'none',
-          background: active
-            ? 'rgba(139,92,246,0.18)'
-            : isHovered
-              ? 'rgba(255,255,255,0.06)'
-              : 'transparent',
-          boxShadow: active
-            ? '0 0 0 1px rgba(139,92,246,0.35), 0 0 18px rgba(139,92,246,0.18)'
-            : 'none',
-          transition: 'background 0.2s ease, box-shadow 0.2s ease',
+          background: 'transparent',
+          transition: 'background 0.15s ease',
         }}
       >
         <Icon
-          size={20}
+          size={19}
           style={{
-            color: active ? '#c4b5fd' : isHovered ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.42)',
+            color: active
+              ? '#ffffff'
+              : isHovered
+                ? 'rgba(255,255,255,0.75)'
+                : 'rgba(255,255,255,0.32)',
             transition: 'color 0.18s ease',
-            strokeWidth: active ? 2.2 : 1.8,
+            strokeWidth: active ? 2.0 : 1.6,
           }}
         />
 
@@ -212,20 +183,18 @@ const NavIcon: React.FC<NavIconProps> = ({
               position: 'absolute',
               top: 6,
               right: 6,
-              width: 15,
-              height: 15,
+              width: 14,
+              height: 14,
               borderRadius: '50%',
               background: '#ef4444',
-              border: `2px solid #111`,
+              border: `2px solid rgba(10,10,12,0.98)`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 8,
+              fontSize: 7,
               fontWeight: 800,
               color: '#fff',
               lineHeight: 1,
-              boxShadow: '0 0 6px rgba(239,68,68,0.6)',
-              animation: 'badgePulse 2.5s ease-in-out infinite',
             }}
           >
             {item.badge > 9 ? '9+' : item.badge}
@@ -426,16 +395,15 @@ const Sidebar: React.FC = () => {
           top: 0,
           width: SIDEBAR_W,
           height: '100vh',
-          background: '#111114',
+          background: 'rgba(10,10,12,0.98)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           zIndex: 100,
-          // Subtle right edge separator
           borderRight: '1px solid rgba(255,255,255,0.04)',
         }}
       >
-        {/* ── Logo zone (matches navbar height exactly) ── */}
+        {/* ── Logo zone ── */}
         <motion.button
           onClick={() => navigate('/')}
           whileHover={{ scale: 1.08 }}
@@ -444,7 +412,7 @@ const Sidebar: React.FC = () => {
           aria-label="Go home"
           style={{
             width: SIDEBAR_W,
-            height: 68,           // exact navbar height
+            height: 64,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -461,12 +429,13 @@ const Sidebar: React.FC = () => {
               justifyContent: 'center',
               width: 32,
               height: 32,
-              borderRadius: 10,
-              background: 'linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%)',
-              boxShadow: '0 4px 12px rgba(109,40,217,0.5)',
-              fontSize: 15,
-              fontWeight: 900,
-              color: '#fff',
+              borderRadius: '50%',
+              background: 'rgba(139,92,246,0.18)',
+              border: '1.5px solid rgba(139,92,246,0.45)',
+              flexShrink: 0,
+              fontSize: 14,
+              fontWeight: 800,
+              color: '#a78bfa',
               letterSpacing: '-0.5px',
               userSelect: 'none',
             }}
@@ -479,10 +448,10 @@ const Sidebar: React.FC = () => {
         <div
           aria-hidden="true"
           style={{
-            width: 32,
+            width: 28,
             height: 1,
             background: 'rgba(255,255,255,0.06)',
-            marginBottom: 8,
+            marginBottom: 6,
             flexShrink: 0,
           }}
         />

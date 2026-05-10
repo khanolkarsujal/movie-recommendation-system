@@ -11,35 +11,57 @@ interface GenreFilterBarProps {
 
 const GenreFilterBar: React.FC<GenreFilterBarProps> = ({ activeGenre, setActiveGenre }) => {
   return (
-    <div className="relative z-[35] px-8 md:px-16 pt-8 pb-6" style={{ marginTop: '-160px' }}>
-      {/* Discover Title */}
-      <h1 className="text-white text-[32px] font-bold tracking-tight mb-6">
-        Discover
-      </h1>
-
-      {/* Genre Filters */}
-      <div
-        className="flex items-center gap-3 overflow-x-auto no-scrollbar"
-        role="tablist"
-        aria-label="Genre filters"
-      >
-        {GENRES.map((g) => (
+    <div
+      className="relative z-[35] flex items-center gap-2 overflow-x-auto pb-1"
+      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+      role="tablist"
+      aria-label="Genre filters"
+    >
+      {GENRES.map((g) => {
+        const isActive = activeGenre === g;
+        return (
           <button
             key={g}
             onClick={() => setActiveGenre(g)}
             role="tab"
-            aria-selected={activeGenre === g}
+            aria-selected={isActive}
             aria-label={`Filter by ${g}`}
-            className={`px-[16px] py-[7px] text-[13px] font-medium whitespace-nowrap rounded-[20px] transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
-              activeGenre === g
-                ? 'bg-[#8b5cf6] text-white shadow-[0_4px_12px_rgba(139,92,246,0.3)]'
-                : 'bg-transparent text-white/70 border border-white/20 hover:border-white/40 hover:text-white'
-            }`}
+            style={{
+              padding: '5px 16px',
+              fontSize: 12.5,
+              fontWeight: isActive ? 600 : 400,
+              whiteSpace: 'nowrap',
+              borderRadius: 999,
+              border: isActive
+                ? '1px solid rgba(139,92,246,0.5)'
+                : '1px solid rgba(255,255,255,0.1)',
+              background: isActive
+                ? 'rgba(139,92,246,0.18)'
+                : 'rgba(255,255,255,0.03)',
+              color: isActive ? '#c4b5fd' : 'rgba(255,255,255,0.55)',
+              cursor: 'pointer',
+              outline: 'none',
+              transition: 'all 0.18s ease',
+              letterSpacing: isActive ? '0.01em' : '0',
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.85)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.2)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)';
+                (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.1)';
+              }
+            }}
           >
             {g}
           </button>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 };

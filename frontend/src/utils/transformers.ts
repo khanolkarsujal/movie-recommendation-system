@@ -31,9 +31,10 @@ export function transformTMDBToMovie(tmdb: TMDBMovie, progress = 0): Movie {
     rating: calculateMatchScore(tmdb.vote_average || 0),
     genres: mapGenres(tmdb.genre_ids || [], tmdb.genres),
     description: tmdb.overview || 'No description available.',
-    thumbnail: tmdbClient.getImageUrl(tmdb.backdrop_path || tmdb.poster_path, 'w780') || generatePlaceholder(),
+    thumbnail: tmdbClient.getImageUrl(tmdb.backdrop_path || tmdb.poster_path || null, 'w780') || generatePlaceholder(),
     accent: generateAccentColor(tmdb.genre_ids?.[0] || 0),
     progress,
+    quality: '4K',
   };
 }
 
@@ -52,11 +53,10 @@ export function formatRuntime(minutes: number): string {
 }
 
 /**
- * Calculate match score from TMDB vote average (0-10 → 0-100%)
+ * Calculate rating from TMDB vote average (0-10)
  */
 export function calculateMatchScore(voteAverage: number): string {
-  const percentage = Math.min(100, Math.max(0, Math.round((voteAverage / 10) * 100)));
-  return `${percentage}%`;
+  return voteAverage.toFixed(1);
 }
 
 /**

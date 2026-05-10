@@ -1,19 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface Movie {
-  id: number | string;
-  title: string;
-  badge?: string;
-  year?: string | number;
-  duration?: string;
-  rating?: string | number;
-  genres?: string[];
-  description?: string;
-  thumbnail?: string;
-  accent?: string;
-  progress?: number;
-}
+import { Movie } from '../imports/types';
 
 interface StoreState {
   watchlist: Movie[];

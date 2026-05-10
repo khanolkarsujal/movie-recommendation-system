@@ -193,131 +193,57 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-[64px] right-0 h-[64px] flex items-center justify-between px-8 z-[99] transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled
-          ? 'bg-[#141414]/85 backdrop-blur-[20px] border-b border-white/5 shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
-          : 'bg-transparent border-transparent shadow-none'
+      className={`fixed top-0 left-[64px] right-0 h-[64px] flex items-center justify-between px-6 z-[99] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${scrolled
+          ? 'bg-[#111113]/95 backdrop-blur-[24px] border-b border-white/[0.06] shadow-[0_1px_20px_rgba(0,0,0,0.5)]'
+          : 'bg-gradient-to-b from-[rgba(0,0,0,0.55)] to-transparent border-transparent shadow-none'
         }`}
     >
-      {/* Left side - Logo/Brand */}
-      <div className="flex items-center">
-        <h1 className="text-white text-[20px] font-bold tracking-tight">
-          Discover
-        </h1>
+      {/* Left side - Primary Nav links */}
+      <div className="flex items-center gap-0.5">
+        {[
+          { label: 'Home', path: '/' },
+          { label: 'Browse', path: '/browse' },
+          { label: 'Kids', path: '/kids' },
+          { label: 'Support', path: '/support' },
+          { label: 'FAQ', path: '/faq' },
+        ].map(({ label, path }) => {
+          const isActive = location.pathname === path;
+          return (
+            <button
+              key={label}
+              onClick={() => navigate(path)}
+              className="outline-none"
+              style={{
+                padding: '5px 12px',
+                fontSize: 13.5,
+                fontWeight: isActive ? 500 : 400,
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.55)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                borderRadius: 6,
+                transition: 'color 0.15s ease',
+                whiteSpace: 'nowrap',
+                letterSpacing: '0.01em',
+              }}
+              onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.9)'; }}
+              onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.55)'; }}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="relative flex items-center justify-end h-[64px]" ref={searchContainerRef}>
-          <motion.div
-            initial={false}
-            animate={{ width: searchOpen ? 240 : 20, opacity: 1 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className={`flex items-center overflow-hidden ${searchOpen ? 'bg-white/10 border border-white/15 rounded-[20px] backdrop-blur-[8px]' : ''
-              }`}
+      <div className="flex items-center gap-5">
+        <div className="relative flex items-center justify-end h-[64px]">
+          <button
+            onClick={() => navigate('/browse', { state: { focusSearch: true } })}
+            className="text-white hover:scale-110 transition-transform duration-200 outline-none flex-shrink-0"
+            aria-label="Search"
           >
-            <button
-              onClick={() => !searchOpen && setSearchOpen(true)}
-              className={`text-white transition-transform duration-200 outline-none flex-shrink-0 ${searchOpen ? 'ml-3' : 'hover:scale-110'
-                }`}
-              aria-label="Search"
-            >
-              <Search size={20} className={searchOpen ? 'text-white/60' : ''} />
-            </button>
-
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Titles, people, genres"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent border-none outline-none text-white text-[14px] w-full px-2.5 py-1.5 placeholder-white/40"
-              style={{ display: searchOpen ? 'block' : 'none' }}
-              aria-label="Search content"
-            />
-
-            {searchOpen && (
-              <button
-                onClick={() => setSearchOpen(false)}
-                className="text-white/60 hover:text-white mr-3 transition-colors outline-none flex-shrink-0"
-                aria-label="Close search"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </motion.div>
-
-          <AnimatePresence>
-            {searchOpen && searchQuery.length > 1 && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-[56px] right-0 w-[360px] bg-[#0f0f0f]/98 border border-white/5 rounded-xl backdrop-blur-[20px] shadow-[0_16px_48px_rgba(0,0,0,0.6)] overflow-hidden max-h-[400px] overflow-y-auto"
-              >
-                <div className="p-3">
-                  <p className="text-[12px] font-bold tracking-wider text-white/40 uppercase px-2 pb-3 pt-1">
-                    {searchResults.length > 0 ? 'Top Results' : 'No Results'}
-                  </p>
-
-                  {searchResults.length === 0 ? (
-                    <div className="py-10 flex flex-col items-center justify-center text-center px-4">
-                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                        <Search size={24} className="text-white/20" />
-                      </div>
-                      <h3 className="text-[15px] font-bold text-white mb-1">No results for "{searchQuery}"</h3>
-                      <p className="text-[12px] text-white/40 mb-6">Try different keywords or browse our suggested genres below</p>
-
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {['Action', 'Sci-Fi', 'Drama'].map(suggest => (
-                          <button
-                            key={suggest}
-                            onClick={() => setSearchQuery(suggest)}
-                            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] text-white/70 hover:bg-white/10 hover:text-white transition-all"
-                          >
-                            {suggest}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-1">
-                      {searchResults.map((res) => (
-                        <div
-                          key={res.id}
-                          onClick={() => {
-                            setSearchOpen(false);
-                            navigate(`/watch?title=${encodeURIComponent(res.title)}`);
-                          }}
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors group"
-                        >
-                          <div className="w-14 h-[76px] bg-white/10 rounded-md overflow-hidden flex-shrink-0 relative">
-                            {res.thumbnail ? (
-                              <img src={res.thumbnail} className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform" alt={res.title} />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center"><Film size={16} className="text-white/30" /></div>
-                            )}
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                          </div>
-                          <div>
-                            <h4 className="text-[14px] text-white font-bold mb-1">{res.title}</h4>
-                            <div className="flex items-center gap-2 text-[11px] text-white/50">
-                              <span>{res.year || 2025}</span>
-                              {res.genres && (
-                                <>
-                                  <span>·</span>
-                                  <span>{res.genres[0]}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <Search size={20} />
+          </button>
         </div>
 
         {/* 🌟 NEW AI LOGO BUTTON PLACED HERE 🌟 */}
@@ -379,7 +305,7 @@ const Navbar: React.FC = () => {
         <div className="relative h-[64px] flex items-center" ref={avatarMenuRef}>
           <button
             onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
-            className="w-9 h-9 rounded-full border-2 border-white/30 overflow-hidden cursor-pointer transition-colors duration-200 hover:border-white/60 outline-none"
+            className="w-8 h-8 rounded-full border border-white/25 overflow-hidden cursor-pointer transition-all duration-200 hover:border-white/70 hover:scale-105 outline-none"
             aria-label="User menu"
           >
             <img src={avatarImg} alt="User Profile" className="w-full h-full object-cover" />

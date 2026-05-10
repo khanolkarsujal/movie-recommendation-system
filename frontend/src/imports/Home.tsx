@@ -73,7 +73,6 @@ const Home: React.FC = () => {
   ], [allMovies]);
 
   // OTT UX FEATURE: Filter the rows based on the active genre.
-  // If a row becomes empty after filtering, it is hidden.
   const filteredSections = useMemo(() => {
     if (activeGenre === 'All') return baseSections;
 
@@ -88,68 +87,88 @@ const Home: React.FC = () => {
   }, [baseSections, activeGenre]);
 
   return (
-    // OTT UI Tweak: Deep dark background (#141414 is Netflix's exact color)
-    <div className="bg-[#141414] min-h-screen text-white overflow-x-hidden pb-10">
+    <div style={{ background: '#111113', minHeight: '100vh', color: '#fff', overflowX: 'hidden' }}>
+      {/* ─── HERO ─── */}
       <Hero />
 
-      {/* OTT UI Tweak: Gradient overlay to seamlessly blend the bottom of the Hero into the rows */}
-      <div className="h-32 md:h-48 bg-gradient-to-t from-[#141414] via-[#141414]/80 to-transparent -mt-32 md:-mt-48 relative z-10 pointer-events-none" />
+      {/* ─── Hero → Content Gradient Bridge ─── */}
+      <div style={{
+        height: 80,
+        marginTop: -80,
+        background: 'linear-gradient(to bottom, transparent 0%, #111113 100%)',
+        position: 'relative',
+        zIndex: 10,
+        pointerEvents: 'none',
+      }} />
 
-      {/* OTT UI Tweak: Negative top margin pulls the content up, creating the overlapping effect */}
-      <div className="relative z-20 -mt-16 md:-mt-24 space-y-8 md:space-y-12">
+      {/* ─── MAIN CONTENT AREA ─── */}
+      <div style={{ position: 'relative', zIndex: 20 }}>
 
-        {/* Genre Filter Bar */}
-        <div className="px-4 md:px-12 mb-2 md:mb-6">
+        {/* Genre Filter Bar — sticky Netflix-style tab row */}
+        <div
+          style={{
+            position: 'sticky',
+            top: 64,
+            zIndex: 50,
+            padding: '12px 60px',
+            background: 'linear-gradient(to bottom, rgba(17,17,19,0.97) 0%, rgba(17,17,19,0.9) 100%)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            borderBottom: '1px solid rgba(255,255,255,0.04)',
+            marginBottom: 4,
+          }}
+        >
           <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />
         </div>
 
-        {/* Dynamic Movie Rows */}
-        {filteredSections.map((section, idx) => (
-          <React.Fragment key={`${section.title}-${idx}`}>
+        {/* Movie Rows */}
+        <div style={{ paddingBottom: 40 }}>
+          {filteredSections.map((section, idx) => (
+            <React.Fragment key={`${section.title}-${idx}`}>
 
-            {/* Inject My List early in the page */}
-            {idx === 1 && watchlist.length > 0 && (
-              <MovieRow
-                title="My List"
-                movies={watchlist}
-              />
-            )}
+              {/* Inject My List early in the page */}
+              {idx === 1 && watchlist.length > 0 && (
+                <MovieRow
+                  title="My List"
+                  movies={watchlist}
+                />
+              )}
 
-            {/* Render Top 10 or Standard Movie Row */}
-            {section.type === 'top10' ? (
-              <Top10RowNew
-                title={section.title}
-                movies={section.data as any}
-              />
-            ) : (
-              <MovieRow
-                title={section.title}
-                movies={section.data as any}
-                {...(section.props as any)}
-              />
-            )}
+              {/* Render Top 10 or Standard Movie Row */}
+              {section.type === 'top10' ? (
+                <Top10RowNew
+                  title={section.title}
+                  movies={section.data as any}
+                />
+              ) : (
+                <MovieRow
+                  title={section.title}
+                  movies={section.data as any}
+                  {...(section.props as any)}
+                />
+              )}
 
-            {/* Inject Featured Banner 1 */}
-            {idx === 4 && (
-              <div className="py-4 md:py-8 px-4 md:px-12">
-                <FeaturedBanner />
-              </div>
-            )}
+              {/* Inject Featured Banner 1 */}
+              {idx === 4 && (
+                <div style={{ padding: '8px 60px 24px' }}>
+                  <FeaturedBanner />
+                </div>
+              )}
 
-            {/* Inject Featured Banner 2 */}
-            {idx === 15 && (
-              <div className="py-4 md:py-8 px-4 md:px-12 opacity-90 hover:opacity-100 transition-opacity duration-300">
-                <FeaturedBanner />
-              </div>
-            )}
+              {/* Inject Featured Banner 2 */}
+              {idx === 15 && (
+                <div style={{ padding: '8px 60px 24px', opacity: 0.95 }}>
+                  <FeaturedBanner />
+                </div>
+              )}
 
-          </React.Fragment>
-        ))}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-12">
-        <Footer />
-      </div>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

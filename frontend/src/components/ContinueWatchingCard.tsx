@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Play, MoreVertical, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProgressBar } from './ui/ProgressBar';
-import { useStore } from '../store';
 import { toast } from 'sonner';
 import type { Movie } from '../imports/types';
 
@@ -54,18 +53,24 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
   return (
     <motion.div
       className="relative flex-shrink-0 group cursor-pointer aspect-video"
-      style={{ width: 'var(--card-width, 240px)' }}
+      style={{ width: 'var(--card-width, 260px)', borderRadius: 8 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
         setShowMenu(false);
       }}
       onClick={handlePlayClick}
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+      whileHover={{ scale: 1.05, y: -6, zIndex: 50 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 20, mass: 0.8 }}
     >
+      {/* Ambient glow on hover */}
+      <div
+        className={`absolute inset-0 -z-10 blur-3xl transition-opacity duration-700 ${isHovered ? 'opacity-40' : 'opacity-0'}`}
+        style={{ background: 'radial-gradient(circle at 50% 120%, rgba(139,92,246,0.6) 0%, transparent 65%)' }}
+      />
+
       {/* Thumbnail Container */}
-      <div className="relative w-full h-full rounded-[4px] overflow-hidden bg-[var(--bg-card)]">
+      <div className="relative w-full h-full overflow-hidden bg-[var(--bg-card)]" style={{ borderRadius: 8 }}>
         {/* Thumbnail Image */}
         <img
           src={movie.thumbnail || 'https://via.placeholder.com/230x130/181818/666?text=No+Image'}
@@ -74,11 +79,11 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
           loading="lazy"
         />
 
-        {/* Gradient Overlays */}
+        {/* Base gradient */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.35) 40%, transparent 65%)',
           }}
         />
 
@@ -169,48 +174,48 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
 
         {/* Progress bar */}
         {movie.progress !== undefined && movie.progress > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 z-10">
-            <ProgressBar progress={movie.progress} height={3} variant="watch" />
+          <div className="absolute bottom-0 left-0 right-0 z-10 h-[3px] bg-white/10">
+            <div
+              style={{
+                width: `${Math.min(movie.progress, 100)}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)',
+                borderRadius: '0 2px 2px 0',
+              }}
+            />
           </div>
         )}
 
-        {/* Hover shadow effect */}
+        {/* Title overlay - shows at bottom on hover */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-20 px-2 pb-2 pt-8"
+          style={{
+            background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)',
+            transition: 'opacity 0.2s',
+            opacity: isHovered ? 0 : 1,
+          }}
+        >
+          <h3 style={{ fontSize: 12, fontWeight: 600, color: '#e5e5e5', margin: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {movie.title}
+          </h3>
+        </div>
+
+        {/* Hover shadow */}
         <AnimatePresence>
           {isHovered && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 rounded-[4px] pointer-events-none"
+              className="absolute inset-0 pointer-events-none"
               style={{
-                boxShadow: 'var(--shadow-card-hover)',
+                borderRadius: 8,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.85), 0 2px 8px rgba(0,0,0,0.5)',
               }}
             />
           )}
         </AnimatePresence>
       </div>
-
-      {/* Title and Match score - Centered below thumbnail */}
-      <div className="mt-3 text-center px-2">
-        <h3 className="text-white text-[14px] font-semibold line-clamp-1 mb-1">
-          {movie.title}
-        </h3>
-        {movie.rating && (
-          <p className="text-[var(--status-match-green)] text-[12px] font-bold">
-            {movie.rating} Match
-          </p>
-        )}
-      </div>
-
-      {/* Glow effect */}
-      {movie.accent && isHovered && (
-        <div
-          className="absolute inset-0 -z-10 blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
-          style={{
-            background: `radial-gradient(circle at center, ${movie.accent} 0%, transparent 70%)`,
-          }}
-        />
-      )}
     </motion.div>
   );
 };

@@ -14,6 +14,7 @@ import {
   VolumeX,
   ChevronLeft,
   ChevronRight,
+  Star,
 } from 'lucide-react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
@@ -190,8 +191,8 @@ const Hero: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
-  const videoTRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<any>(null);
+  const videoTRef = useRef<any>(null);
   const barKeyRef = useRef(0);
 
   // Reduced motion
@@ -208,7 +209,7 @@ const Hero: React.FC = () => {
   const panY = useTransform(rawY, [-1, 1], reducedMotion ? [0, 0] : [-8, 8]);
 
   const movie = heroMovie ?? FEATURED[current];
-  const isReady = loaded.has(movie.id) || !!(movie as any).isCustom;
+  const isReady = loaded.has(movie.id as any) || !!(movie as any).isCustom;
   const matchN = parseInt(movie.match ?? '90', 10);
   const mColor = matchColor(matchN);
   const accentRgb = hex2rgb(movie.accent ?? '#8b5cf6');
@@ -383,7 +384,7 @@ const Hero: React.FC = () => {
         style={{
           position: 'relative',
           width: '100%',
-          height: '100vh',
+          height: '85vh',
           minHeight: 600,
           overflow: 'hidden',
           background: '#050508',
@@ -414,7 +415,7 @@ const Hero: React.FC = () => {
               src={m.image}
               alt=""
               aria-hidden="true"
-              onLoad={() => setLoaded(s => new Set(s).add(m.id))}
+              onLoad={() => setLoaded(s => new Set(s).add(m.id as any))}
               style={{
                 position: 'absolute',
                 inset: 0,
@@ -427,10 +428,6 @@ const Hero: React.FC = () => {
                   ? 'none'
                   : 'opacity 1.4s cubic-bezier(0.22,1,0.36,1)',
                 filter: 'contrast(1.08) saturate(1.12) brightness(0.88)',
-                maskImage:
-                  'linear-gradient(to left, black 25%, rgba(0,0,0,0.3) 60%, transparent 100%)',
-                WebkitMaskImage:
-                  'linear-gradient(to left, black 25%, rgba(0,0,0,0.3) 60%, transparent 100%)',
                 willChange: 'opacity',
               }}
             />
@@ -454,10 +451,6 @@ const Hero: React.FC = () => {
                 objectPosition: 'center 20%',
                 opacity: showVideo ? 1 : 0,
                 transition: 'opacity 1.6s cubic-bezier(0.22,1,0.36,1)',
-                maskImage:
-                  'linear-gradient(to left, black 25%, rgba(0,0,0,0.3) 60%, transparent 100%)',
-                WebkitMaskImage:
-                  'linear-gradient(to left, black 25%, rgba(0,0,0,0.3) 60%, transparent 100%)',
               }}
             />
           )}
@@ -541,10 +534,10 @@ const Hero: React.FC = () => {
           style={{
             position: 'absolute',
             zIndex: 20,
-            left: 60,
-            bottom: 140,
-            maxWidth: 580,
-            transform: `translateY(${-scrollY * 0.12}px)`,
+            left: 100,
+            top: '50%',
+            transform: `translateY(calc(-50% + ${scrollY * 0.06}px))`,
+            maxWidth: 560,
             transition: reducedMotion ? 'none' : undefined,
           }}
         >
@@ -579,29 +572,30 @@ const Hero: React.FC = () => {
                 style={{ display: 'flex', flexDirection: 'column', gap: 0 }}
               >
 
-                {/* Badge */}
+                {/* Badge — "slothui original" style */}
                 {movie.badge && (
                   <motion.div
                     variants={childVariants}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 8,
-                      marginBottom: 10,
+                      gap: 7,
+                      marginBottom: 12,
                     }}
                   >
                     <div
                       style={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: 6,
-                        background: '#8b5cf6',
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: 'rgba(139,92,246,0.2)',
+                        border: '1.5px solid rgba(139,92,246,0.5)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: 11,
                         fontWeight: 900,
-                        color: '#fff',
+                        color: '#a78bfa',
                         flexShrink: 0,
                       }}
                     >
@@ -609,14 +603,13 @@ const Hero: React.FC = () => {
                     </div>
                     <span
                       style={{
-                        fontSize: 10,
-                        fontWeight: 800,
-                        letterSpacing: '2.5px',
-                        color: '#a78bfa',
-                        textTransform: 'uppercase',
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: 'rgba(255,255,255,0.7)',
+                        letterSpacing: '0.01em',
                       }}
                     >
-                      {movie.badge}
+                      streamvault original
                     </span>
                   </motion.div>
                 )}
@@ -648,75 +641,25 @@ const Hero: React.FC = () => {
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'center',
-                    gap: 8,
-                    marginBottom: 14,
-                    fontSize: 13,
+                    gap: 10,
+                    marginBottom: 16,
+                    fontSize: 15,
                     fontWeight: 500,
+                    color: '#fff',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
                   }}
                 >
-                  {/* Match score */}
-                  <span
-                    style={{
-                      color: mColor,
-                      fontWeight: 700,
-                      fontSize: 14,
-                    }}
-                  >
-                    {matchN}% Match
+                  <span style={{ color: 'rgba(255,255,255,0.9)' }}>{movie.year}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>•</span>
+                  <span style={{ color: 'rgba(255,255,255,0.9)' }}>{movie.duration}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>•</span>
+                  <span style={{ color: 'rgba(255,255,255,0.9)' }}>{movie.genre}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>•</span>
+
+                  {/* Star rating */}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#facc15', fontWeight: 600 }}>
+                    <Star size={14} fill="currentColor" /> {movie.match ? (parseInt(movie.match) / 10).toFixed(1) : '8.8'}
                   </span>
-
-                  <span style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
-                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>{movie.year}</span>
-
-                  <span style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
-                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>{movie.duration}</span>
-
-                  <span style={{ color: 'rgba(255,255,255,0.3)' }}>·</span>
-                  <MetaBadge>{movie.rating}</MetaBadge>
-                  <MetaBadge>{movie.quality}</MetaBadge>
-
-                  {movie.audio && (
-                    <span
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        color: 'rgba(255,255,255,0.38)',
-                        letterSpacing: '0.5px',
-                      }}
-                    >
-                      {movie.audio}
-                    </span>
-                  )}
-                </motion.div>
-
-                {/* Match bar */}
-                <motion.div
-                  variants={childVariants}
-                  style={{ marginBottom: 16 }}
-                >
-                  <div
-                    style={{
-                      height: 2,
-                      width: '100%',
-                      maxWidth: 340,
-                      background: 'rgba(255,255,255,0.1)',
-                      borderRadius: 1,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.8, ease: EASE_CINEMA, delay: 0.4 }}
-                      style={{
-                        height: '100%',
-                        width: `${matchN}%`,
-                        background: mColor,
-                        transformOrigin: 'left',
-                        borderRadius: 1,
-                      }}
-                    />
-                  </div>
                 </motion.div>
 
                 {/* Description */}
@@ -737,93 +680,91 @@ const Hero: React.FC = () => {
                   {movie.description}
                 </motion.p>
 
-                {/* CTA buttons */}
+                {/* CTA buttons — reference style */}
                 <motion.div
                   variants={childVariants}
-                  style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 12 }}
                 >
-                  {/* Play — primary */}
+                  {/* Circular Play + label */}
                   <motion.button
                     onClick={handlePlay}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.06 }}
+                    whileTap={{ scale: 0.94 }}
                     aria-label={`Play ${movie.title}`}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 9,
-                      background: '#ffffff',
-                      color: '#000',
+                      gap: 10,
+                      background: 'transparent',
+                      color: '#fff',
                       border: 'none',
-                      borderRadius: 5,
-                      padding: '11px 26px',
-                      fontSize: 15,
-                      fontWeight: 700,
                       cursor: 'pointer',
-                      boxShadow: '0 4px 24px rgba(255,255,255,0.15)',
-                      whiteSpace: 'nowrap',
+                      padding: 0,
                     }}
                   >
-                    <Play size={19} fill="black" strokeWidth={0} />
-                    Play
+                    <span
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+                      }}
+                    >
+                      <Play size={18} fill="black" strokeWidth={0} style={{ marginLeft: 2 }} />
+                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: '0.01em' }}>Play S1 E1</span>
                   </motion.button>
 
-                  {/* My List — secondary */}
+                  {/* + icon circle */}
                   <motion.button
                     onClick={handleWatchlist}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.92 }}
                     aria-label={inList ? 'Remove from My List' : 'Add to My List'}
                     style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.15)',
+                      border: '1.5px solid rgba(255,255,255,0.3)',
+                      backdropFilter: 'blur(8px)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 8,
-                      background: inList
-                        ? 'rgba(139,92,246,0.25)'
-                        : 'rgba(109,109,110,0.65)',
-                      border: inList
-                        ? '1.5px solid rgba(139,92,246,0.5)'
-                        : '1.5px solid transparent',
-                      color: '#fff',
-                      borderRadius: 5,
-                      padding: '11px 22px',
-                      fontSize: 15,
-                      fontWeight: 600,
+                      justifyContent: 'center',
                       cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      transition: 'background 0.25s, border 0.25s',
+                      color: '#fff',
+                      transition: 'background 0.2s',
                     }}
                   >
-                    {inList ? (
-                      <Check size={18} color="#a78bfa" />
-                    ) : (
-                      <Plus size={18} />
-                    )}
-                    My List
+                    {inList ? <Check size={16} /> : <Plus size={16} />}
                   </motion.button>
 
-                  {/* More Info — ghost */}
+                  {/* Info icon circle */}
                   <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.92 }}
                     aria-label="More information"
                     style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.12)',
+                      border: '1.5px solid rgba(255,255,255,0.25)',
+                      backdropFilter: 'blur(8px)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 8,
-                      background: 'transparent',
-                      border: '1.5px solid rgba(255,255,255,0.28)',
-                      color: 'rgba(255,255,255,0.85)',
-                      borderRadius: 5,
-                      padding: '11px 20px',
-                      fontSize: 15,
-                      fontWeight: 600,
+                      justifyContent: 'center',
                       cursor: 'pointer',
-                      whiteSpace: 'nowrap',
+                      color: 'rgba(255,255,255,0.85)',
+                      transition: 'background 0.2s',
                     }}
                   >
-                    <Info size={18} />
-                    More Info
+                    <Info size={16} />
                   </motion.button>
                 </motion.div>
               </motion.div>
@@ -835,8 +776,8 @@ const Hero: React.FC = () => {
         <div
           style={{
             position: 'absolute',
-            bottom: 88,
-            left: 60,
+            bottom: 40,
+            left: 100,
             zIndex: 30,
             display: 'flex',
             alignItems: 'center',
@@ -858,7 +799,6 @@ const Hero: React.FC = () => {
                 style={{
                   padding: 0,
                   border: 'none',
-                  background: 'none',
                   cursor: 'pointer',
                   width: active ? 32 : 6,
                   height: active ? 4 : 6,
@@ -989,7 +929,7 @@ const Hero: React.FC = () => {
               aria-label={muted ? 'Unmute preview' : 'Mute preview'}
               style={{
                 position: 'absolute',
-                bottom: 86,
+                bottom: 40,
                 right: 40,
                 zIndex: 30,
                 width: 38,

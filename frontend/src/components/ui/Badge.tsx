@@ -1,6 +1,6 @@
 /**
  * Badge Component
- * 8 variants following Netflix-style design system
+ * Premium badge variants for the streaming platform
  */
 
 import React from 'react';
@@ -15,14 +15,14 @@ interface BadgeProps {
 }
 
 const badgeStyles: Record<BadgeVariant, string> = {
-  new: 'bg-[#3b82f6] text-white border-transparent',
-  hd: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-default)]',
-  '4k': 'bg-transparent text-[var(--text-secondary)] border-[var(--border-default)]',
-  rating: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-default)]',
-  pg: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-default)]',
-  award: 'bg-[#FFD700] text-black border-transparent shadow-[0_2px_8px_rgba(255,215,0,0.4)]',
-  top10: 'bg-[rgba(239,68,68,0.2)] text-[#ef4444] border-[rgba(239,68,68,0.4)]',
-  trending: 'bg-[var(--brand-purple-10)] text-[var(--brand-purple)] border-[var(--brand-purple-40)]',
+  new: 'bg-[#2563eb]/90 text-white border-transparent',
+  hd: 'bg-black/50 backdrop-blur-md text-white/90 border-white/20 shadow-sm',
+  '4k': 'bg-black/50 backdrop-blur-md text-white/90 border-white/20 shadow-sm',
+  rating: 'bg-black/50 backdrop-blur-md text-white/90 border-white/20 shadow-sm',
+  pg: 'bg-black/50 backdrop-blur-md text-white/90 border-white/20 shadow-sm',
+  award: 'bg-[#f59e0b]/15 text-[#fbbf24] border-[#f59e0b]/30',
+  top10: 'bg-[rgba(239,68,68,0.15)] text-[#f87171] border-[rgba(239,68,68,0.3)]',
+  trending: 'bg-[rgba(139,92,246,0.15)] text-[#a78bfa] border-[rgba(139,92,246,0.3)]',
 };
 
 export const Badge: React.FC<BadgeProps> = ({ variant, children, className = '' }) => {
@@ -30,15 +30,15 @@ export const Badge: React.FC<BadgeProps> = ({ variant, children, className = '' 
     <span
       className={`
         inline-flex items-center justify-center gap-1
-        h-5 px-[7px]
-        rounded-[3px] border
-        text-[11px] font-bold uppercase tracking-[2px]
+        h-[18px] px-[6px]
+        rounded-[5px] border
+        text-[9px] font-bold uppercase tracking-[0.5px]
         leading-none
         ${badgeStyles[variant]}
         ${className}
       `}
     >
-      {variant === 'award' && <Award size={11} strokeWidth={2.5} />}
+      {variant === 'award' && <Award size={10} strokeWidth={2.5} />}
       {children}
     </span>
   );

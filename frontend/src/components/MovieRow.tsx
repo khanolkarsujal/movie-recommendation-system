@@ -47,7 +47,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   const [hoveredMovie, setHoveredMovie] = useState<Movie | null>(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [hoverDirection, setHoverDirection] = useState<'above' | 'below' | 'left-edge' | 'right-edge'>('below');
-  const hoverTimeoutRef = useRef<NodeJS.Timeout>();
+  const hoverTimeoutRef = useRef<any>(null);
   const cardRefs = useRef<Map<number | string, HTMLDivElement>>(new Map());
 
   const updateScrollButtons = useCallback(() => {
@@ -168,10 +168,10 @@ export const MovieRow: React.FC<MovieRowProps> = ({
 
   return (
     <div
-      className="group/row relative py-6 outline-none"
+      className="group/row relative py-4 outline-none"
       style={{ zIndex: rowZIndex }}
-      onMouseEnter={() => setRowZIndex(50)} // Bring row to front when interacting
-      onMouseLeave={() => setRowZIndex(10)} // Reset when leaving
+      onMouseEnter={() => setRowZIndex(50)}
+      onMouseLeave={() => setRowZIndex(10)}
     >
       <div className={paddingClass}>
         <SectionHeader
@@ -185,7 +185,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
       </div>
 
       <div className="relative">
-        {/* Left Scroll Button - Full Height Cinematic Gradient */}
+        {/* Left Scroll Button */}
         <AnimatePresence>
           {canScrollLeft && variant !== 'mobile' && (
             <motion.button
@@ -193,17 +193,13 @@ export const MovieRow: React.FC<MovieRowProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => scroll('left')}
-              className="absolute left-0 top-0 bottom-0 z-[40] w-[80px] bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/80 to-transparent
-                         flex items-center justify-start pl-4 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 outline-none"
+              className="absolute left-0 top-0 bottom-0 z-[40] w-[56px] flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-200 outline-none"
+              style={{
+                background: 'linear-gradient(to right, rgba(20,20,20,0.98) 0%, rgba(20,20,20,0.75) 65%, transparent 100%)',
+              }}
               aria-label="Scroll left"
             >
-              <motion.div
-                whileHover={{ scale: 1.15 }}
-                whileTap={{ scale: 0.9 }}
-                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:bg-white/10 hover:border-white/40 transition-all"
-              >
-                <ChevronLeft size={28} className="text-white drop-shadow-md" />
-              </motion.div>
+              <ChevronLeft size={22} className="text-white/70" strokeWidth={1.8} />
             </motion.button>
           )}
         </AnimatePresence>
@@ -216,7 +212,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.15}
           onDragEnd={handleDragEnd}
-          className={`flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing py-8 -my-8 ${paddingClass}`}
+          className={`flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing py-6 -my-6 ${paddingClass}`}
           style={{
             scrollbarWidth: 'none',
             WebkitOverflowScrolling: 'touch',
@@ -258,7 +254,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
           <div className="w-[20px] flex-shrink-0" />
         </motion.div>
 
-        {/* Right Scroll Button - Full Height Cinematic Gradient */}
+        {/* Right Scroll Button */}
         <AnimatePresence>
           {canScrollRight && variant !== 'mobile' && (
             <motion.button
@@ -266,17 +262,13 @@ export const MovieRow: React.FC<MovieRowProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => scroll('right')}
-              className="absolute right-0 top-0 bottom-0 z-[40] w-[80px] bg-gradient-to-l from-[#0B0F19] via-[#0B0F19]/80 to-transparent
-                         flex items-center justify-end pr-4 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 outline-none"
+              className="absolute right-0 top-0 bottom-0 z-[40] w-[56px] flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-200 outline-none"
+              style={{
+                background: 'linear-gradient(to left, rgba(20,20,20,0.98) 0%, rgba(20,20,20,0.75) 65%, transparent 100%)',
+              }}
               aria-label="Scroll right"
             >
-              <motion.div
-                whileHover={{ scale: 1.15 }}
-                whileTap={{ scale: 0.9 }}
-                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:bg-white/10 hover:border-white/40 transition-all"
-              >
-                <ChevronRight size={28} className="text-white drop-shadow-md" />
-              </motion.div>
+              <ChevronRight size={22} className="text-white/70" strokeWidth={1.8} />
             </motion.button>
           )}
         </AnimatePresence>

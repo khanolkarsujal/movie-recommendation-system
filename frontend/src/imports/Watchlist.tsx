@@ -198,14 +198,14 @@ const Watchlist: React.FC = () => {
               </div>
 
               {/* Play / Shuffle Buttons */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button 
                   onClick={() => navigate('/watch')}
-                  className="flex items-center justify-center gap-2 h-11 bg-white text-black rounded-full font-bold text-[14px] hover:bg-white/90 transition-all active:scale-95"
+                  className="flex-1 flex items-center justify-center gap-2 h-12 bg-white text-black rounded-full font-bold text-[14px] hover:bg-white/90 transition-all active:scale-95 whitespace-nowrap px-4"
                 >
                   <Play size={18} fill="black" /> Play all
                 </button>
-                <button className="flex items-center justify-center gap-2 h-11 bg-white/10 text-white rounded-full font-bold text-[14px] hover:bg-white/20 transition-all border border-white/5 active:scale-95">
+                <button className="flex-1 flex items-center justify-center gap-2 h-12 bg-white/10 text-white rounded-full font-bold text-[14px] hover:bg-white/20 transition-all border border-white/10 active:scale-95 whitespace-nowrap px-4 backdrop-blur-sm">
                   <Shuffle size={18} /> Shuffle
                 </button>
               </div>
@@ -284,6 +284,7 @@ const Watchlist: React.FC = () => {
                 label="YOU MIGHT LIKE"
                 movies={trendingNow.slice(0, 8)}
                 className="!px-0"
+                variant="mobile"
               />
             </div>
           )}

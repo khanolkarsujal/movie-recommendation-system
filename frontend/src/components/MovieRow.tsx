@@ -1,10 +1,11 @@
 /**
  * MovieRow Component
- * Production-ready carousel with smooth scrolling, drag, hover expansion
+ * Ultra-Premium carousel with smooth scrolling, edge-fading, drag physics, and dynamic z-indexing
  */
 
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence, PanInfo } from 'motion/react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+// Note: If using 'motion/react', change import to: import { motion, AnimatePresence, PanInfo } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MovieCard } from './MovieCard';
 import { ContinueWatchingCard } from './ContinueWatchingCard';
@@ -39,6 +40,10 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Smart z-indexing to prevent clipping when cards scale up
+  const [rowZIndex, setRowZIndex] = useState(10);
+
   const [hoveredMovie, setHoveredMovie] = useState<Movie | null>(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [hoverDirection, setHoverDirection] = useState<'above' | 'below' | 'left-edge' | 'right-edge'>('below');
@@ -48,8 +53,9 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   const updateScrollButtons = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 10);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+    // Added slight buffer (2px) to prevent sub-pixel rendering bugs
+    setCanScrollLeft(el.scrollLeft > 2);
+    setCanScrollRight(Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 2);
   }, []);
 
   useEffect(() => {
@@ -60,13 +66,19 @@ export const MovieRow: React.FC<MovieRowProps> = ({
     const resizeObserver = new ResizeObserver(updateScrollButtons);
     resizeObserver.observe(el);
 
-    return () => resizeObserver.disconnect();
+    // Also listen to native scroll to update fading masks in real time
+    el.addEventListener('scroll', updateScrollButtons, { passive: true });
+
+    return () => {
+      resizeObserver.disconnect();
+      el.removeEventListener('scroll', updateScrollButtons);
+    };
   }, [movies, updateScrollButtons]);
 
   const scroll = useCallback((direction: 'left' | 'right') => {
     const el = scrollRef.current;
     if (!el) return;
-    const scrollAmount = el.clientWidth * 0.85;
+    const scrollAmount = el.clientWidth * 0.8; // Scroll 80% of view for context retention
     el.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
@@ -80,7 +92,8 @@ export const MovieRow: React.FC<MovieRowProps> = ({
     const velocity = info.velocity.x;
     const offset = info.offset.x;
 
-    if (Math.abs(velocity) > 500 || Math.abs(offset) > 100) {
+    // Adjusted velocity/offset thresholds for a snappier, more native mobile feel
+    if (Math.abs(velocity) > 400 || Math.abs(offset) > 80) {
       const scrollAmount = el.clientWidth * 0.6;
       el.scrollBy({
         left: offset < 0 ? scrollAmount : -scrollAmount,
@@ -90,61 +103,59 @@ export const MovieRow: React.FC<MovieRowProps> = ({
   }, []);
 
   const handleCardHover = useCallback((movie: Movie, cardElement: HTMLDivElement) => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 
     hoverTimeoutRef.current = setTimeout(() => {
       const rect = cardElement.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const viewportWidth = window.innerWidth;
 
-      // Determine popup direction based on card position
       let direction: 'above' | 'below' | 'left-edge' | 'right-edge' = 'below';
 
-      if (rect.bottom > viewportHeight * 0.6) {
-        direction = 'above';
-      } else {
-        direction = 'below';
-      }
+      if (rect.bottom > viewportHeight * 0.6) direction = 'above';
+      else direction = 'below';
 
-      // Check horizontal edges
-      if (rect.left < 300) {
-        direction = 'left-edge';
-      } else if (rect.right > viewportWidth - 300) {
-        direction = 'right-edge';
-      }
+      if (rect.left < 300) direction = 'left-edge';
+      else if (rect.right > viewportWidth - 300) direction = 'right-edge';
 
       setHoverDirection(direction);
       setHoverPosition({ x: rect.left, y: rect.top });
       setHoveredMovie(movie);
-    }, 500); // 500ms hover delay for premium feel
+    }, 600); // Slightly increased delay so casual scrolling doesn't trigger massive popups
   }, []);
 
   const handleCardLeave = useCallback(() => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     setHoveredMovie(null);
   }, []);
 
   useEffect(() => {
     return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current);
-      }
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     };
   }, []);
 
   const paddingClass = variant === 'mobile' ? 'px-5' : 'px-[60px]';
 
+  // Cinematic edge-mask logic. Fades out the cards at the edges if there's more content.
+  const maskImageStyle = {
+    WebkitMaskImage: `linear-gradient(to right, 
+      ${canScrollLeft ? 'transparent, black 4%' : 'black 0%, black 0%'}, 
+      ${canScrollRight ? 'black 96%, transparent' : 'black 100%, black 100%'}
+    )`,
+    maskImage: `linear-gradient(to right, 
+      ${canScrollLeft ? 'transparent, black 4%' : 'black 0%, black 0%'}, 
+      ${canScrollRight ? 'black 96%, transparent' : 'black 100%, black 100%'}
+    )`
+  };
+
   if (loading) {
     return (
       <div className={`${paddingClass} py-6`}>
         <div className="mb-6">
-          <div className="w-48 h-6 bg-white/10 rounded animate-pulse mb-2" />
+          <div className="w-48 h-6 bg-white/5 rounded animate-pulse mb-2" />
         </div>
-        <div className="flex gap-2 overflow-hidden">
+        <div className="flex gap-4 overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} variant="landscape" />
           ))}
@@ -153,55 +164,67 @@ export const MovieRow: React.FC<MovieRowProps> = ({
     );
   }
 
-  if (movies.length === 0) {
-    return null;
-  }
+  if (movies.length === 0) return null;
 
   return (
-    <div className={`group/row relative ${paddingClass} py-6`}>
-      <SectionHeader
-        label={label}
-        title={title}
-        onSeeAll={onSeeAll}
-        showSeeAll={showSeeAll}
-        variant={variant}
-        className="!px-0"
-      />
+    <div
+      className="group/row relative py-6 outline-none"
+      style={{ zIndex: rowZIndex }}
+      onMouseEnter={() => setRowZIndex(50)} // Bring row to front when interacting
+      onMouseLeave={() => setRowZIndex(10)} // Reset when leaving
+    >
+      <div className={paddingClass}>
+        <SectionHeader
+          label={label}
+          title={title}
+          onSeeAll={onSeeAll}
+          showSeeAll={showSeeAll}
+          variant={variant}
+          className="!px-0 mb-3"
+        />
+      </div>
 
       <div className="relative">
-        {/* Left scroll button */}
+        {/* Left Scroll Button - Full Height Cinematic Gradient */}
         <AnimatePresence>
-          {canScrollLeft && (
+          {canScrollLeft && variant !== 'mobile' && (
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => scroll('left')}
-              className="absolute left-0 top-0 bottom-0 z-[40] w-16 bg-gradient-to-r from-[var(--bg-page)] via-[var(--bg-page)]/95 to-transparent
-                         flex items-center justify-start opacity-0 group-hover/row:opacity-100 transition-opacity duration-300
-                         hover:scale-110 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-purple)]"
+              className="absolute left-0 top-0 bottom-0 z-[40] w-[80px] bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/80 to-transparent
+                         flex items-center justify-start pl-4 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 outline-none"
               aria-label="Scroll left"
             >
-              <div className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 flex items-center justify-center
-                            hover:bg-black/80 hover:border-white/40 transition-all">
-                <ChevronLeft size={24} className="text-white" />
-              </div>
+              <motion.div
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:bg-white/10 hover:border-white/40 transition-all"
+              >
+                <ChevronLeft size={28} className="text-white drop-shadow-md" />
+              </motion.div>
             </motion.button>
           )}
         </AnimatePresence>
 
-        {/* Scrollable container */}
+        {/* Scrollable Container */}
+        {/* Note the `py-8 -my-8` trick: This gives cards room to scale UP on hover without being cut off by overflow-x-auto! */}
         <motion.div
           ref={scrollRef}
-          onScroll={updateScrollButtons}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.1}
+          dragElastic={0.15}
           onDragEnd={handleDragEnd}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing"
-          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+          className={`flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing py-8 -my-8 ${paddingClass}`}
+          style={{
+            scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
+            ...maskImageStyle,
+            transition: 'mask-image 0.3s ease, -webkit-mask-image 0.3s ease'
+          }}
         >
-          {movies.map((movie, index) => (
+          {movies.map((movie) => (
             <div
               key={movie.id}
               ref={(el) => {
@@ -214,10 +237,7 @@ export const MovieRow: React.FC<MovieRowProps> = ({
               {showProgress ? (
                 <ContinueWatchingCard
                   movie={movie}
-                  onRemove={(id) => {
-                    // Handle remove from Continue Watching
-                    console.log('Remove movie:', id);
-                  }}
+                  onRemove={(id) => console.log('Remove movie:', id)}
                 />
               ) : (
                 <MovieCard
@@ -233,31 +253,36 @@ export const MovieRow: React.FC<MovieRowProps> = ({
               )}
             </div>
           ))}
+
+          {/* Spacer to ensure the last card isn't completely flush with the edge */}
+          <div className="w-[20px] flex-shrink-0" />
         </motion.div>
 
-        {/* Right scroll button */}
+        {/* Right Scroll Button - Full Height Cinematic Gradient */}
         <AnimatePresence>
-          {canScrollRight && (
+          {canScrollRight && variant !== 'mobile' && (
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => scroll('right')}
-              className="absolute right-0 top-0 bottom-0 z-[40] w-16 bg-gradient-to-l from-[var(--bg-page)] via-[var(--bg-page)]/95 to-transparent
-                         flex items-center justify-end opacity-0 group-hover/row:opacity-100 transition-opacity duration-300
-                         hover:scale-110 active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-purple)]"
+              className="absolute right-0 top-0 bottom-0 z-[40] w-[80px] bg-gradient-to-l from-[#0B0F19] via-[#0B0F19]/80 to-transparent
+                         flex items-center justify-end pr-4 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300 outline-none"
               aria-label="Scroll right"
             >
-              <div className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 flex items-center justify-center
-                            hover:bg-black/80 hover:border-white/40 transition-all">
-                <ChevronRight size={24} className="text-white" />
-              </div>
+              <motion.div
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:bg-white/10 hover:border-white/40 transition-all"
+              >
+                <ChevronRight size={28} className="text-white drop-shadow-md" />
+              </motion.div>
             </motion.button>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Hover card popup */}
+      {/* Extreme Hover Portal Popup (Retained from your code) */}
       <AnimatePresence>
         {hoveredMovie && (
           <div className="fixed z-[999]" style={{ pointerEvents: 'none' }}>

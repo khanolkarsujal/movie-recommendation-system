@@ -1,12 +1,17 @@
 /**
  * MovieCard Component
- * Enhanced landscape 16:9 card with trailer preview and quick actions
+ * Enhanced landscape 16:9 card with trailer preview, glassmorphism, and spring physics
  */
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Play, Plus, Info, Check, Volume2, VolumeX, MoreVertical, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+// Note: If using 'motion/react', change import to: import { motion, AnimatePresence } from 'motion/react';
+import { Play, Plus, Info, Check, Volume2, VolumeX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+// Assuming you still want to keep these imports. 
+// I've styled natively around them to guarantee the cinematic look, 
+// but left them imported so your file doesn't break!
 import { Badge } from './ui/Badge';
 import { ProgressBar } from './ui/ProgressBar';
 import { IconButton } from './ui/IconButton';
@@ -44,25 +49,31 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   const [showTrailer, setShowTrailer] = useState(false);
   const [trailerMuted, setTrailerMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Timeout refs
   const hoverTimeoutRef = useRef<NodeJS.Timeout>();
   const trailerTimeoutRef = useRef<NodeJS.Timeout>();
 
   const inWatchlist = isInWatchlist(movie.id);
 
+  // Proper cleanup on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (trailerTimeoutRef.current) clearTimeout(trailerTimeoutRef.current);
+    };
+  }, []);
+
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
     onHover?.();
 
-    // Show quick actions after 300ms
-    hoverTimeoutRef.current = setTimeout(() => {
-      setShowQuickActions(true);
-    }, 300);
+    // Show quick actions after 300ms (prevents flashing when scrolling quickly)
+    hoverTimeoutRef.current = setTimeout(() => setShowQuickActions(true), 300);
 
-    // Start trailer preview after 2 seconds of hover
+    // Start trailer preview after 1.5s - 2s of hover
     if (enableTrailerPreview && movie.trailerUrl) {
-      trailerTimeoutRef.current = setTimeout(() => {
-        setShowTrailer(true);
-      }, 2000);
+      trailerTimeoutRef.current = setTimeout(() => setShowTrailer(true), 1500);
     }
   }, [onHover, enableTrailerPreview, movie.trailerUrl]);
 
@@ -72,22 +83,19 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     setShowTrailer(false);
     onLeave?.();
 
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    if (trailerTimeoutRef.current) {
-      clearTimeout(trailerTimeoutRef.current);
-    }
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    if (trailerTimeoutRef.current) clearTimeout(trailerTimeoutRef.current);
   }, [onLeave]);
 
-  // Play/pause trailer video
+  // Play/pause trailer video smoothly
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     if (showTrailer) {
-      video.play().catch(() => { });
+      video.play().catch(() => { /* Handle autoplay restrictions silently */ });
     } else {
+      // Small fade out delay logic could go here, but pausing immediately is safer
       video.pause();
       video.currentTime = 0;
     }
@@ -95,11 +103,8 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   const handlePlayClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onPlay) {
-      onPlay();
-    } else {
-      navigate(`/watch?title=${encodeURIComponent(movie.title)}`);
-    }
+    if (onPlay) onPlay();
+    else navigate(`/watch?title=${encodeURIComponent(movie.title)}`);
   }, [onPlay, navigate, movie.title]);
 
   const handleWatchlistClick = useCallback((e: React.MouseEvent) => {
@@ -115,68 +120,69 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   const handleInfoClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    // Open detail modal or navigate to detail page
     console.log('Show info for:', movie.title);
   }, [movie.title]);
 
   return (
     <motion.div
-      className="relative cursor-pointer group aspect-video flex-shrink-0"
-      style={{ width: 'var(--card-width, 240px)' }}
+      className="relative cursor-pointer group aspect-video flex-shrink-0 z-0 hover:z-50 outline-none focus-visible:ring-4 focus-visible:ring-[#8b5cf6]/50 rounded-xl"
+      style={{ width: 'var(--card-width, 260px)' }} // Increased base width slightly for a more premium feel
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handlePlayClick}
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+      whileHover={{ y: -6, scale: 1.05 }} // Lifts up and scales slightly
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      role="button"
+      tabIndex={0}
     >
-      {/* Card Container */}
-      <div className="w-full h-full rounded-[4px] overflow-hidden relative bg-[var(--bg-card)]">
+      {/* 🌟 Background Ambient Glow (Activates on hover) */}
+      <div
+        className={`absolute inset-0 -z-10 blur-2xl transition-opacity duration-500 ${isHovered ? 'opacity-40' : 'opacity-0'}`}
+        style={{
+          background: movie.accent
+            ? `radial-gradient(circle at bottom, ${movie.accent} 0%, transparent 70%)`
+            : 'radial-gradient(circle at bottom, #8b5cf6 0%, transparent 70%)'
+        }}
+      />
+
+      {/* 🌟 Main Card Container */}
+      <div className="w-full h-full rounded-xl overflow-hidden relative bg-[#141414] border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.5)] group-hover:border-white/15 transition-colors duration-300">
+
         {/* Thumbnail Image */}
         <motion.img
-          src={movie.thumbnail || 'https://via.placeholder.com/220x124/181818/666?text=No+Image'}
+          src={movie.thumbnail || 'https://via.placeholder.com/260x146/181818/666?text=No+Image'}
           alt={movie.title}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover transform-gpu transition-transform duration-1000 ease-out group-hover:scale-105"
           loading="lazy"
           animate={{ opacity: showTrailer ? 0 : 1 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.6 }}
         />
 
         {/* Trailer Video */}
         {enableTrailerPreview && movie.trailerUrl && (
-          <video
+          <motion.video
             ref={videoRef}
             src={movie.trailerUrl}
             muted={trailerMuted}
             loop
             playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-0"
-            style={{ opacity: showTrailer ? 1 : 0, transition: 'opacity 0.3s' }}
+            className="absolute inset-0 w-full h-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: showTrailer ? 1 : 0 }}
+            transition={{ duration: 0.6 }}
           />
         )}
 
-        {/* Gradient Overlays */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 30%, transparent 60%)',
-          }}
-        />
+        {/* Deep Cinematic Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent pointer-events-none" />
 
-        {/* Hover overlay */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          className="absolute inset-0 bg-black/40 pointer-events-none"
-        />
-
-        {/* Top-left badge */}
+        {/* Top Badges (Left) */}
         {badge && (
-          <div className="absolute top-2 left-2 z-10">
+          <div className="absolute top-2.5 left-2.5 z-10 drop-shadow-md">
             {badge === 'new' && <Badge variant="new">NEW</Badge>}
             {badge === 'top10' && rank && (
-              <div className="flex items-center gap-1">
-                <Badge variant="top10">TOP 10</Badge>
-                <span className="text-white text-[11px] font-bold">#{rank}</span>
+              <div className="flex items-center gap-1.5 bg-[#E50914] text-white px-2 py-0.5 rounded text-[11px] font-black tracking-wider uppercase shadow-lg">
+                TOP 10 <span className="opacity-80">#{rank}</span>
               </div>
             )}
             {badge === 'trending' && <Badge variant="trending">TRENDING</Badge>}
@@ -184,11 +190,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         )}
 
-        {/* Top-right duration/quality */}
-        <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+        {/* Top Metadata (Right) */}
+        <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5 drop-shadow-md">
           {movie.duration && (
-            <div className="bg-black/70 px-1.5 py-0.5 rounded-[3px]">
-              <span className="text-white text-[11px] font-semibold">{movie.duration}</span>
+            <div className="bg-black/60 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded text-[10px] text-white/90 font-bold tracking-wide">
+              {movie.duration}
             </div>
           )}
           {movie.quality && (
@@ -196,124 +202,107 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           )}
         </div>
 
-        {/* Trailer mute button */}
-        {showTrailer && movie.trailerUrl && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setTrailerMuted(!trailerMuted);
-            }}
-            className="absolute top-2 right-2 z-20 w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm
-                     flex items-center justify-center text-white hover:bg-black/80 transition-all"
-            aria-label={trailerMuted ? 'Unmute' : 'Mute'}
-          >
-            {trailerMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-          </motion.button>
-        )}
-
-        {/* Bottom-left title */}
-        <div className="absolute bottom-2 left-2 right-2 z-10">
-          <motion.h3
-            className="text-white text-[14px] font-semibold line-clamp-1"
-            style={{
-              textShadow: '0 2px 8px rgba(0,0,0,0.8)',
-            }}
-            animate={{ y: showQuickActions ? -20 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {movie.title}
-          </motion.h3>
-
-          {/* Match score */}
-          {movie.rating && (
-            <motion.p
-              className="text-[var(--status-match-green)] text-[11px] font-bold mt-0.5"
-              animate={{ opacity: showQuickActions ? 0 : 1 }}
-              transition={{ duration: 0.2 }}
+        {/* Trailer Mute Button */}
+        <AnimatePresence>
+          {showTrailer && movie.trailerUrl && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, rotate: -45 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setTrailerMuted(!trailerMuted);
+              }}
+              className="absolute top-10 right-2.5 z-20 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/70 hover:scale-110 transition-all"
+              aria-label={trailerMuted ? 'Unmute' : 'Mute'}
             >
-              {movie.rating} Match
-            </motion.p>
+              {trailerMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            </motion.button>
           )}
-        </div>
+        </AnimatePresence>
 
-        {/* Quick Actions */}
+        {/* Bottom Content Area */}
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 p-3 z-10 flex flex-col justify-end"
+          animate={{ y: showQuickActions ? -12 : 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        >
+          {/* Title */}
+          <h3 className="text-white text-[15px] font-bold line-clamp-1 leading-tight tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            {movie.title}
+          </h3>
+
+          {/* Match Score & Genres */}
+          <div className="flex items-center gap-2 mt-1">
+            {movie.rating && (
+              <span className="text-[#22c55e] text-[11px] font-black tracking-wide drop-shadow-md">
+                {movie.rating} Match
+              </span>
+            )}
+            {/* If you have genres in your type, they'd look great here: */}
+            {/* <span className="text-white/50 text-[10px] font-medium">• Action • Sci-Fi</span> */}
+          </div>
+        </motion.div>
+
+        {/* 🌟 Floating Glass Quick Actions */}
         <AnimatePresence>
           {showQuickActions && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-2 left-2 right-2 z-20 flex items-center gap-1.5"
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="absolute bottom-3 left-3 right-3 z-20 flex items-center gap-2"
             >
+              {/* Play Button (Primary) */}
               <button
                 onClick={handlePlayClick}
-                className="flex-shrink-0 w-7 h-7 rounded-full bg-white hover:bg-white/90
-                         flex items-center justify-center transition-all active:scale-95 shadow-lg"
-                aria-label="Play"
+                className="flex-1 h-8 rounded-lg bg-white flex items-center justify-center gap-1.5 transition-all hover:bg-gray-200 active:scale-95 shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
               >
-                <Play size={14} fill="black" className="text-black ml-0.5" />
+                <Play size={14} fill="black" className="text-black" />
+                <span className="text-black text-[12px] font-bold">Play</span>
               </button>
 
+              {/* Watchlist Button */}
               <button
                 onClick={handleWatchlistClick}
-                className={`flex-shrink-0 w-7 h-7 rounded-full backdrop-blur-sm border
-                         flex items-center justify-center transition-all active:scale-95 ${inWatchlist
-                    ? 'bg-[var(--brand-purple)]/20 border-[var(--brand-purple)] text-[var(--brand-purple)]'
-                    : 'bg-black/60 border-white/20 text-white hover:border-white/40'
+                className={`w-8 h-8 rounded-lg backdrop-blur-md border flex items-center justify-center transition-all active:scale-95 shadow-lg ${inWatchlist
+                  ? 'bg-[#8b5cf6]/20 border-[#8b5cf6]/50 text-[#8b5cf6]'
+                  : 'bg-black/40 border-white/20 text-white hover:bg-white/20 hover:border-white/40'
                   }`}
                 aria-label={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
               >
-                {inWatchlist ? <Check size={14} /> : <Plus size={14} />}
+                {inWatchlist ? <Check size={16} /> : <Plus size={16} />}
               </button>
 
+              {/* Info Button */}
               <button
                 onClick={handleInfoClick}
-                className="flex-shrink-0 w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm border border-white/20
-                         flex items-center justify-center text-white hover:border-white/40
-                         transition-all active:scale-95"
+                className="w-8 h-8 rounded-lg bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:border-white/40 transition-all active:scale-95 shadow-lg"
                 aria-label="More info"
               >
-                <Info size={14} />
+                <Info size={16} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Progress bar (Continue Watching) */}
+        {/* Glowing Progress Bar (Replaces default to match EpisodeCard) */}
         {showProgress && movie.progress !== undefined && movie.progress > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 z-10">
-            <ProgressBar progress={movie.progress} height={3} variant="watch" />
+          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-black/60 z-30">
+            <div
+              className="h-full relative rounded-r-full"
+              style={{
+                width: `${movie.progress}%`,
+                background: 'linear-gradient(90deg, #00d2ff 0%, #8b5cf6 100%)',
+                boxShadow: '0 0 8px rgba(139, 92, 246, 0.6)'
+              }}
+            >
+              <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-white rounded-full blur-[1px]" />
+            </div>
           </div>
         )}
       </div>
-
-      {/* Hover shadow effect */}
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 rounded-[4px] pointer-events-none"
-            style={{
-              boxShadow: 'var(--shadow-card-hover)',
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Glow effect */}
-      {movie.accent && isHovered && (
-        <div
-          className="absolute inset-0 -z-10 blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
-          style={{
-            background: `radial-gradient(circle at center, ${movie.accent} 0%, transparent 70%)`,
-          }}
-        />
-      )}
     </motion.div>
   );
 };

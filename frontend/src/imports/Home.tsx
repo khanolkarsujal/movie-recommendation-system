@@ -38,8 +38,8 @@ const Home: React.FC = () => {
     ...criticallyAcclaimed,
   ], []);
 
-  // Define 30 sections with their titles and data
-  const sections = useMemo(() => [
+  // Define all 30 sections with their titles and data
+  const baseSections = useMemo(() => [
     { title: "Continue Watching", data: continueWatching, props: { showProgress: true } },
     { title: "Trending Now", data: trendingNow, props: { badge: 'trending' } },
     { title: "Top 10 in Your Country Today", type: 'top10', data: trendingNow },
@@ -72,20 +72,42 @@ const Home: React.FC = () => {
     { title: "Coming of Age Stories", data: shuffle(allMovies).slice(0, 8) },
   ], [allMovies]);
 
+  // OTT UX FEATURE: Filter the rows based on the active genre.
+  // If a row becomes empty after filtering, it is hidden.
+  const filteredSections = useMemo(() => {
+    if (activeGenre === 'All') return baseSections;
+
+    return baseSections.map(section => {
+      const filteredData = section.data.filter((movie: any) => {
+        const matchSingle = movie.genre?.toLowerCase() === activeGenre.toLowerCase();
+        const matchArray = movie.genres?.some((g: string) => g.toLowerCase() === activeGenre.toLowerCase());
+        return matchSingle || matchArray;
+      });
+      return { ...section, data: filteredData };
+    }).filter(section => section.data.length > 0);
+  }, [baseSections, activeGenre]);
+
   return (
-    <div className="bg-[var(--bg-page)] min-h-screen">
+    // OTT UI Tweak: Deep dark background (#141414 is Netflix's exact color)
+    <div className="bg-[#141414] min-h-screen text-white overflow-x-hidden pb-10">
       <Hero />
 
-      {/* Discover Title + Genre Filters - Overlaying bottom of Hero */}
-      <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />
+      {/* OTT UI Tweak: Gradient overlay to seamlessly blend the bottom of the Hero into the rows */}
+      <div className="h-32 md:h-48 bg-gradient-to-t from-[#141414] via-[#141414]/80 to-transparent -mt-32 md:-mt-48 relative z-10 pointer-events-none" />
 
-      <div className="relative z-20 space-y-4 pt-4">
-        {sections.map((section, idx) => (
-          <React.Fragment key={idx}>
-            {/* Insert FeaturedBanner after a few sections */}
-            {idx === 4 && <FeaturedBanner />}
-            
-            {/* My List - Only show if user has items in watchlist, insert before Trending */}
+      {/* OTT UI Tweak: Negative top margin pulls the content up, creating the overlapping effect */}
+      <div className="relative z-20 -mt-16 md:-mt-24 space-y-8 md:space-y-12">
+
+        {/* Genre Filter Bar */}
+        <div className="px-4 md:px-12 mb-2 md:mb-6">
+          <GenreFilterBar activeGenre={activeGenre} setActiveGenre={setActiveGenre} />
+        </div>
+
+        {/* Dynamic Movie Rows */}
+        {filteredSections.map((section, idx) => (
+          <React.Fragment key={`${section.title}-${idx}`}>
+
+            {/* Inject My List early in the page */}
             {idx === 1 && watchlist.length > 0 && (
               <MovieRow
                 title="My List"
@@ -93,6 +115,7 @@ const Home: React.FC = () => {
               />
             )}
 
+            {/* Render Top 10 or Standard Movie Row */}
             {section.type === 'top10' ? (
               <Top10RowNew
                 title={section.title}
@@ -105,18 +128,28 @@ const Home: React.FC = () => {
                 {...(section.props as any)}
               />
             )}
-            
-            {/* Insert another banner later in the list */}
-            {idx === 15 && (
-                <div className="py-12 opacity-80 hover:opacity-100 transition-opacity">
-                    <FeaturedBanner />
-                </div>
+
+            {/* Inject Featured Banner 1 */}
+            {idx === 4 && (
+              <div className="py-4 md:py-8 px-4 md:px-12">
+                <FeaturedBanner />
+              </div>
             )}
+
+            {/* Inject Featured Banner 2 */}
+            {idx === 15 && (
+              <div className="py-4 md:py-8 px-4 md:px-12 opacity-90 hover:opacity-100 transition-opacity duration-300">
+                <FeaturedBanner />
+              </div>
+            )}
+
           </React.Fragment>
         ))}
       </div>
 
-      <Footer />
+      <div className="mt-12">
+        <Footer />
+      </div>
     </div>
   );
 };

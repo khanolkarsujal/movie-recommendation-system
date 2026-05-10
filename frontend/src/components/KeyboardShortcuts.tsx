@@ -22,7 +22,6 @@ const SHORTCUTS: Shortcut[] = [
       { keys: ['H'], description: 'Go to Home' },
       { keys: ['B'], description: 'Go to Browse' },
       { keys: ['W'], description: 'Go to Watchlist' },
-      { keys: ['A'], description: 'Go to Analytics' },
       { keys: ['P'], description: 'Go to Profile' },
       { keys: ['Esc'], description: 'Go Back' },
     ],

@@ -13,7 +13,6 @@ import {
   Plus,
   Search,
   PlayCircle,
-  History,
   TrendingUp,
   Settings,
   X,
@@ -63,13 +62,6 @@ export const QuickActions: React.FC = () => {
         // Trigger search modal
         setIsOpen(false);
       },
-    },
-    {
-      id: 'history',
-      icon: <History size={20} />,
-      label: 'Watch History',
-      color: '#f59e0b',
-      onClick: () => navigate('/analytics'),
     },
     {
       id: 'settings',

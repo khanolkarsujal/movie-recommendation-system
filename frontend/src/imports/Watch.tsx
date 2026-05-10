@@ -100,7 +100,7 @@ const Watch: React.FC = () => {
     >
       <video
         ref={videoRef}
-        src="https://www.w3schools.com/html/mov_bbb.mp4"
+        src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-4006-large.mp4"
         autoPlay
         loop
         muted={muted}

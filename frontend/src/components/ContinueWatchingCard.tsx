@@ -3,7 +3,7 @@
  * Specialized card for "Continue Watching" with centered text and more options menu
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, MoreVertical, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +25,34 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoTimeoutRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (isHovered && movie.trailerUrl) {
+      videoTimeoutRef.current = setTimeout(() => setShowVideo(true), 1200);
+    } else {
+      setShowVideo(false);
+      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+    }
+    return () => {
+      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+    };
+  }, [isHovered, movie.trailerUrl]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      if (showVideo) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+  }, [showVideo]);
 
   const handlePlayClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -75,9 +102,21 @@ export const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({
         <img
           src={movie.thumbnail || 'https://via.placeholder.com/230x130/181818/666?text=No+Image'}
           alt={movie.title}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-0' : 'opacity-100'}`}
           loading="lazy"
         />
+
+        {/* Video Preview */}
+        {movie.trailerUrl && (
+          <video
+            ref={videoRef}
+            src={movie.trailerUrl}
+            muted
+            loop
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
 
         {/* Base gradient */}
         <div

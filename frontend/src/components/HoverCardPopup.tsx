@@ -3,7 +3,7 @@
  * Detailed preview that appears on hover (280px width)
  */
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Play, Plus, Info } from 'lucide-react';
 import { IconButton } from './ui/IconButton';
@@ -44,6 +44,25 @@ export const HoverCardPopup: React.FC<HoverCardPopupProps> = ({
   isInWatchlist = false,
 }) => {
   const animation = animationVariants[direction];
+  const [showVideo, setShowVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoTimeoutRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (movie.trailerUrl) {
+      videoTimeoutRef.current = setTimeout(() => setShowVideo(true), 800);
+    }
+    return () => {
+      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+    };
+  }, [movie.trailerUrl]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video && showVideo) {
+      video.play().catch(() => {});
+    }
+  }, [showVideo]);
 
   // Parse match score
   const matchScore = typeof movie.rating === 'string'
@@ -70,16 +89,26 @@ export const HoverCardPopup: React.FC<HoverCardPopupProps> = ({
           border border-[var(--border-subtle)]
         "
       >
-        {/* Thumbnail */}
-        <div className="relative w-full h-[158px]">
+        {/* Thumbnail & Video */}
+        <div className="relative w-full h-[158px] bg-black">
           <img
             src={movie.thumbnail || 'https://via.placeholder.com/280x158/181818/666?text=No+Image'}
             alt={movie.title}
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-0' : 'opacity-100'}`}
           />
+          {movie.trailerUrl && (
+            <video
+              ref={videoRef}
+              src={movie.trailerUrl}
+              muted
+              loop
+              playsInline
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${showVideo ? 'opacity-100' : 'opacity-0'}`}
+            />
+          )}
           {/* Gradient overlay */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 pointer-events-none"
             style={{
               background: 'linear-gradient(to top, rgba(35,35,35,1) 0%, transparent 40%)',
             }}

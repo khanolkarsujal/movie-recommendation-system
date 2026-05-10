@@ -18,9 +18,6 @@ interface StoreState {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 
-  aiDrawerOpen: boolean;
-  setAiDrawerOpen: (open: boolean) => void;
-  toggleAiDrawer: () => void;
 }
 
 export const useStore = create<StoreState>()(
@@ -48,9 +45,6 @@ export const useStore = create<StoreState>()(
       searchQuery: '',
       setSearchQuery: (query) => set({ searchQuery: query }),
 
-      aiDrawerOpen: false,
-      setAiDrawerOpen: (open) => set({ aiDrawerOpen: open }),
-      toggleAiDrawer: () => set((state) => ({ aiDrawerOpen: !state.aiDrawerOpen })),
     }),
     {
       name: 'ott-storage',

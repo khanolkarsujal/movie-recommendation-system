@@ -114,7 +114,7 @@ export function generateAccentColor(genreId: number): string {
  * Generate placeholder image URL
  */
 function generatePlaceholder(): string {
-  return `https://picsum.photos/seed/${Math.random()}/780/440`;
+  return 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&q=80';
 }
 
 /**

@@ -43,10 +43,9 @@ const FEATURED: Movie[] = [
     audio: 'Dolby Atmos',
     description:
       'When a small, unsuspecting town becomes the hunting ground for a malevolent entity, a group of unlikely heroes must rise — The Demonic Slash Group.',
-    image:
-      'https://images.unsplash.com/photo-1574267432644-f610cda3f9e7?w=1920&q=90&fit=crop',
+    image: '/hero-1.png',
     accent: '#7c3aed',
-    trailerUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    trailerUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-4006-large.mp4',
   },
   {
     id: 2,
@@ -62,9 +61,9 @@ const FEATURED: Movie[] = [
     description:
       'A rogue assassin must navigate a deadly underworld where shadows come to life and ancient magic dictates the rules of survival.',
     image:
-      'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2525&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&q=80&fit=crop',
     accent: '#dc2626',
-    trailerUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    trailerUrl: 'https://assets.mixkit.co/videos/preview/mixkit-curvy-road-between-mountains-and-trees-4963-large.mp4',
   },
   {
     id: 3,
@@ -80,9 +79,9 @@ const FEATURED: Movie[] = [
     description:
       'In a future where the sun has gone permanently dark, a team of scavengers discovers a device that could reignite the dying star.',
     image:
-      'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2670&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=1920&q=80&fit=crop',
     accent: '#2563eb',
-    trailerUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    trailerUrl: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-4006-large.mp4',
   },
   {
     id: 4,
@@ -98,9 +97,9 @@ const FEATURED: Movie[] = [
     description:
       'Betrayed by his own order, a templar knight forms a dark pact with a vampire to exact revenge on the king who wronged them both.',
     image:
-      'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=2574&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1920&q=80&fit=crop',
     accent: '#991b1b',
-    trailerUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    trailerUrl: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-525-large.mp4',
   },
   {
     id: 5,
@@ -115,10 +114,9 @@ const FEATURED: Movie[] = [
     audio: 'Atmos',
     description:
       "When the city's central AI goes rogue, a hacker must infiltrate the heavily guarded Nexus tower before it wipes all human memory.",
-    image:
-      'https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2670&auto=format&fit=crop',
+    image: '/hero-5.png',
     accent: '#059669',
-    trailerUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    trailerUrl: 'https://assets.mixkit.co/videos/preview/mixkit-underground-light-trails-in-a-dark-tunnel-4425-large.mp4',
   },
 ];
 

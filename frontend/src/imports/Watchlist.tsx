@@ -1,6 +1,24 @@
 import React, { useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Play, Trash2, Info, Plus, Check, Filter, SortAsc, Film, Bookmark, Grid, List } from 'lucide-react';
+import { 
+  Heart, 
+  Play, 
+  Trash2, 
+  Info, 
+  Plus, 
+  Check, 
+  Filter, 
+  SortAsc, 
+  Film, 
+  Bookmark, 
+  Grid, 
+  List, 
+  Shuffle, 
+  Download, 
+  MoreVertical, 
+  GripVertical,
+  ChevronDown
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useStore } from '../store';
@@ -30,145 +48,70 @@ const WatchlistCard: React.FC<WatchlistCardProps> = ({ movie, onRemove, index })
     [navigate, movie.title]
   );
 
-  const handleRemoveClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onRemove(movie.id);
-    },
-    [onRemove, movie.id]
-  );
-
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: -20 }}
-      transition={{
-        delay: index * 0.04,
-        duration: 0.4,
-        layout: { duration: 0.3 },
-        exit: { duration: 0.2 }
-      }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ delay: index * 0.03, duration: 0.3 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative rounded-[8px] overflow-hidden bg-[var(--bg-card)] border border-[var(--border-default)]
-                 hover:border-[var(--border-brand)] transition-all duration-300 hover:-translate-y-2
-                 hover:shadow-[0_24px_64px_rgba(0,0,0,0.8)] cursor-pointer"
-      style={{ aspectRatio: '16/9' }}
+      className="group flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 transition-all cursor-pointer"
     >
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src={src}
-          alt={movie.title}
-          loading="lazy"
-          className="w-full h-full object-cover transition-all duration-700 ease-out"
-          style={{
-            opacity: isHovered ? 0.3 : 0.6,
-            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-          }}
-          onError={(e) => {
-            e.currentTarget.src = `https://picsum.photos/seed/${movie.id}/400/225`;
-          }}
+      {/* Drag Handle */}
+      <div className="opacity-0 group-hover:opacity-40 transition-opacity cursor-grab active:cursor-grabbing">
+        <GripVertical size={20} />
+      </div>
+
+      <span className="text-white/40 text-[13px] w-6 text-center">{index + 1}</span>
+
+      {/* Thumbnail */}
+      <div className="relative w-40 h-24 shrink-0 rounded-lg overflow-hidden bg-white/5 shadow-lg" onClick={handlePlayClick}>
+        <img 
+          src={src} 
+          alt={movie.title} 
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80'; }}
         />
-      </div>
-
-      {/* Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-[var(--bg-card)]/60 to-transparent" />
-      <div
-        className="absolute inset-0 transition-opacity duration-300"
-        style={{
-          background: `radial-gradient(circle at 50% 120%, ${movie.accent || 'var(--brand-purple)'}20 0%, transparent 60%)`,
-          opacity: isHovered ? 1 : 0,
-        }}
-      />
-
-      {/* Remove button */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: isHovered ? 1 : 0, scale: isHovered ? 1 : 0.8 }}
-        transition={{ duration: 0.2 }}
-        onClick={handleRemoveClick}
-        className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-black/80 backdrop-blur-md
-                   flex items-center justify-center border border-white/10
-                   text-white/70 hover:text-[#ef4444] hover:bg-[#ef4444]/20 hover:border-[#ef4444]/40
-                   transition-all outline-none"
-        aria-label="Remove from watchlist"
-      >
-        <Trash2 size={16} />
-      </motion.button>
-
-      {/* Content */}
-      <div className="absolute inset-0 flex flex-col justify-end p-5 z-10">
-        <motion.div
-          initial={false}
-          animate={{ y: isHovered ? 0 : 10 }}
-          transition={{ duration: 0.3 }}
-        >
-          <h3 className="text-white font-bold text-[17px] leading-tight mb-2 line-clamp-2">
-            {movie.title}
-          </h3>
-
-          <div className="flex items-center gap-2 text-[13px] text-white/60 mb-4">
-            <span>{movie.year}</span>
-            {movie.duration && (
-              <>
-                <span>•</span>
-                <span>{movie.duration}</span>
-              </>
-            )}
-            {typeof movie.rating === 'string' && (
-              <>
-                <span>•</span>
-                <span className="text-[var(--status-match-green)] font-semibold">
-                  {movie.rating}
-                </span>
-              </>
-            )}
+        {movie.duration && (
+          <div className="absolute bottom-1 right-1 px-1 py-0.5 bg-black/80 rounded text-[10px] font-bold">
+            {movie.duration}
           </div>
-
-          {/* Action buttons */}
-          <motion.div
-            initial={false}
-            animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
-            transition={{ duration: 0.3, delay: isHovered ? 0.1 : 0 }}
-            className="flex items-center gap-2"
-          >
-            <button
-              onClick={handlePlayClick}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-[5px]
-                       text-[14px] font-bold hover:bg-white/90 active:scale-95
-                       transition-all outline-none shadow-lg"
-            >
-              <Play size={14} fill="black" /> Play
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm border border-white/20
-                       flex items-center justify-center text-white/80 hover:bg-black/80 hover:border-white/40
-                       transition-all outline-none"
-              aria-label="More info"
-            >
-              <Info size={16} />
-            </button>
-          </motion.div>
-        </motion.div>
+        )}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <Play size={20} fill="white" />
+        </div>
       </div>
 
-      {/* Progress bar */}
-      {movie.progress !== undefined && movie.progress > 0 && (
-        <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-white/10 z-20">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${movie.progress}%` }}
-            transition={{ duration: 0.8, delay: index * 0.04 + 0.2 }}
-            className="h-full bg-[var(--brand-purple)] rounded-r-full"
-          />
+      {/* Info */}
+      <div className="flex-1 flex flex-col justify-center gap-1">
+        <h4 className="text-[15px] font-bold text-white line-clamp-2 leading-tight group-hover:text-[var(--brand-purple)] transition-colors">
+          {movie.title}
+        </h4>
+        <div className="flex flex-col text-[12px] text-white/50">
+          <span>{movie.genre || 'Media Content'} • {movie.year}</span>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-[var(--status-match-green)] font-medium">98% Match</span>
+            <span>•</span>
+            <span>5.2M views</span>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <button 
+          onClick={(e) => { e.stopPropagation(); onRemove(movie.id); }}
+          className="p-2 text-white/60 hover:text-[#ef4444] transition-colors"
+          title="Remove from watchlist"
+        >
+          <Trash2 size={18} />
+        </button>
+        <button className="p-2 text-white/60 hover:text-white transition-colors">
+          <MoreVertical size={18} />
+        </button>
+      </div>
     </motion.div>
   );
 };
@@ -190,160 +133,163 @@ const Watchlist: React.FC = () => {
     [removeFromWatchlist]
   );
 
-  // Sort and filter logic
   const sortedWatchlist = React.useMemo(() => {
     let filtered = [...watchlist];
-
     if (filterGenre !== 'all') {
       filtered = filtered.filter(m => m.genres?.includes(filterGenre));
     }
-
     switch (sortBy) {
-      case 'title':
-        return filtered.sort((a, b) => a.title.localeCompare(b.title));
-      case 'year':
-        return filtered.sort((a, b) => (b.year || '').localeCompare(a.year || ''));
-      default:
-        return filtered;
+      case 'title': return filtered.sort((a, b) => a.title.localeCompare(b.title));
+      case 'year': return filtered.sort((a, b) => (b.year || '').toString().localeCompare((a.year || '').toString()));
+      default: return filtered;
     }
   }, [watchlist, sortBy, filterGenre]);
 
+  const firstMovie = watchlist[0];
+  const heroThumb = firstMovie?.thumbnail?.startsWith('http')
+    ? firstMovie.thumbnail
+    : firstMovie?.thumbnail 
+      ? `https://image.tmdb.org/t/p/w1280${firstMovie.thumbnail}`
+      : 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1280&q=80';
+
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6 md:px-[60px]">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="mb-8 flex items-start justify-between"
-      >
-        <div>
-          <h1 className="text-[40px] font-medium text-white tracking-tight mb-3">My Watchlist</h1>
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--brand-purple)]/20 text-[var(--brand-purple)] text-[14px] font-medium tracking-wide">
-            {watchlist.length} {watchlist.length === 1 ? 'title' : 'titles'} saved
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="w-10 h-10 rounded-[8px] border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors bg-transparent outline-none">
-            <Grid size={18} />
-          </button>
-          <button className="w-10 h-10 rounded-[8px] border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors bg-transparent outline-none">
-            <List size={18} />
-          </button>
-        </div>
-      </motion.div>
-
-      {/* Filters and Sort */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-        className="flex items-center justify-between mb-8 pb-8 border-b border-white/10"
-      >
-        <div className="flex items-center gap-3">
-          {['All', 'Movies', 'TV Shows', 'Documentaries'].map(tab => {
-            const isActive = (filterGenre === 'all' && tab === 'All') || filterGenre === tab;
-            return (
-              <button 
-                key={tab}
-                onClick={() => setFilterGenre(tab === 'All' ? 'all' : tab)}
-                className={`px-5 py-2.5 rounded-[8px] text-[14px] font-medium transition-all outline-none ${
-                  isActive
-                  ? 'border border-white/30 text-white bg-white/5'
-                  : 'border border-white/10 text-white/60 hover:border-white/20 hover:text-white'
-                }`}
-              >
-                {tab}
-              </button>
-            )
-          })}
-        </div>
+    <div className="min-h-screen pt-24 pb-20 px-6 md:px-[60px] bg-[#0f0f0f]">
+      <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-8 relative">
         
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-[8px] border border-white/10 text-white/80 hover:text-white hover:border-white/30 transition-all text-[14px] font-medium outline-none">
-          <SortAsc size={16} /> Sort
-        </button>
-      </motion.div>
+        {/* Left Column: Playlist Hero (Sticky) */}
+        <div className="lg:w-[400px] lg:sticky lg:top-32 h-fit">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl p-6 flex flex-col">
+            {/* Blurred Background */}
+            <div 
+              className="absolute inset-0 z-0 bg-cover bg-center scale-110 blur-3xl opacity-40"
+              style={{ backgroundImage: `url(${heroThumb})` }}
+            />
+            <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-black/40 to-black/80" />
 
-      {/* Content */}
-      {watchlist.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          className="flex flex-col items-center justify-center py-20 text-center"
-        >
-          {/* Bookmark Icon Circle */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", duration: 0.8, delay: 0.3 }}
-            className="w-24 h-24 rounded-full flex items-center justify-center mb-8
-                     border border-[var(--brand-purple)]/30 bg-[var(--brand-purple)]/10 relative"
-          >
-            <Bookmark size={32} className="text-[var(--brand-purple)]" strokeWidth={1.5} />
-          </motion.div>
+            <div className="relative z-10">
+              {/* Large Image */}
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-6 shadow-xl border border-white/5">
+                <img 
+                  src={heroThumb} 
+                  alt="Playlist Cover" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-          <h2 className="text-[28px] font-medium text-white mb-3 tracking-tight">
-            Your watchlist is empty
-          </h2>
-          <p className="text-white/50 mb-10 max-w-sm text-[15px] leading-relaxed">
-            Browse content and tap the bookmark icon to save movies and shows for later.
-          </p>
+              {/* Text Info */}
+              <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Watch later</h1>
+              <p className="text-[15px] font-bold text-white mb-1">Sujal Khanolkar Discipline</p>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/60 mb-6">
+                <span>{watchlist.length} videos</span>
+                <span>•</span>
+                <span>No views</span>
+                <span>•</span>
+                <span>Last updated on May 10, 2026</span>
+              </div>
 
-          <div className="flex gap-4">
-            <button
-              onClick={() => navigate('/browse')}
-              className="px-6 py-3 bg-transparent text-white rounded-[8px] font-medium text-[15px]
-                       border border-white/20 hover:bg-white/5 transition-all
-                       flex items-center gap-2 outline-none"
-            >
-              <Bookmark size={16} />
-              Browse Content
-            </button>
-            <button
-              onClick={() => navigate('/')}
-              className="px-6 py-3 bg-transparent text-white/80 rounded-[8px] font-medium text-[15px]
-                       hover:text-white border border-white/20 hover:bg-white/5
-                       transition-all outline-none"
-            >
-              Go Home
-            </button>
+              {/* Quick Actions */}
+              <div className="flex items-center gap-3 mb-8">
+                <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/5">
+                  <Download size={20} />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/5">
+                  <MoreVertical size={20} />
+                </button>
+              </div>
+
+              {/* Play / Shuffle Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <button 
+                  onClick={() => navigate('/watch')}
+                  className="flex items-center justify-center gap-2 h-11 bg-white text-black rounded-full font-bold text-[14px] hover:bg-white/90 transition-all active:scale-95"
+                >
+                  <Play size={18} fill="black" /> Play all
+                </button>
+                <button className="flex items-center justify-center gap-2 h-11 bg-white/10 text-white rounded-full font-bold text-[14px] hover:bg-white/20 transition-all border border-white/5 active:scale-95">
+                  <Shuffle size={18} /> Shuffle
+                </button>
+              </div>
+            </div>
           </div>
-          
-          {/* Recommended section to prevent "dead end" empty states */}
-          <div className="mt-24 w-full max-w-[1400px] text-left">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-            >
-              <MovieRow
+        </div>
+
+        {/* Right Column: List */}
+        <div className="flex-1 flex flex-col">
+          {/* Header & Filters */}
+          <div className="flex flex-col mb-6 gap-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center p-1 bg-white/5 rounded-xl border border-white/5 h-10">
+                <button 
+                  className="flex items-center gap-2 px-3 h-full text-[13px] font-bold text-white/90 hover:text-white"
+                  onClick={() => setSortBy('recent')}
+                >
+                  Manual <ChevronDown size={14} />
+                </button>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {['All', 'Videos', 'Shorts'].map(type => (
+                  <button 
+                    key={type}
+                    className={`px-4 py-1.5 rounded-full text-[13px] font-bold transition-all ${
+                      type === 'All' 
+                        ? 'bg-white text-black' 
+                        : 'bg-white/5 text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* List Content */}
+          <div className="flex flex-col gap-1">
+            <AnimatePresence mode="popLayout">
+              {sortedWatchlist.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-24 text-center">
+                  <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                    <Bookmark size={32} className="text-white/20" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Your watchlist is empty</h2>
+                  <p className="text-white/40 text-[14px] max-w-xs mx-auto mb-8">
+                    Items you add to your watchlist will appear here.
+                  </p>
+                  <button 
+                    onClick={() => navigate('/browse')}
+                    className="px-6 py-2.5 bg-[var(--brand-purple)] text-white rounded-full font-bold text-[14px] hover:bg-[var(--brand-purple)]/90 transition-all"
+                  >
+                    Browse Content
+                  </button>
+                </div>
+              ) : (
+                sortedWatchlist.map((movie, index) => (
+                  <WatchlistCard
+                    key={movie.id}
+                    movie={movie}
+                    onRemove={handleRemove}
+                    index={index}
+                  />
+                ))
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Recommended (at bottom if list is short) */}
+          {watchlist.length > 0 && watchlist.length < 5 && (
+            <div className="mt-16 pt-16 border-t border-white/5">
+               <MovieRow
                 title="Recommended for you"
                 label="YOU MIGHT LIKE"
                 movies={trendingNow.slice(0, 8)}
                 className="!px-0"
               />
-            </motion.div>
-          </div>
-        </motion.div>
-      ) : (
-        <motion.div
-          layout
-          className="grid gap-5"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))' }}
-        >
-          <AnimatePresence mode="popLayout">
-            {sortedWatchlist.map((movie, index) => (
-              <WatchlistCard
-                key={movie.id}
-                movie={movie}
-                onRemove={handleRemove}
-                index={index}
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      )}
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 };

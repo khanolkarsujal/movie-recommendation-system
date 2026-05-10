@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 // Note: If using 'motion/react', change the import back: import { motion } from 'motion/react';
 import { Play, Star } from 'lucide-react';
@@ -15,6 +15,35 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
   const handleClick = useCallback(() => {
     navigate(`/watch?title=${encodeURIComponent(episode.title)}`);
   }, [navigate, episode.title]);
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoTimeoutRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (isHovered && episode.trailerUrl) {
+      videoTimeoutRef.current = setTimeout(() => setShowVideo(true), 1200);
+    } else {
+      setShowVideo(false);
+      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+    }
+    return () => {
+      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+    };
+  }, [isHovered, episode.trailerUrl]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      if (showVideo) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+  }, [showVideo]);
 
   return (
     <motion.div
@@ -34,6 +63,8 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
           handleClick();
         }
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Thumbnail Container */}
       {/* OTT UI: Deep dark background skeleton before image loads */}
@@ -43,12 +74,22 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
         <img
           src={episode.thumbnail}
           alt={episode.title}
-          className="w-full aspect-video object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          className={`w-full aspect-video object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${showVideo ? 'opacity-0' : 'opacity-100'}`}
           loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = `https://picsum.photos/seed/${episode.id}/400/225`;
-          }}
+          onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80'; }}
         />
+
+        {/* Video Preview */}
+        {episode.trailerUrl && (
+          <video
+            ref={videoRef}
+            src={episode.trailerUrl}
+            muted
+            loop
+            playsInline
+            className={`absolute inset-0 w-full aspect-video object-cover transition-opacity duration-500 ${showVideo ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
 
         {/* Premium Dark Glass Badge */}
         {episode.badge && (

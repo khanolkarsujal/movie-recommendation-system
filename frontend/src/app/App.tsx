@@ -12,16 +12,13 @@ import Browse from '../imports/Browse';
 import Watch from '../imports/Watch';
 import Watchlist from '../imports/Watchlist';
 import Profile from '../imports/Profile';
-import Analytics from '../imports/Analytics';
 import Activity from '../imports/Activity';
-import Schedule from '../imports/Schedule';
+import Settings from '../imports/Settings';
 import NotFound from '../imports/NotFound';
 
 // Enhanced Global Components
 import { KeyboardShortcuts } from '../components/KeyboardShortcuts';
 import { NetworkStatus } from '../components/NetworkStatus';
-import { AiDrawer } from '../imports/AiDrawer';
-import AiButton from '../imports/AiButton';
 import BackToTop from '../imports/BackToTop';
 
 function AppContent() {
@@ -43,9 +40,8 @@ function AppContent() {
           <Route path="/watch" element={<Watch />} />
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/analytics" element={<Analytics />} />
           <Route path="/activity" element={<Activity />} />
-          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -53,7 +49,6 @@ function AppContent() {
       {/* Always-Available Features */}
       <KeyboardShortcuts />
       <NetworkStatus />
-      <AiDrawer />
 
       {/* Toast Notifications */}
       <Toaster
